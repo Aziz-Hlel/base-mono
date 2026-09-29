@@ -5,6 +5,8 @@ import { pinoHttpMiddleware } from '@/logger/pinoHttp';
 import { compressionMiddleware } from '@/middlewares/compression';
 import { globalErrorHandler } from '@/middlewares/error.middleware';
 import notFoundHandler from '@/middlewares/notFoundHandler';
+import { responseEnvelope } from '@/middlewares/response.middleware';
+import cookieParser from 'cookie-parser';
 import express from 'express';
 
 export function createExpressApp() {
@@ -16,6 +18,8 @@ export function createExpressApp() {
 
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+  app.use(cookieParser());
+
   app.use(...configureSecurity());
 
   app.use(configureCors());
@@ -23,6 +27,8 @@ export function createExpressApp() {
   app.use(pinoHttpMiddleware);
 
   app.use(compressionMiddleware);
+
+  app.use(responseEnvelope);
 
   app.use('/api', appRoutes);
 

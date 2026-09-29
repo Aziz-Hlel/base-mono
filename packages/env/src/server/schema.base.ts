@@ -1,4 +1,4 @@
-import { API_PORT, dbSchema, FIREBASE_CERT, mobileVersionsSchema, redisSchema } from './envs.fields';
+import { API_PORT, dbSchema, FIREBASE_CERT, jwtSchema, mobileVersionsSchema, redisSchema } from './envs.fields';
 import z from 'zod';
 
 const baseSchema = z.object({
@@ -7,6 +7,9 @@ const baseSchema = z.object({
 
   // FIREBASE
   FIREBASE_CERT,
+
+  // JWT
+  ...jwtSchema,
 
   // DB
   ...dbSchema,

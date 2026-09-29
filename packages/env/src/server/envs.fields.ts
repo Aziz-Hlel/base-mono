@@ -15,6 +15,12 @@ export const dbSchema = {
   DB_HOST: z.enum(['localhost', 'db']),
 };
 
+// JWT
+export const jwtSchema = {
+  JWT_ACCESS_SECRET: z.string().trim().min(32, 'JWT_ACCESS_SECRET must be at least 32 chars long'),
+  JWT_REFRESH_SECRET: z.string().trim().min(32, 'JWT_REFRESH_SECRET must be at least 32 chars long'),
+};
+
 // Redis
 export const redisSchema = {
   REDIS_PORT: z.coerce.number().positive(),

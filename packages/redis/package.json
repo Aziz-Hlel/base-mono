@@ -1,0 +1,22 @@
+{
+  "name": "@base-monorepo-v2/redis",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@base-monorepo-v2/env": "workspace:*",
+    "ioredis": "catalog:",
+    "dotenv": "catalog:"
+  },
+  "devDependencies": {
+    "@base-monorepo-v2/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

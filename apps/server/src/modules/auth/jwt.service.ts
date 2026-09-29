@@ -1,0 +1,50 @@
+import ENV from '@/env';
+import jwt from 'jsonwebtoken';
+
+export interface AccessTokenPayload {
+  userId: string;
+  accountId: string;
+}
+
+export interface RefreshTokenPayload {
+  accountId: string;
+  tokenId: string; // unique ID per token, used for rotation detection
+}
+
+const ACCESS_EXPIRES_IN = '1h';
+const REFRESH_EXPIRES_IN = '30d';
+
+class JwtService {
+  signAccessToken = (payload: AccessTokenPayload): string => {
+    return jwt.sign(payload, ENV.JWT_ACCESS_SECRET, {
+      expiresIn: ACCESS_EXPIRES_IN,
+      algorithm: 'HS256',
+    });
+  };
+
+  signRefreshToken = (payload: RefreshTokenPayload): string => {
+    return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
+      expiresIn: REFRESH_EXPIRES_IN,
+      algorithm: 'HS256',
+    });
+  };
+
+  verifyAccessToken = (token: string): AccessTokenPayload => {
+    return jwt.verify(token, ENV.JWT_ACCESS_SECRET, {
+      algorithms: ['HS256'],
+    }) as AccessTokenPayload;
+  };
+
+  verifyRefreshToken = (token: string): RefreshTokenPayload => {
+    return jwt.verify(token, ENV.JWT_REFRESH_SECRET, {
+      algorithms: ['HS256'],
+    }) as RefreshTokenPayload;
+  };
+
+  decodeToken = (token: string): jwt.JwtPayload | null => {
+    const decoded = jwt.decode(token);
+    return typeof decoded === 'object' ? decoded : null;
+  };
+}
+
+export const jwtService = new JwtService();

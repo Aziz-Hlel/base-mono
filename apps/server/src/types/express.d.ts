@@ -6,6 +6,14 @@ export type SucessResponseParams<T> = ApiSimpleDataResponse<T> | ApiPaginatedDat
 
 declare global {
   namespace Express {
+    interface Request {
+      /** Populated by the `authenticate` middleware after JWT verification */
+      user?: {
+        userId: string;
+        accountId: string;
+        tokenId?: string; // present if decoded from refresh token context
+      };
+    }
     interface Response {
       success<T>(params: SucessResponseParams<T>): this;
     }
