@@ -7,14 +7,17 @@
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
     "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.mjs",
-    "env:generate": "varlock codegen"
+    "start": "node dist/index.mjs"
   },
   "dependencies": {
     "@base-monorepo-v2/db": "workspace:*",
+    "@base-monorepo-v2/env": "workspace:*",
+    "@types/compression": "^1.8.1",
+    "compression": "^1.8.2",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "varlock": "catalog:",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "^8.3.0",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -22,6 +25,8 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "catalog:",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
     "tsdown": "^0.23.0",
     "tsx": "^4.23.13",
     "typescript": "catalog:"

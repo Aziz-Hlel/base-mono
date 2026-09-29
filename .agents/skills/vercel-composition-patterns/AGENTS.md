@@ -55,24 +55,12 @@ unmaintainable conditional logic. Use composition instead.
 **Incorrect: boolean props create exponential complexity**
 
 ```tsx
-function Composer({
-  onSubmit,
-  isThread,
-  channelId,
-  isDMThread,
-  dmId,
-  isEditing,
-  isForwarding,
-}: Props) {
+function Composer({ onSubmit, isThread, channelId, isDMThread, dmId, isEditing, isForwarding }: Props) {
   return (
     <form>
       <Header />
       <Input />
-      {isDMThread ? (
-        <AlsoSendToDMField id={dmId} />
-      ) : isThread ? (
-        <AlsoSendToChannelField id={channelId} />
-      ) : null}
+      {isDMThread ? <AlsoSendToDMField id={dmId} /> : isThread ? <AlsoSendToChannelField id={channelId} /> : null}
       {isEditing ? <EditActions /> : isForwarding ? <ForwardActions /> : <DefaultActions />}
       <Footer onSubmit={onSubmit} />
     </form>
@@ -148,14 +136,7 @@ pieces they need.
 **Incorrect: monolithic component with render props**
 
 ```tsx
-function Composer({
-  renderHeader,
-  renderFooter,
-  renderActions,
-  showAttachments,
-  showFormatting,
-  showEmojis,
-}: Props) {
+function Composer({ renderHeader, renderFooter, renderActions, showAttachments, showFormatting, showEmojis }: Props) {
   return (
     <form>
       {renderHeader?.()}
@@ -195,11 +176,7 @@ function ComposerInput() {
     meta: { inputRef },
   } = use(ComposerContext);
   return (
-    <TextInput
-      ref={inputRef}
-      value={state.input}
-      onChangeText={(text) => update((s) => ({ ...s, input: text }))}
-    />
+    <TextInput ref={inputRef} value={state.input} onChangeText={(text) => update((s) => ({ ...s, input: text }))} />
   );
 }
 
@@ -281,13 +258,7 @@ function ChannelComposer({ channelId }: { channelId: string }) {
 
 ```tsx
 // Provider handles all state management details
-function ChannelProvider({
-  channelId,
-  children,
-}: {
-  channelId: string;
-  children: React.ReactNode;
-}) {
+function ChannelProvider({ channelId, children }: { channelId: string; children: React.ReactNode }) {
   const { state, update, submit } = useGlobalChannel(channelId);
   const inputRef = useRef(null);
 
@@ -592,7 +563,7 @@ function ForwardMessageDialog() {
 
 ```tsx
 function ForwardMessageDialog() {
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   return (
     <Dialog>
       <ForwardMessageComposer onInputChange={setInput} />
@@ -632,11 +603,7 @@ function ForwardMessageProvider({ children }: { children: React.ReactNode }) {
   const inputRef = useRef(null);
 
   return (
-    <Composer.Provider
-      state={state}
-      actions={{ update: setState, submit: forwardMessage }}
-      meta={{ inputRef }}
-    >
+    <Composer.Provider state={state} actions={{ update: setState, submit: forwardMessage }} meta={{ inputRef }}>
       {children}
     </Composer.Provider>
   );
@@ -698,7 +665,7 @@ itself.
 
 ```tsx
 // What does this component actually render?
-<Composer isThread isEditing={false} channelId="abc" showAttachments showFormatting={false} />
+<Composer isThread isEditing={false} channelId='abc' showAttachments showFormatting={false} />
 ```
 
 **Correct: explicit variants**
@@ -834,7 +801,7 @@ function ComposerFrame({ children }: { children: React.ReactNode }) {
 }
 
 function ComposerFooter({ children }: { children: React.ReactNode }) {
-  return <footer className="flex">{children}</footer>;
+  return <footer className='flex'>{children}</footer>;
 }
 
 // Usage is flexible

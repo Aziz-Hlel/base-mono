@@ -22,16 +22,16 @@ See [customization.md](../customization.md) for theming, CSS variables, and addi
 **Incorrect:**
 
 ```tsx
-<div className="bg-blue-500 text-white">
-  <p className="text-gray-600">Secondary text</p>
+<div className='bg-blue-500 text-white'>
+  <p className='text-gray-600'>Secondary text</p>
 </div>
 ```
 
 **Correct:**
 
 ```tsx
-<div className="bg-primary text-primary-foreground">
-  <p className="text-muted-foreground">Secondary text</p>
+<div className='bg-primary text-primary-foreground'>
+  <p className='text-muted-foreground'>Secondary text</p>
 </div>
 ```
 
@@ -66,13 +66,13 @@ If you need a success/positive color that doesn't exist as a semantic token, use
 **Incorrect:**
 
 ```tsx
-<Button className="border border-input bg-transparent hover:bg-accent">Click me</Button>
+<Button className='border-input hover:bg-accent border bg-transparent'>Click me</Button>
 ```
 
 **Correct:**
 
 ```tsx
-<Button variant="outline">Click me</Button>
+<Button variant='outline'>Click me</Button>
 ```
 
 ---
@@ -84,7 +84,7 @@ Use `className` for layout (e.g. `max-w-md`, `mx-auto`, `mt-4`), **not** for ove
 **Incorrect:**
 
 ```tsx
-<Card className="bg-blue-100 text-blue-900 font-bold">
+<Card className='bg-blue-100 font-bold text-blue-900'>
   <CardContent>Dashboard</CardContent>
 </Card>
 ```
@@ -92,7 +92,7 @@ Use `className` for layout (e.g. `max-w-md`, `mx-auto`, `mt-4`), **not** for ove
 **Correct:**
 
 ```tsx
-<Card className="max-w-md mx-auto">
+<Card className='mx-auto max-w-md'>
   <CardContent>Dashboard</CardContent>
 </Card>
 ```
@@ -110,7 +110,7 @@ To customize a component's appearance, prefer these approaches in order:
 Use `gap-*` instead. `space-y-4` → `flex flex-col gap-4`. `space-x-2` → `flex gap-2`.
 
 ```tsx
-<div className="flex flex-col gap-4">
+<div className='flex flex-col gap-4'>
   <Input />
   <Input />
   <Button>Submit</Button>
@@ -172,7 +172,7 @@ For scroll-aware edge fading on a scroll container, use `scroll-fade` (and the a
 **Incorrect:**
 
 ```tsx
-<span className="animate-pulse bg-gradient-to-r from-muted-foreground/40 via-foreground/70 to-muted-foreground/40 bg-clip-text text-transparent [animation:shimmer_1.6s_infinite]">
+<span className='from-muted-foreground/40 via-foreground/70 to-muted-foreground/40 [animation:shimmer_1.6s_infinite] animate-pulse bg-gradient-to-r bg-clip-text text-transparent'>
   Thinking…
 </span>
 ```
@@ -180,5 +180,5 @@ For scroll-aware edge fading on a scroll container, use `scroll-fade` (and the a
 **Correct:**
 
 ```tsx
-<span className="shimmer">Thinking…</span>
+<span className='shimmer'>Thinking…</span>
 ```

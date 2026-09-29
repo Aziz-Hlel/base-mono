@@ -8,7 +8,7 @@ Execute SELECT queries and get typed results:
 
 ```typescript
 const users = await prisma.$queryRaw`
-  SELECT * FROM "User" WHERE email LIKE ${"%@prisma.io"}
+  SELECT * FROM "User" WHERE email LIKE ${'%@prisma.io'}
 `;
 ```
 
@@ -18,7 +18,7 @@ const users = await prisma.$queryRaw`
 type User = { id: number; email: string; name: string | null };
 
 const users = await prisma.$queryRaw<User[]>`
-  SELECT id, email, name FROM "User" WHERE role = ${"ADMIN"}
+  SELECT id, email, name FROM "User" WHERE role = ${'ADMIN'}
 `;
 ```
 
@@ -27,9 +27,9 @@ const users = await prisma.$queryRaw<User[]>`
 Use `Prisma.raw()` for identifiers (not safe for user input):
 
 ```typescript
-import { Prisma } from "../generated/client";
+import { Prisma } from '../generated/client';
 
-const column = "email";
+const column = 'email';
 const users = await prisma.$queryRaw`
   SELECT ${Prisma.raw(column)} FROM "User"
 `;
@@ -40,9 +40,9 @@ const users = await prisma.$queryRaw`
 Build queries dynamically:
 
 ```typescript
-import { Prisma } from "../generated/client";
+import { Prisma } from '../generated/client';
 
-const email = "alice@prisma.io";
+const email = 'alice@prisma.io';
 const query = Prisma.sql`SELECT * FROM "User" WHERE email = ${email}`;
 const users = await prisma.$queryRaw(query);
 ```
@@ -50,13 +50,13 @@ const users = await prisma.$queryRaw(query);
 ### Join multiple SQL fragments
 
 ```typescript
-import { Prisma } from "../generated/client";
+import { Prisma } from '../generated/client';
 
-const conditions = [Prisma.sql`role = ${"ADMIN"}`, Prisma.sql`verified = ${true}`];
+const conditions = [Prisma.sql`role = ${'ADMIN'}`, Prisma.sql`verified = ${true}`];
 
 const users = await prisma.$queryRaw`
   SELECT * FROM "User" 
-  WHERE ${Prisma.join(conditions, " AND ")}
+  WHERE ${Prisma.join(conditions, ' AND ')}
 `;
 ```
 
@@ -66,7 +66,7 @@ Execute INSERT, UPDATE, DELETE (returns affected count):
 
 ```typescript
 const count = await prisma.$executeRaw`
-  UPDATE "User" SET verified = true WHERE email LIKE ${"%@prisma.io"}
+  UPDATE "User" SET verified = true WHERE email LIKE ${'%@prisma.io'}
 `;
 console.log(`Updated ${count} users`);
 ```
@@ -94,18 +94,14 @@ For fully dynamic queries (use with caution!):
 
 ```typescript
 // ⚠️ SQL injection risk - only use with trusted input
-const table = "User";
+const table = 'User';
 const users = await prisma.$queryRawUnsafe(`SELECT * FROM "${table}" WHERE id = $1`, userId);
 ```
 
 ### Parameterized unsafe query
 
 ```typescript
-const result = await prisma.$executeRawUnsafe(
-  'UPDATE "User" SET name = $1 WHERE id = $2',
-  "Alice",
-  1,
-);
+const result = await prisma.$executeRawUnsafe('UPDATE "User" SET name = $1 WHERE id = $2', 'Alice', 1);
 ```
 
 ## SQL Injection Prevention

@@ -1,0 +1,27 @@
+{
+  // Format Setting
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // To choose Prettier as formatter
+  "editor.formatOnSave": true, // To format code on save
+  "files.eol": "\n",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit" // Organizer imports and remove unused imports
+  },
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+
+  // git settings
+  "git.autofetch": true,
+
+  // tailwind settings
+  "tailwindCSS.classFunctions": ["tw", "cn"], // literal names of functions for which to provide class completions, hover previews, linting etc.
+
+  // TS Settings
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib", // To use the same TypeScript version as in the project
+  "typescript.tsdk": "node_modules\\typescript\\lib", // To use the same TypeScript version as in the project
+
+  // Terminal settings
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.suggest.quickSuggestions": true,
+  "terminal.integrated.shellIntegration.enabled": true
+}

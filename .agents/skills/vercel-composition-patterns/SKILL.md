@@ -8,7 +8,7 @@ description: React composition patterns that scale. Use when refactoring compone
 license: MIT
 metadata:
   author: vercel
-  version: "1.0.0"
+  version: '1.0.0'
 ---
 
 # React Composition Patterns

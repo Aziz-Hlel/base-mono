@@ -1,0 +1,37 @@
+# Dependency folders
+node_modules
+**/node_modules
+.agent/
+
+# Build artifacts
+dist
+build
+target
+**/dist
+**/build
+**/target
+
+# Environment / secrets
+.env
+.env.*
+*.env
+*.env.*
+
+.prisma
+
+# Package manager artifacts
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+
+# Logs and temp
+*.log
+backup/
+tmp/    
+.cache/
+
+# IDE / system files
+# .vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode", // * Prettier
+    "dbaeumer.vscode-eslint", // * Eslint
+    "aaron-bond.better-comments", // * Better Comments
+    "bradlc.vscode-tailwindcss", // * Tailwind CSS
+    "stivo.tailwind-fold", // * Tailwind Fold
+    "humao.rest-client", // * REST Client
+    "yoavbls.pretty-ts-errors", // * TypeScript Errors
+    "pkief.material-icon-theme", // * Material Icons
+    "wix.vscode-import-cost", // * Import Cost
+    "mikestead.dotenv", // * Dotenv
+    "ferrierbenjamin.fold-unfold-all-icone", // * Fold Unfold All Icone
+    "kisstkondoros.vscode-gutter-preview", // * Image Preview
+    "TypeScriptTeam.native-preview", // * TS/GO
+    "usernamehw.errorlens", // * Error Lens
+    "github.vscode-github-actions" // * GitHub Actions ( for YAML files IntelliSense / autocomplete )
+  ],
+  "unwantedRecommendations": []
+}

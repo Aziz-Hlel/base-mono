@@ -1,23 +1,17 @@
-import cors from "cors";
-import express from "express";
+import { createExpressApp } from './app';
+import ENV from './env';
 
-import { ENV } from "./env.server";
+async function bootstrap() {
+  // await asyncBootstrapHandlers();
 
-const app = express();
+  const app = createExpressApp();
+  app.on('mount', (error) => {
+    console.error('❌ ERROR : oops Server failed to start', error);
+    process.exit(1);
+  });
+  app.listen(ENV.API_PORT, () => {
+    console.log(`✅ SUCCESS : Server running on port ${ENV.API_PORT}`);
+  });
+}
 
-app.use(
-  cors({
-    origin: ENV.CORS_ORIGIN,
-    methods: ["GET", "POST", "OPTIONS"],
-  }),
-);
-
-app.use(express.json());
-
-app.get("/", (_req, res) => {
-  res.status(200).send("OK");
-});
-
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
-});
+bootstrap();

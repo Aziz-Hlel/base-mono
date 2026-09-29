@@ -26,8 +26,8 @@ Never render items directly inside the content container.
 
 ```tsx
 <SelectContent>
-  <SelectItem value="apple">Apple</SelectItem>
-  <SelectItem value="banana">Banana</SelectItem>
+  <SelectItem value='apple'>Apple</SelectItem>
+  <SelectItem value='banana'>Banana</SelectItem>
 </SelectContent>
 ```
 
@@ -36,8 +36,8 @@ Never render items directly inside the content container.
 ```tsx
 <SelectContent>
   <SelectGroup>
-    <SelectItem value="apple">Apple</SelectItem>
-    <SelectItem value="banana">Banana</SelectItem>
+    <SelectItem value='apple'>Apple</SelectItem>
+    <SelectItem value='banana'>Banana</SelectItem>
   </SelectGroup>
 </SelectContent>
 ```
@@ -76,7 +76,7 @@ Chat components nest in a fixed order (`MessageScrollerProvider` → `MessageScr
 ```tsx
 <Empty>
   <EmptyHeader>
-    <EmptyMedia variant="icon">
+    <EmptyMedia variant='icon'>
       <FolderIcon />
     </EmptyMedia>
     <EmptyTitle>No projects yet</EmptyTitle>
@@ -95,22 +95,22 @@ Chat components nest in a fixed order (`MessageScrollerProvider` → `MessageScr
 For Base UI projects, use the `toast` component:
 
 ```tsx
-import { toast } from "@/components/ui/toast";
+import { toast } from '@/components/ui/toast';
 
 toast.add({
-  title: "Changes saved.",
+  title: 'Changes saved.',
 });
 ```
 
 For Radix and React Aria projects, use Sonner:
 
 ```tsx
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
-toast.success("Changes saved.");
-toast.error("Something went wrong.");
-toast("File deleted.", {
-  action: { label: "Undo", onClick: () => undoDelete() },
+toast.success('Changes saved.');
+toast.error('Something went wrong.');
+toast('File deleted.', {
+  action: { label: 'Undo', onClick: () => undoDelete() },
 });
 ```
 
@@ -170,7 +170,7 @@ Compose with `Spinner` + `data-icon` + `disabled`:
 
 ```tsx
 <Button disabled>
-  <Spinner data-icon="inline-start" />
+  <Spinner data-icon='inline-start' />
   Saving...
 </Button>
 ```
@@ -182,12 +182,12 @@ Compose with `Spinner` + `data-icon` + `disabled`:
 Never render `TabsTrigger` directly inside `Tabs` — always wrap in `TabsList`:
 
 ```tsx
-<Tabs defaultValue="account">
+<Tabs defaultValue='account'>
   <TabsList>
-    <TabsTrigger value="account">Account</TabsTrigger>
-    <TabsTrigger value="password">Password</TabsTrigger>
+    <TabsTrigger value='account'>Account</TabsTrigger>
+    <TabsTrigger value='password'>Password</TabsTrigger>
   </TabsList>
-  <TabsContent value="account">...</TabsContent>
+  <TabsContent value='account'>...</TabsContent>
 </Tabs>
 ```
 
@@ -199,7 +199,7 @@ Always include `AvatarFallback` for when the image fails to load:
 
 ```tsx
 <Avatar>
-  <AvatarImage src="/avatar.png" alt="User" />
+  <AvatarImage src='/avatar.png' alt='User' />
   <AvatarFallback>JD</AvatarFallback>
 </Avatar>
 ```

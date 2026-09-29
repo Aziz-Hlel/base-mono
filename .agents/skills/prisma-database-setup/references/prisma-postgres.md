@@ -50,12 +50,12 @@ generator client {
 In `prisma.config.ts`:
 
 ```typescript
-import { defineConfig, env } from "prisma/config";
+import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
-  schema: "prisma/schema.prisma",
+  schema: 'prisma/schema.prisma',
   datasource: {
-    url: env("DATABASE_URL"),
+    url: env('DATABASE_URL'),
   },
 });
 ```
@@ -74,9 +74,9 @@ Use a driver adapter for Prisma Postgres in the standard SQL workflow.
 
 2. Use the direct TCP connection string from Prisma Console:
    ```typescript
-   import "dotenv/config";
-   import { PrismaClient } from "../generated/client";
-   import { PrismaPg } from "@prisma/adapter-pg";
+   import { PrismaClient } from '../generated/client';
+   import { PrismaPg } from '@prisma/adapter-pg';
+   import 'dotenv/config';
 
    const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
    const prisma = new PrismaClient({ adapter });
@@ -92,11 +92,10 @@ const prisma = new PrismaClient({ adapter });
 For PostgreSQL prepared statement naming, pass adapter options as the second argument:
 
 ```typescript
-import { createHash } from "node:crypto";
+import { createHash } from 'node:crypto';
 
 const adapter = new PrismaPg(process.env.DATABASE_URL!, {
-  statementNameGenerator: ({ sql }) =>
-    `prisma_${createHash("sha1").update(sql).digest("hex").slice(0, 16)}`,
+  statementNameGenerator: ({ sql }) => `prisma_${createHash('sha1').update(sql).digest('hex').slice(0, 16)}`,
 });
 ```
 
@@ -109,8 +108,8 @@ npm install @prisma/adapter-ppg @prisma/ppg
 ```
 
 ```typescript
-import { PrismaClient } from "../generated/client";
-import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
+import { PrismaClient } from '../generated/client';
+import { PrismaPostgresAdapter } from '@prisma/adapter-ppg';
 
 const prisma = new PrismaClient({
   adapter: new PrismaPostgresAdapter({

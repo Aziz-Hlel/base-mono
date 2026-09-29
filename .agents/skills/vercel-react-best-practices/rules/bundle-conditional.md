@@ -22,10 +22,8 @@ function AnimationPlayer({
   const [frames, setFrames] = useState<Frame[] | null>(null);
 
   useEffect(() => {
-    if (enabled && !frames && typeof window !== "undefined") {
-      import("./animation-frames.js")
-        .then((mod) => setFrames(mod.frames))
-        .catch(() => setEnabled(false));
+    if (enabled && !frames && typeof window !== 'undefined') {
+      import('./animation-frames.js').then((mod) => setFrames(mod.frames)).catch(() => setEnabled(false));
     }
   }, [enabled, frames, setEnabled]);
 
