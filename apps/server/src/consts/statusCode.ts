@@ -15,4 +15,7 @@ export const STATUS_CODES_ERROR = {
   CONFLICT: 409,
   UNPROCESSABLE_ENTITY: 422,
   TOO_MANY_REQUESTS: 429,
-};
+  INTERNAL_SERVER: 500,
+} as const;
+
+export type ErrorStatusCodes = (typeof STATUS_CODES_ERROR)[keyof typeof STATUS_CODES_ERROR];

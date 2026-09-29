@@ -4,7 +4,8 @@ import { configureSecurity } from '@/config/security';
 import { pinoHttpMiddleware } from '@/logger/pinoHttp';
 import { compressionMiddleware } from '@/middlewares/compression';
 import { globalErrorHandler } from '@/middlewares/error.middleware';
-import express, { type NextFunction, type Request, type Response } from 'express';
+import notFoundHandler from '@/middlewares/notFoundHandler';
+import express from 'express';
 
 export function createExpressApp() {
   const app = express();
@@ -25,12 +26,7 @@ export function createExpressApp() {
 
   app.use('/api', appRoutes);
 
-  app.use((req: Request, res: Response, _: NextFunction) => {
-    res.status(404).json({
-      message: `Route ${req.method} ${req.originalUrl} not found`,
-    });
-    res.success('NOT_FOUND', 'Route not found');
-  });
+  app.use(notFoundHandler);
 
   app.use(globalErrorHandler);
 

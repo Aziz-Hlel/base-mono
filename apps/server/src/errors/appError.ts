@@ -33,17 +33,14 @@ export class AppError extends Error {
   }
 
   static toApiErrorResponse(error: AppError, req: Request): ApiError {
-    return ErrorMapper.toResponse(
-      {
-        name: error.name,
-        message: error.message,
-        status: error.status,
-        clientMessage: error.clientMessage,
-        internalLog: error.internalLog,
-        cause: error.cause,
-        stack: error.stack,
-      },
-      req,
-    );
+    return ErrorMapper.toResponse(req, {
+      name: error.name,
+      message: error.message,
+      status: error.status,
+      clientMessage: error.clientMessage,
+      internalLog: error.internalLog,
+      cause: error.cause,
+      stack: error.stack,
+    });
   }
 }

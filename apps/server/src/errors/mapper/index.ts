@@ -5,6 +5,7 @@ import type { Request } from 'express';
 
 export class ErrorMapper {
   static toResponse(
+    req: Request,
     error: {
       message: string;
       status: number;
@@ -14,7 +15,6 @@ export class ErrorMapper {
       cause?: unknown;
       stack?: string;
     },
-    req: Request,
   ): ApiError {
     const apiResponse: ApiError = {
       success: false,

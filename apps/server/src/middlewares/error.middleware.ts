@@ -33,17 +33,14 @@ export const globalErrorHandler = (error: Error, req: Request, res: Response<Api
     //   'Database error : If you see this, it means that the error was not caught by the repo layer',
     // );
 
-    const errorResponse = ErrorMapper.toResponse(
-      {
-        message: isDev() ? 'Database operation failed' : 'Operation failed',
-        internalLog: 'Database operation failed',
-        name: ErrorNames.INTERNAL_SERVER,
-        status: 500,
-        stack: error.stack,
-        cause: error.cause,
-      },
-      req,
-    );
+    const errorResponse = ErrorMapper.toResponse(req, {
+      message: isDev() ? 'Database operation failed' : 'Operation failed',
+      internalLog: 'Database operation failed',
+      name: ErrorNames.INTERNAL_SERVER,
+      status: 500,
+      stack: error.stack,
+      cause: error.cause,
+    });
 
     return res.status(400).json(errorResponse);
   }
@@ -51,6 +48,8 @@ export const globalErrorHandler = (error: Error, req: Request, res: Response<Api
   // Default 500
   // logger.fatal({ err: error, path }, 'Unhandled error');
   const errorResponse = ErrorMapper.toResponse(
+    req,
+
     {
       message: 'Internal server error',
       name: ErrorNames.INTERNAL_SERVER,
@@ -58,7 +57,6 @@ export const globalErrorHandler = (error: Error, req: Request, res: Response<Api
       stack: error.stack,
       cause: error.cause,
     },
-    req,
   );
   return res.status(500).json(errorResponse);
 };
