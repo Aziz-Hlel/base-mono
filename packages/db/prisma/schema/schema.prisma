@@ -9,13 +9,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum AccountRole {
+  SYSTEM
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
 model Account {
-  id              String  @id @default(uuid())
-  authId          String?  @db.VarChar(255)
-  email           String  @db.VarChar(255)
-  password        String? @db.VarChar(255)
-  username        String? @db.VarChar(255)
-  isEmailVerified Boolean @default(false)
+  id              String      @id @default(uuid())
+  email           String      @db.VarChar(255)
+  password        String?     @db.VarChar(255)
+  role            AccountRole @default(USER)
+  authId          String?     @db.VarChar(255)
+  username        String?     @db.VarChar(255)
+  isEmailVerified Boolean     @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -27,11 +45,16 @@ model Account {
   @@map("account")
 }
 
+
 model User {
-  id String @id @default(uuid())
+  id        String   @id @default(uuid())
+  firstName String   @db.VarChar(255)
+  lastName  String   @db.VarChar(255)
+  gender    Gender
+  phone     String?   @db.VarChar(15)
+  birthday  DateTime? @db.Date
 
   account Account @relation(fields: [id], references: [id])
-  
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

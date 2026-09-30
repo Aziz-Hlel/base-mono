@@ -1,13 +1,14 @@
 import ENV from '@/env';
+import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import jwt from 'jsonwebtoken';
 
 export interface AccessTokenPayload {
-  userId: string;
-  accountId: string;
+  id: string;
+  accountRole: AccountRole;
 }
 
 export interface RefreshTokenPayload {
-  accountId: string;
+  id: string;
   tokenId: string; // unique ID per token, used for rotation detection
 }
 

@@ -1,12 +1,13 @@
 import { loginSchema, registerSchema } from './auth.schemas';
 import { authService } from './auth.service';
+import { isProd } from '@base-monorepo-v2/env/server';
 import type { Request, Response } from 'express';
 
 const REFRESH_COOKIE_NAME = 'refreshToken';
 
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
+  secure: isProd(),
   sameSite: 'strict' as const,
   path: '/api/auth/refresh', // scope the cookie to refresh endpoint only
 };
@@ -69,7 +70,7 @@ class AuthController {
     const user = req.user!; // set by authenticate middleware
     const allDevices = req.query.allDevices === 'true';
 
-    await authService.logout(user.accountId, user.tokenId ?? '', allDevices);
+    await authService.logout(user.id, user.tokenId ?? '', allDevices);
 
     res.clearCookie(REFRESH_COOKIE_NAME, { ...cookieOptions });
 
@@ -83,7 +84,7 @@ class AuthController {
   me = async (req: Request, res: Response) => {
     return res.success({
       status: 200,
-      data: { userId: req.user!.userId, accountId: req.user!.accountId },
+      data: { id: req.user!.id, role: req.user!.role },
       message: 'ok',
     });
   };

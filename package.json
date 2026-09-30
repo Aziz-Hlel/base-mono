@@ -26,9 +26,8 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "env:generate": "varlock codegen --path ./apps/web/ && varlock codegen --path ./packages/db/",
-    "format": "prettier --write .",
-    "postinstall": "varlock codegen --path ./apps/web/ && varlock && varlock codegen --path ./packages/db/"
+    "env:generate": "varlock codegen --path ./apps/web/ ",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "zod": "catalog:"

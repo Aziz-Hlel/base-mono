@@ -19,7 +19,7 @@ catalogs:
       specifier: ^1.16.1
       version: 1.20.0
     dotenv:
-      specifier: ^17.2.2
+      specifier: ^17.4.2
       version: 17.4.2
     ioredis:
       specifier: 5.9.3
@@ -251,6 +251,15 @@ importers:
 
   packages/config: {}
 
+  packages/contracts:
+    dependencies:
+      '@base-monorepo-v2/db':
+        specifier: workspace:*
+        version: link:../db
+      zod:
+        specifier: 'catalog:'
+        version: 4.6.5
+
   packages/db:
     dependencies:
       '@base-monorepo-v2/env':
@@ -275,15 +284,15 @@ importers:
       '@types/pg':
         specifier: ^8.23.1
         version: 8.23.1
+      dotenv:
+        specifier: 'catalog:'
+        version: 17.4.2
       prisma:
         specifier: ^7.10.0
         version: 7.10.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@6.0.3)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
-      varlock:
-        specifier: 'catalog:'
-        version: 1.18.0
 
   packages/env:
     dependencies:

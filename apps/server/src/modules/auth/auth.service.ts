@@ -3,6 +3,7 @@ import { jwtService } from './jwt.service';
 import { tokenStoreService } from './token-store.service';
 import { ConflictError, UnauthorizedError } from '@/errors/customErrors';
 import prisma from '@base-monorepo-v2/db';
+import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import bcrypt from 'bcrypt';
 import crypto from 'node:crypto';
 
@@ -17,10 +18,6 @@ export interface AuthTokens {
 }
 
 class AuthService {
-  /**
-   * Register a new account + user record.
-   * Throws ConflictError if email already exists.
-   */
   async register(input: RegisterInput): Promise<AuthTokens> {
     const existing = await prisma.account.findUnique({
       where: { email: input.email },
@@ -42,21 +39,16 @@ class AuthService {
         username: input.username ?? null,
         user: { create: {} }, // auto-create related User row
       },
-      select: { id: true, user: { select: { id: true } } },
+      select: { id: true, role: true },
     });
 
-    const userId = account.user!.id;
-    return authService._issueTokenPair(account.id, userId);
+    return authService._issueTokenPair(account.id, account.role);
   }
 
-  /**
-   * Login with email + password.
-   * Throws UnauthorizedError on bad credentials (intentionally vague).
-   */
   async login(input: LoginInput): Promise<AuthTokens> {
     const account = await prisma.account.findUnique({
       where: { email: input.email },
-      select: { id: true, password: true, user: { select: { id: true } } },
+      select: { id: true, role: true, password: true },
     });
 
     const INVALID_CREDENTIALS = 'Invalid email or password';
@@ -76,14 +68,9 @@ class AuthService {
       });
     }
 
-    const userId = account.user!.id;
-    return authService._issueTokenPair(account.id, userId);
+    return authService._issueTokenPair(account.id, account.role);
   }
 
-  /**
-   * Rotate refresh token: validate old one, revoke it, issue a new pair.
-   * Throws UnauthorizedError on any invalid state (reuse attack, expired, etc.).
-   */
   async refresh(rawRefreshToken: string): Promise<AuthTokens> {
     let payload;
     try {
@@ -94,61 +81,51 @@ class AuthService {
       });
     }
 
-    const isValid = await tokenStoreService.validate(payload.accountId, payload.tokenId, rawRefreshToken);
+    const isValid = await tokenStoreService.validate(payload.id, payload.tokenId, rawRefreshToken);
 
     if (!isValid) {
       // Possible reuse attack — revoke ALL tokens for this account as a safety measure
-      await tokenStoreService.revokeAll(payload.accountId);
+      await tokenStoreService.revokeAll(payload.id);
       throw new UnauthorizedError('Refresh token reuse detected', {
         clientMessage: 'Session invalid. Please log in again.',
       });
     }
 
     // Revoke the used token (rotation: one use only)
-    await tokenStoreService.revoke(payload.accountId, payload.tokenId);
+    await tokenStoreService.revoke(payload.id, payload.tokenId);
 
     // Fetch userId from DB (not stored in the refresh payload intentionally)
     const account = await prisma.account.findUnique({
-      where: { id: payload.accountId },
-      select: { user: { select: { id: true } } },
+      where: { id: payload.id },
+      select: { id: true, role: true },
     });
 
-    if (!account?.user) {
+    if (!account) {
       throw new UnauthorizedError('Account not found', {
         clientMessage: 'Session invalid. Please log in again.',
       });
     }
 
-    return authService._issueTokenPair(payload.accountId, account.user.id);
+    return authService._issueTokenPair(account.id, account.role);
   }
 
-  /**
-   * Logout: revoke either one session (current device) or all sessions.
-   */
-  async logout(accountId: string, tokenId: string, allDevices = false): Promise<void> {
+  async logout(id: string, tokenId: string, allDevices = false): Promise<void> {
     if (allDevices) {
-      await tokenStoreService.revokeAll(accountId);
+      await tokenStoreService.revokeAll(id);
     } else {
-      await tokenStoreService.revoke(accountId, tokenId);
+      await tokenStoreService.revoke(id, tokenId);
     }
   }
 
-  /**
-   * Issue a fresh access + refresh token pair.
-   * Flow: generate tokenId → sign refresh with that ID → store hash in Redis → sign access.
-   */
-  async _issueTokenPair(accountId: string, userId: string): Promise<AuthTokens> {
-    // 1. Generate a unique token ID upfront
+  async _issueTokenPair(id: string, accountRole: AccountRole): Promise<AuthTokens> {
     const tokenId = crypto.randomUUID();
-
-    // 2. Sign the refresh token with the tokenId embedded
-    const refreshToken = jwtService.signRefreshToken({ accountId, tokenId });
+    const refreshToken = jwtService.signRefreshToken({ id, tokenId });
 
     // 3. Store the hashed refresh token in Redis (keyed by accountId + tokenId)
-    await tokenStoreService.store(accountId, refreshToken, tokenId);
+    await tokenStoreService.store(id, refreshToken, tokenId);
 
     // 4. Sign the access token
-    const accessToken = jwtService.signAccessToken({ userId, accountId });
+    const accessToken = jwtService.signAccessToken({ id, accountRole });
 
     return {
       accessToken,

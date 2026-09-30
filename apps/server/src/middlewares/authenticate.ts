@@ -25,8 +25,8 @@ export const authenticate: RequestHandler = (req, _res, next) => {
   try {
     const payload = jwtService.verifyAccessToken(token);
     req.user = {
-      userId: payload.userId,
-      accountId: payload.accountId,
+      id: payload.id,
+      role: payload.accountRole,
     };
     return next();
   } catch (err) {

@@ -22,6 +22,6 @@
 
   // Terminal settings
   "terminal.integrated.suggest.enabled": true,
-  "terminal.integrated.suggest.quickSuggestions": true,
+  "terminal.integrated.suggest.quickSuggestions": {},
   "terminal.integrated.shellIntegration.enabled": true
 }

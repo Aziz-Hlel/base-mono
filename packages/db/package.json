@@ -3,7 +3,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./prisma": "./prisma/generated/client.ts"
+    "./prisma": "./prisma/generated/client.ts",
+    "./prisma/enums": "./prisma/generated/enums.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit",
@@ -23,8 +24,8 @@
   "devDependencies": {
     "@base-monorepo-v2/config": "workspace:*",
     "@types/pg": "^8.23.1",
+    "dotenv": "catalog:",
     "prisma": "^7.10.0",
-    "typescript": "catalog:",
-    "varlock": "catalog:"
+    "typescript": "catalog:"
   }
 }
