@@ -1,15 +1,13 @@
-import type { LoginInput, RegisterInput } from './auth.schemas';
-import { jwtService } from './jwt.service';
-import { tokenStoreService } from './token-store.service';
 import { ConflictError, UnauthorizedError } from '@/errors/customErrors';
+import type { LoginInput } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
+import type { RegisterInput } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import prisma from '@base-monorepo-v2/db';
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import bcrypt from 'bcrypt';
 import crypto from 'node:crypto';
-
-const BCRYPT_ROUNDS = 12;
-
-const REFRESH_COOKIE_MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days in ms
+import { BCRYPT_ROUNDS, REFRESH_COOKIE_MAX_AGE } from './const';
+import { jwtService } from './jwt.service';
+import { tokenStoreService } from './token-store.service';
 
 export interface AuthTokens {
   accessToken: string;
@@ -36,8 +34,6 @@ class AuthService {
       data: {
         email: input.email,
         password: hashedPassword,
-        username: input.username ?? null,
-        user: { create: {} }, // auto-create related User row
       },
       select: { id: true, role: true },
     });

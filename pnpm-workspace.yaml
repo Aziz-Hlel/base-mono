@@ -21,6 +21,6 @@ catalog:
   react-dom: ^19.2.8
   sonner: ^2.0.8
   tailwindcss: ^4.3.3
-  typescript: ^6.0.3
+  typescript: 6.0.2
   varlock: 1.18.0
   zod: ^4.5.4

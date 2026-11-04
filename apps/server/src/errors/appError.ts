@@ -11,7 +11,6 @@ interface IAppError {
   internalLog?: string | object;
   cause?: unknown;
 }
-
 export class AppError extends Error {
   status: number;
   name: ErrNames;

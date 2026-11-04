@@ -1,13 +1,13 @@
 import type { SucessStatusCodes } from '@/consts/statusCode';
 
 export interface ApiSimpleDataResponse<T> {
-  status: SucessStatusCodes;
+  status?: SucessStatusCodes;
   message: string;
   data: T;
 }
 
 export interface ApiPaginatedDataResponse<T> {
-  status: SucessStatusCodes;
+  status?: SucessStatusCodes;
   message: string;
   data: T[];
   pagination: {
@@ -19,7 +19,7 @@ export interface ApiPaginatedDataResponse<T> {
 }
 
 export interface ApiCursorResponse<T> {
-  status: SucessStatusCodes;
+  status?: SucessStatusCodes;
   message: string;
   data: T[];
   nextCursor: string | null;

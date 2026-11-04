@@ -1,6 +1,7 @@
 import ENV from '@/env';
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import jwt from 'jsonwebtoken';
+import { ACCESS_EXPIRES_IN, REFRESH_EXPIRES_IN } from './const';
 
 export interface AccessTokenPayload {
   id: string;
@@ -11,9 +12,6 @@ export interface RefreshTokenPayload {
   id: string;
   tokenId: string; // unique ID per token, used for rotation detection
 }
-
-const ACCESS_EXPIRES_IN = '1h';
-const REFRESH_EXPIRES_IN = '30d';
 
 class JwtService {
   signAccessToken = (payload: AccessTokenPayload): string => {

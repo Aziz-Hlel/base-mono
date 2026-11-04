@@ -1,13 +1,10 @@
 import z from 'zod';
 import { AccountRole, AccountStatus } from '../enums';
+import { zodEmail } from './shared/zodEmail';
 
 export const accountBaseSchema = {
   id: z.uuid(),
-  email: z
-    .email('Please provide a valid email address')
-    .max(255, 'Email must be at most 255 characters')
-    .trim(),
-
+  email: zodEmail(),
   password: z
     .string('Password is required')
     .trim()

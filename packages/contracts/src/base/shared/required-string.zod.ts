@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const requiredZodString = (
+export const zodString = (
   module: string,
   { min = 3, max = 255 }: { min?: number; max?: number } = {},
 ) => {

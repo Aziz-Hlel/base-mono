@@ -1,16 +1,8 @@
-import { loginSchema, registerSchema } from './auth.schemas';
-import { authService } from './auth.service';
-import { isProd } from '@base-monorepo-v2/env/server';
+import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
+import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import type { Request, Response } from 'express';
-
-const REFRESH_COOKIE_NAME = 'refreshToken';
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: isProd(),
-  sameSite: 'strict' as const,
-  path: '/api/auth/refresh', // scope the cookie to refresh endpoint only
-};
+import { authService } from './auth.service';
+import { cookieOptions, REFRESH_COOKIE_NAME } from './const';
 
 class AuthController {
   register = async (req: Request, res: Response) => {
@@ -39,7 +31,6 @@ class AuthController {
     });
 
     return res.success({
-      status: 200,
       data: { accessToken: tokens.accessToken },
       message: 'Logged in successfully',
     });
@@ -60,7 +51,6 @@ class AuthController {
     });
 
     return res.success({
-      status: 200,
       data: { accessToken: tokens.accessToken },
       message: 'Tokens refreshed successfully',
     });
@@ -75,7 +65,6 @@ class AuthController {
     res.clearCookie(REFRESH_COOKIE_NAME, { ...cookieOptions });
 
     return res.success({
-      status: 200,
       data: null,
       message: allDevices ? 'Logged out from all devices' : 'Logged out successfully',
     });
@@ -83,7 +72,6 @@ class AuthController {
 
   me = async (req: Request, res: Response) => {
     return res.success({
-      status: 200,
       data: { id: req.user!.id, role: req.user!.role },
       message: 'ok',
     });
