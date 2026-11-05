@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Docker",
+      "type": "shell",
+      "command": "pnpm docker:local; pwsh", // `; pwsh`, so that the termianl doesn't close when you stop taks or when having an error
+      "presentation": {
+        "group": "dev",
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Server",
+      "type": "shell",
+      "command": "pnpm --filter server dev; pwsh",
+      "presentation": {
+        "group": "dev",
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Local",
+      "dependsOrder": "parallel",
+      "dependsOn": ["Docker", "Frontend", "Server"], // Because of how VS Code inserts panes relative to the root pane, reversing the order of Frontend and Server in dependsOn places Server into the middle slot and Frontend in last, idk but this is chat explanation when giving me the code
+      "problemMatcher": [],
+      "icon": {
+        "color": "terminal.ansiGreen",
+        "id": "run" // or 'run-all', 'debug-start', 'terminal', 'layers'
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}

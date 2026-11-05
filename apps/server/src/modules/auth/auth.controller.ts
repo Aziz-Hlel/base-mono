@@ -1,16 +1,17 @@
+import { UnauthorizedException } from '@/exceptions';
 import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
 import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import type { Request, Response } from 'express';
 import { authService } from './auth.service';
-import { cookieOptions, REFRESH_COOKIE_NAME } from './const';
+import { AUTH_CONST } from './const';
 
 class AuthController {
   register = async (req: Request, res: Response) => {
     const input = registerSchema.parse(req.body);
     const tokens = await authService.register(input);
 
-    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...cookieOptions,
+    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
+      ...AUTH_CONST.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -25,8 +26,8 @@ class AuthController {
     const input = loginSchema.parse(req.body);
     const tokens = await authService.login(input);
 
-    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...cookieOptions,
+    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
+      ...AUTH_CONST.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -37,16 +38,32 @@ class AuthController {
   };
 
   refresh = async (req: Request, res: Response) => {
-    const rawRefreshToken = req.cookies?.[REFRESH_COOKIE_NAME] as string | undefined;
+    const rawRefreshToken = req.cookies?.[AUTH_CONST.REFRESH_COOKIE_NAME];
 
     if (!rawRefreshToken) {
-      return res.status(401).json({ success: false, message: 'No refresh token provided' });
+      throw new UnauthorizedException('No refresh token provided', {
+        clientMessage: 'No refresh token provided',
+        internalLog: {
+          reason: 'Refresh token missing in cookies',
+          refreshTokenValue: rawRefreshToken,
+        },
+      });
+    }
+
+    if (typeof rawRefreshToken !== 'string') {
+      throw new UnauthorizedException('Invalid refresh token format', {
+        clientMessage: 'Invalid refresh token format',
+        internalLog: {
+          reason: 'Refresh token is not a string',
+          refreshTokenValue: rawRefreshToken,
+        },
+      });
     }
 
     const tokens = await authService.refresh(rawRefreshToken);
 
-    res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...cookieOptions,
+    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
+      ...AUTH_CONST.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -60,9 +77,31 @@ class AuthController {
     const user = req.user!; // set by authenticate middleware
     const allDevices = req.query.allDevices === 'true';
 
-    await authService.logout(user.id, user.tokenId ?? '', allDevices);
+    const refreshToken = req.cookies?.[AUTH_CONST.REFRESH_COOKIE_NAME];
 
-    res.clearCookie(REFRESH_COOKIE_NAME, { ...cookieOptions });
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token provided', {
+        clientMessage: 'No refresh token provided',
+        internalLog: {
+          reason: 'Refresh token missing in cookies',
+          refreshTokenValue: refreshToken,
+        },
+      });
+    }
+
+    if (typeof refreshToken !== 'string') {
+      throw new UnauthorizedException('Invalid refresh token format', {
+        clientMessage: 'Invalid refresh token format',
+        internalLog: {
+          reason: 'Refresh token is not a string',
+          refreshTokenValue: refreshToken,
+        },
+      });
+    }
+
+    await authService.logout(user.id, refreshToken, allDevices);
+
+    res.clearCookie(AUTH_CONST.REFRESH_COOKIE_NAME, { ...AUTH_CONST.cookieOptions });
 
     return res.success({
       data: null,

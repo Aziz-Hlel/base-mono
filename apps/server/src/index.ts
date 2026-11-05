@@ -1,8 +1,9 @@
 import { createExpressApp } from './app';
+import initializeServices from './bootstrap';
 import ENV from './env';
 
 async function bootstrap() {
-  // await asyncBootstrapHandlers();
+  await initializeServices();
 
   const app = createExpressApp();
   app.on('mount', (error) => {

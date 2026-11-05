@@ -7,5 +7,5 @@
     },
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../../packages/contracts/src/exceptions/codes.ts"]
 }

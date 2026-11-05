@@ -1,19 +1,21 @@
-import { ConflictError, UnauthorizedError } from '@/errors/customErrors';
+/**
+ * ARCHITECTURE: Auth module = "who are you?" (credentials). Nothing about tokens.
+ *
+ * It verifies credentials, then hands off to the session module to start / end sessions.
+ * It never signs JWTs or touches the token store. If you find yourself importing
+ * jwt.service or token-store.service here, that logic probably belongs in session.service.
+ */
+import prisma from '@/db';
+import PrismaExceptionCodes from '@/db/PrismaExceptionCodes';
+import { ConflictException, UnauthorizedException } from '@/exceptions';
+import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { LoginInput } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
 import type { RegisterInput } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
-import prisma from '@base-monorepo-v2/db';
-import type { AccountRole } from '@base-monorepo-v2/db/prisma';
-import bcrypt from 'bcrypt';
-import crypto from 'node:crypto';
-import { BCRYPT_ROUNDS, REFRESH_COOKIE_MAX_AGE } from './const';
-import { jwtService } from './jwt.service';
-import { tokenStoreService } from './token-store.service';
+import { Prisma } from '@base-monorepo-v2/db/prisma';
+import { passwordService } from './password.service';
+import { sessionService, type AuthTokens } from './session.service';
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  refreshCookieMaxAge: number;
-}
+export type { AuthTokens };
 
 class AuthService {
   async register(input: RegisterInput): Promise<AuthTokens> {
@@ -23,22 +25,40 @@ class AuthService {
     });
 
     if (existing) {
-      throw new ConflictError('Email already registered', {
-        clientMessage: 'An account with this email already exists.',
+      throw new ConflictException('Email already registered', {
+        code: ERROR_CODES.ACCOUNT.ALREADY_EXISTS,
       });
     }
 
-    const hashedPassword = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
+    const hashedPassword = await passwordService.hashPassword(input.password);
 
-    const account = await prisma.account.create({
-      data: {
-        email: input.email,
-        password: hashedPassword,
-      },
-      select: { id: true, role: true },
-    });
+    let account;
+    try {
+      account = await prisma.account.create({
+        data: {
+          email: input.email,
+          password: hashedPassword,
+        },
+        select: { id: true, role: true },
+      });
+    } catch (error) {
+      // The findUnique above is a fast path; this catch is the real guarantee. Two concurrent
+      // registrations can both pass the check, and the DB unique constraint is what stops the second.
+      // We translate the DB error into a domain exception HERE, where we know what it means.
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === PrismaExceptionCodes.UNIQUE_CONSTRAINT
+      ) {
+        throw new ConflictException('Email already registered', {
+          code: ERROR_CODES.ACCOUNT.ALREADY_EXISTS,
+        });
+      }
+      throw error;
+    }
 
-    return authService._issueTokenPair(account.id, account.role);
+    // Kept outside the try on purpose: a Redis failure while issuing the session must not be
+    // mistaken for (or swallowed by) the DB error handling above.
+    return sessionService.issue(account.id, account.role);
   }
 
   async login(input: LoginInput): Promise<AuthTokens> {
@@ -51,83 +71,33 @@ class AuthService {
 
     if (!account || !account.password) {
       // Timing-safe: always hash to prevent timing attacks revealing account existence
-      await bcrypt.hash(input.password, BCRYPT_ROUNDS);
-      throw new UnauthorizedError(INVALID_CREDENTIALS, {
-        clientMessage: INVALID_CREDENTIALS,
+      await passwordService.hashPassword(input.password);
+      throw new UnauthorizedException(INVALID_CREDENTIALS, {
+        code: ERROR_CODES.AUTH.INVALID_CREDENTIALS,
+        internalLog: 'Account not found or does not have a password ',
       });
     }
 
-    const isValid = await bcrypt.compare(input.password, account.password);
+    const isValid = await passwordService.comparePassword(input.password, account.password);
     if (!isValid) {
-      throw new UnauthorizedError(INVALID_CREDENTIALS, {
-        clientMessage: INVALID_CREDENTIALS,
+      throw new UnauthorizedException(INVALID_CREDENTIALS, {
+        code: ERROR_CODES.AUTH.INVALID_CREDENTIALS,
+        internalLog: 'Password mismatch',
       });
     }
 
-    return authService._issueTokenPair(account.id, account.role);
+    return sessionService.issue(account.id, account.role);
   }
 
+  // Thin delegations: the controller only talks to authService, and the rules live in sessionService.
+  // If these ever feel pointless, the controller may call sessionService directly. Both are fine.
   async refresh(rawRefreshToken: string): Promise<AuthTokens> {
-    let payload;
-    try {
-      payload = jwtService.verifyRefreshToken(rawRefreshToken);
-    } catch {
-      throw new UnauthorizedError('Invalid or expired refresh token', {
-        clientMessage: 'Session expired. Please log in again.',
-      });
-    }
-
-    const isValid = await tokenStoreService.validate(payload.id, payload.tokenId, rawRefreshToken);
-
-    if (!isValid) {
-      // Possible reuse attack — revoke ALL tokens for this account as a safety measure
-      await tokenStoreService.revokeAll(payload.id);
-      throw new UnauthorizedError('Refresh token reuse detected', {
-        clientMessage: 'Session invalid. Please log in again.',
-      });
-    }
-
-    // Revoke the used token (rotation: one use only)
-    await tokenStoreService.revoke(payload.id, payload.tokenId);
-
-    // Fetch userId from DB (not stored in the refresh payload intentionally)
-    const account = await prisma.account.findUnique({
-      where: { id: payload.id },
-      select: { id: true, role: true },
-    });
-
-    if (!account) {
-      throw new UnauthorizedError('Account not found', {
-        clientMessage: 'Session invalid. Please log in again.',
-      });
-    }
-
-    return authService._issueTokenPair(account.id, account.role);
+    return sessionService.rotate(rawRefreshToken);
   }
 
-  async logout(id: string, tokenId: string, allDevices = false): Promise<void> {
-    if (allDevices) {
-      await tokenStoreService.revokeAll(id);
-    } else {
-      await tokenStoreService.revoke(id, tokenId);
-    }
-  }
-
-  async _issueTokenPair(id: string, accountRole: AccountRole): Promise<AuthTokens> {
-    const tokenId = crypto.randomUUID();
-    const refreshToken = jwtService.signRefreshToken({ id, tokenId });
-
-    // 3. Store the hashed refresh token in Redis (keyed by accountId + tokenId)
-    await tokenStoreService.store(id, refreshToken, tokenId);
-
-    // 4. Sign the access token
-    const accessToken = jwtService.signAccessToken({ id, accountRole });
-
-    return {
-      accessToken,
-      refreshToken,
-      refreshCookieMaxAge: REFRESH_COOKIE_MAX_AGE,
-    };
+  async logout(accountId: string, rawRefreshToken: string, allDevices = false): Promise<void> {
+    if (allDevices) return sessionService.revokeAll(accountId);
+    return sessionService.revoke(rawRefreshToken, accountId);
   }
 }
 

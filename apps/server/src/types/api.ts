@@ -1,4 +1,4 @@
-import type { SucessStatusCodes } from '@/consts/statusCode';
+type SucessStatusCodes = 200 | 201 | 204;
 
 export interface ApiSimpleDataResponse<T> {
   status?: SucessStatusCodes;

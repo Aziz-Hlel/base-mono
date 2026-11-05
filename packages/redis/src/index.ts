@@ -3,35 +3,20 @@ import Redis from 'ioredis';
 
 const cacheEnv = initCacheEnv();
 
-let redis: Redis;
-
-const getRedisClient = async () => {
-  if (redis) return redis;
-
-  redis = new Redis({
+const getRedisClient = () => {
+  const client = new Redis({
     host: cacheEnv.REDIS_HOST,
     port: cacheEnv.REDIS_PORT,
     password: cacheEnv.REDIS_PASSWORD,
     lazyConnect: true,
-    maxRetriesPerRequest: null, // ! made it null just to satisfy the notification queue
     enableReadyCheck: true,
   });
-  try {
-    await redis.connect();
-    console.log('✅ SUCCESS : Redis connected successfully.');
-  } catch (err) {
-    throw new Error('❌ ERROR : Redis connection failed', { cause: err });
-  }
 
-  redis.on('error', (err) => {
-    console.error('❌ ERROR : Redis error', err);
-  });
+  // Listeners registered ONCE, here.
+  client.on('error', (err) => console.error('❌ ERROR : Redis error', err));
+  client.on('warning', (w) => console.warn('⚠️ WARNING : Redis warning', w));
 
-  redis.on('warning', (warning) => {
-    console.warn('⚠️ WARNING : Redis warning', warning);
-  });
-
-  return redis;
+  return client;
 };
 
 export default getRedisClient;

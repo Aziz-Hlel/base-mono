@@ -1,6 +1,6 @@
 import getRedisClient from '@base-monorepo-v2/redis';
 
-const redis = await getRedisClient();
+const redis = getRedisClient();
 
 redis.on('ready', () => {
   console.log('✅✅✅✅✅✅✅✅');

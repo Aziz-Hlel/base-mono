@@ -7,7 +7,9 @@ export function serializeUnknownError(error: unknown): Record<string, unknown> |
       message: error.message,
       stack: error.stack,
       // spread everything else on the error object — Prisma fields, Axios fields, whatever
-      ...Object.fromEntries(Object.entries(error).filter(([key]) => !['name', 'message', 'stack'].includes(key))),
+      ...Object.fromEntries(
+        Object.entries(error).filter(([key]) => !['name', 'message', 'stack'].includes(key)),
+      ),
       // recurse into cause if it exists
       ...(error.cause !== undefined && { cause: serializeUnknownError(error.cause) }),
     };

@@ -23,6 +23,8 @@
     "express-rate-limit": "^8.7.0",
     "helmet": "^8.3.0",
     "ioredis": "catalog:",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0",
     "jsonwebtoken": "^9.0.3",
     "zod": "catalog:"
   },
@@ -34,8 +36,6 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "catalog:",
-    "pino": "^10.3.1",
-    "pino-http": "^11.0.0",
     "tsdown": "^0.23.0",
     "tsx": "^4.23.13",
     "typescript": "catalog:"

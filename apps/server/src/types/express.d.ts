@@ -1,7 +1,7 @@
 // src/types/express.d.ts
-import type { ApiCursorResponse, ApiPaginatedDataResponse, ApiSimpleDataResponse } from './api';
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import 'express';
+import type { ApiCursorResponse, ApiPaginatedDataResponse, ApiSimpleDataResponse } from './api';
 
 /**
  * Parameters for standardized API success responses.
@@ -17,7 +17,6 @@ declare global {
       user?: {
         id: string;
         role: AccountRole;
-        tokenId?: string; // present if decoded from refresh token context
       };
     }
     interface Response {
