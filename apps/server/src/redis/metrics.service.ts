@@ -1,4 +1,4 @@
-import { logger } from '@/logger/logger.init';
+import { logger } from '@/logger';
 
 export class CacheMetrics {
   static hits = 0;

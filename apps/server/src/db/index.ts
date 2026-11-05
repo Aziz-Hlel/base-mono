@@ -1,4 +1,4 @@
-import { logger } from '@/logger/logger.init';
+import logger from '@/logger';
 import prismaInstance from '@base-monorepo-v2/db';
 
 prismaInstance.$on('query', (e) => {

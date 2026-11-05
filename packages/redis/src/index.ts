@@ -1,15 +1,16 @@
 import { initCacheEnv } from '@base-monorepo-v2/env/cache';
-import Redis from 'ioredis';
+import Redis, { type RedisOptions } from 'ioredis';
 
 const cacheEnv = initCacheEnv();
 
-const getRedisClient = () => {
+const createRedisClient = (options: Partial<RedisOptions> = {}) => {
   const client = new Redis({
     host: cacheEnv.REDIS_HOST,
     port: cacheEnv.REDIS_PORT,
     password: cacheEnv.REDIS_PASSWORD,
     lazyConnect: true,
     enableReadyCheck: true,
+    ...options,
   });
 
   // Listeners registered ONCE, here.
@@ -19,4 +20,4 @@ const getRedisClient = () => {
   return client;
 };
 
-export default getRedisClient;
+export default createRedisClient;
