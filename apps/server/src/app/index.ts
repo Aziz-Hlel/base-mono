@@ -1,10 +1,10 @@
-import { configureCors } from '@/config/cors';
-import { configureSecurity } from '@/config/security';
-import pinoHttpMiddleware from '@/logger/pinoHttp';
 import { compressionMiddleware } from '@/middlewares/compression';
+import { corsMiddleware } from '@/middlewares/cors.middleware';
 import { globalErrorHandler } from '@/middlewares/error.middleware';
+import pinoHttpMiddleware from '@/middlewares/logger.middleware';
 import notFoundHandler from '@/middlewares/notFoundHandler';
 import { responseEnvelope } from '@/middlewares/response.middleware';
+import { securityMiddleware } from '@/middlewares/security.middleware';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import appRoutes from './app.routes';
@@ -20,9 +20,9 @@ export function createExpressApp() {
 
   app.use(cookieParser());
 
-  app.use(...configureSecurity());
+  app.use(securityMiddleware());
 
-  app.use(configureCors());
+  app.use(corsMiddleware());
 
   app.use(pinoHttpMiddleware);
 

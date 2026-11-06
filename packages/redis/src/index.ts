@@ -10,6 +10,7 @@ const createRedisClient = (options: Partial<RedisOptions> = {}) => {
     password: cacheEnv.REDIS_PASSWORD,
     lazyConnect: true,
     enableReadyCheck: true,
+    maxRetriesPerRequest: null,
     ...options,
   });
 

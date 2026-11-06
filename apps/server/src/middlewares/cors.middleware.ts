@@ -2,7 +2,7 @@ import ENV from '@/env';
 import { hasEnvProdFields } from '@base-monorepo-v2/env/server';
 import cors from 'cors';
 
-export function configureCors() {
+export function corsMiddleware() {
   return cors({
     origin: hasEnvProdFields(ENV) ? ENV.ALLOWED_ORIGIN_PATTERNS : '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

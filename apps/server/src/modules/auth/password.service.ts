@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
-import { AUTH_CONST } from './const';
+import { authConfig } from './auth.config';
 
 export class PasswordService {
   hashPassword = async (password: string): Promise<string> => {
-    const saltRounds = AUTH_CONST.BCRYPT_ROUNDS;
+    const saltRounds = authConfig.bcryptRounds;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     return hashedPassword;
   };

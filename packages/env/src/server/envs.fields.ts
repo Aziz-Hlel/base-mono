@@ -1,4 +1,8 @@
 import z from 'zod';
+import { NODE_ENVS } from './NodeEnvs';
+
+// BASE
+export const NODE_ENV = z.enum(NODE_ENVS);
 
 // App
 export const API_PORT = z.coerce.number().positive();
@@ -18,7 +22,10 @@ export const dbSchema = {
 // JWT
 export const jwtSchema = {
   JWT_ACCESS_SECRET: z.string().trim().min(32, 'JWT_ACCESS_SECRET must be at least 32 chars long'),
-  JWT_REFRESH_SECRET: z.string().trim().min(32, 'JWT_REFRESH_SECRET must be at least 32 chars long'),
+  JWT_REFRESH_SECRET: z
+    .string()
+    .trim()
+    .min(32, 'JWT_REFRESH_SECRET must be at least 32 chars long'),
 };
 
 // Redis
@@ -81,7 +88,8 @@ export const corsSchema = {
         return origins.every((origin) => regexOrigins.test(origin));
       },
       {
-        error: 'ALLOWED_ORIGIN_PATTERNS is invalid, it must follow "http://domain.com,https://domain.com"',
+        error:
+          'ALLOWED_ORIGIN_PATTERNS is invalid, it must follow "http://domain.com,https://domain.com"',
       },
     ),
 };
@@ -114,8 +122,3 @@ export const awsBedrockSchema = {
 export type AwsBedrockSchema = z.infer<z.ZodObject<typeof awsBedrockSchema>>;
 
 export type CdnSchema = z.infer<z.ZodObject<typeof cdnSchema>>;
-
-export const oneSignalSchema = {
-  ONE_SIGNAL_APP_SECRET: z.string().trim().nonempty(),
-  ONE_SIGNAL_APP_ID: z.string().trim().nonempty(),
-};

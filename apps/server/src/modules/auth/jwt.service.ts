@@ -19,7 +19,7 @@ import {
   type AccessTokenPayload,
 } from '@base-monorepo-v2/contracts/schemas/auth/accessTokenPaylod';
 import jwt from 'jsonwebtoken';
-import { AUTH_CONST } from './const';
+import { authConfig } from './auth.config';
 
 // Re-exported so callers depend on this module, not on where the schema happens to live.
 export type { AccessTokenPayload };
@@ -32,22 +32,22 @@ export interface RefreshTokenPayload {
 class JwtService {
   signAccessToken = (payload: AccessTokenPayload): string => {
     return jwt.sign(payload, ENV.JWT_ACCESS_SECRET, {
-      expiresIn: AUTH_CONST.ACCESS_TTL_SECONDS,
-      algorithm: AUTH_CONST.SignatureAlgorithm,
+      expiresIn: authConfig.accessTtlSeconds,
+      algorithm: authConfig.signatureAlgorithm,
     });
   };
 
   signRefreshToken = (payload: RefreshTokenPayload): string => {
     return jwt.sign(payload, ENV.JWT_REFRESH_SECRET, {
-      expiresIn: AUTH_CONST.REFRESH_TTL_SECONDS,
-      algorithm: AUTH_CONST.SignatureAlgorithm,
+      expiresIn: authConfig.refreshTtlSeconds,
+      algorithm: authConfig.signatureAlgorithm,
     });
   };
 
   verifyAccessToken = (token: string): AccessTokenPayload => {
     try {
       const payload = jwt.verify(token, ENV.JWT_ACCESS_SECRET, {
-        algorithms: [AUTH_CONST.SignatureAlgorithm],
+        algorithms: [authConfig.signatureAlgorithm],
       });
 
       const validatedPayload = accessTokenPayloadSchema.safeParse(payload);
@@ -82,7 +82,7 @@ class JwtService {
   verifyRefreshToken = (token: string): RefreshTokenPayload => {
     try {
       return jwt.verify(token, ENV.JWT_REFRESH_SECRET, {
-        algorithms: [AUTH_CONST.SignatureAlgorithm],
+        algorithms: [authConfig.signatureAlgorithm],
       }) as RefreshTokenPayload;
     } catch (error) {
       // No expired/invalid distinction here: for a refresh token both mean "log in again",

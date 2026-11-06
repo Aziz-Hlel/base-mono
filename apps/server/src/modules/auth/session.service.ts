@@ -23,7 +23,7 @@ import { UnauthorizedException } from '@/exceptions';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import crypto from 'node:crypto';
-import { AUTH_CONST } from './const';
+import { authConfig } from './auth.config';
 import { jwtService, type RefreshTokenPayload } from './jwt.service';
 import { tokenStoreService } from './token-store.service';
 
@@ -48,7 +48,7 @@ class SessionService {
     return {
       accessToken: jwtService.signAccessToken({ id: accountId, role }),
       refreshToken,
-      refreshCookieMaxAge: AUTH_CONST.REFRESH_COOKIE_MAX_AGE_MS,
+      refreshCookieMaxAge: authConfig.refreshCookieMaxAgeMs,
     };
   }
 

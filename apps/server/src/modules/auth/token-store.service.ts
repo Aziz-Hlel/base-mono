@@ -8,11 +8,11 @@
  */
 import redis from '@/redis/init';
 import crypto from 'node:crypto';
-import { AUTH_CONST } from './const';
+import { authConfig } from './auth.config';
 
 export class TokenStoreService {
   // Same number as the JWT `exp` and the cookie maxAge (see const/index.ts).
-  private static REFRESH_TOKEN_TTL_SECONDS = AUTH_CONST.REFRESH_TTL_SECONDS;
+  private static REFRESH_TOKEN_TTL_SECONDS = authConfig.refreshTtlSeconds;
 
   // We store sha256(token), never the raw token: a Redis dump/leak must not hand out live sessions.
 

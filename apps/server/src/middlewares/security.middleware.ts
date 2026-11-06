@@ -1,7 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
-export function configureSecurity() {
+export function securityMiddleware() {
   return [
     helmet(), // secure headers
     rateLimit({

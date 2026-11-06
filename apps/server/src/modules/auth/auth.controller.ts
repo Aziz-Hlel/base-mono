@@ -2,16 +2,16 @@ import { UnauthorizedException } from '@/exceptions';
 import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
 import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import type { Request, Response } from 'express';
+import { authConfig } from './auth.config';
 import { authService } from './auth.service';
-import { AUTH_CONST } from './const';
 
 class AuthController {
   register = async (req: Request, res: Response) => {
     const input = registerSchema.parse(req.body);
     const tokens = await authService.register(input);
 
-    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...AUTH_CONST.cookieOptions,
+    res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
+      ...authConfig.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -26,8 +26,8 @@ class AuthController {
     const input = loginSchema.parse(req.body);
     const tokens = await authService.login(input);
 
-    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...AUTH_CONST.cookieOptions,
+    res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
+      ...authConfig.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -38,7 +38,7 @@ class AuthController {
   };
 
   refresh = async (req: Request, res: Response) => {
-    const rawRefreshToken = req.cookies?.[AUTH_CONST.REFRESH_COOKIE_NAME];
+    const rawRefreshToken = req.cookies?.[authConfig.refreshCookieName];
 
     if (!rawRefreshToken) {
       throw new UnauthorizedException('No refresh token provided', {
@@ -62,8 +62,8 @@ class AuthController {
 
     const tokens = await authService.refresh(rawRefreshToken);
 
-    res.cookie(AUTH_CONST.REFRESH_COOKIE_NAME, tokens.refreshToken, {
-      ...AUTH_CONST.cookieOptions,
+    res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
+      ...authConfig.cookieOptions,
       maxAge: tokens.refreshCookieMaxAge,
     });
 
@@ -77,7 +77,7 @@ class AuthController {
     const user = req.user!; // set by authenticate middleware
     const allDevices = req.query.allDevices === 'true';
 
-    const refreshToken = req.cookies?.[AUTH_CONST.REFRESH_COOKIE_NAME];
+    const refreshToken = req.cookies?.[authConfig.refreshCookieName];
 
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided', {
@@ -101,7 +101,7 @@ class AuthController {
 
     await authService.logout(user.id, refreshToken, allDevices);
 
-    res.clearCookie(AUTH_CONST.REFRESH_COOKIE_NAME, { ...AUTH_CONST.cookieOptions });
+    res.clearCookie(authConfig.refreshCookieName, { ...authConfig.cookieOptions });
 
     return res.success({
       data: null,
