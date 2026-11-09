@@ -1,6 +1,6 @@
 import type { ApiError } from '@/types/apiError';
 import { type ErrorCode } from '@base-monorepo-v2/contracts/exceptions/codes';
-import { isDev } from '@base-monorepo-v2/env/server';
+import { isDev, isProd } from '@base-monorepo-v2/env/server';
 import apiErrorDefinitions from './data/Errors.object';
 import { serializeUnknownError } from './helpers/serializeUnknownError';
 
@@ -34,7 +34,6 @@ export class HttpException extends Error {
   code: ErrorCode;
   clientMessage?: string;
   internalLog?: string | object;
-  cause?: unknown;
   details?: Record<string, string>;
 
   constructor(
@@ -79,7 +78,23 @@ export class HttpException extends Error {
     if (this.details) payload.details = this.details;
     if (this.internalLog) payload.internalLog = this.internalLog;
     if (this.stack) payload.stack = this.stack;
-    if (this.internalLog) payload.internalLog = serializeUnknownError(this.cause);
+    if (this.cause) payload.cause = serializeUnknownError(this.cause);
+
+    return payload;
+  }
+
+  toResProdLog(): Record<string, unknown> {
+    if (!isProd()) return {};
+
+    const payload: ReturnType<HttpException['toReqLog']> = {
+      message: this.message,
+      code: this.code,
+    };
+    if (this.clientMessage) payload.clientMessage = this.clientMessage;
+    if (this.details) payload.details = this.details;
+    if (this.internalLog) payload.internalLog = this.internalLog;
+    if (this.stack) payload.stack = this.stack;
+    if (this.cause) payload.cause = serializeUnknownError(this.cause);
 
     return payload;
   }

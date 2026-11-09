@@ -74,14 +74,14 @@ class SessionService {
 
     // Re-read the account instead of trusting the token: it may have been deleted, or its
     // role changed, since the token was issued. The new access token must reflect today's role.
-    const account = await prisma.account.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: payload.id },
       select: { id: true, role: true },
     });
 
-    if (!account) throw this.invalidSession('Account not found');
+    if (!user) throw this.invalidSession('Account not found');
 
-    return this.issue(account.id, account.role);
+    return this.issue(user.id, user.role);
   }
 
   /** End ONE session (this device). Idempotent: an invalid/expired token is simply a no-op. */

@@ -1,3 +1,4 @@
+import { isProd } from '@base-monorepo-v2/env/server';
 import pino, { type LogFn, type Logger } from 'pino';
 
 /**
@@ -11,8 +12,14 @@ export function wrapErrorLogs(
   level: number,
 ): void {
   const [first, ...rest] = args as unknown[];
+  const fromRequest = 'req' in this.bindings();
 
-  if (level !== pino.levels.values.error || typeof first !== 'object' || first === null) {
+  if (!fromRequest || isProd() || level !== pino.levels.values.error) {
+    method.apply(this, args);
+    return;
+  }
+
+  if (typeof first !== 'object' || first === null) {
     method.apply(this, args);
     return;
   }

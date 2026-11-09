@@ -21,10 +21,8 @@ const pinoHttpLoggerMiddleware = pinoHttp({
       };
     },
     res(res: Response) {
-      return {
-        status: res.statusCode,
-        body: res.locals.responseBody,
-      };
+      const log: Record<string, unknown> = { status: res.statusCode };
+      if (res.statusCode > 300) log.exception = res.locals;
     },
   },
 });

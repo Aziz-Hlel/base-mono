@@ -1,7 +1,6 @@
 import { compressionMiddleware } from '@/middlewares/compression';
 import { corsMiddleware } from '@/middlewares/cors.middleware';
 import { globalErrorHandler } from '@/middlewares/error.middleware';
-import pinoHttpLoggerMiddleware from '@/middlewares/logger.middleware';
 import notFoundHandler from '@/middlewares/notFoundHandler';
 import { responseEnvelope } from '@/middlewares/response.middleware';
 import { securityMiddleware } from '@/middlewares/security.middleware';
@@ -24,7 +23,7 @@ export function createExpressApp() {
 
   app.use(corsMiddleware());
 
-  app.use(pinoHttpLoggerMiddleware);
+  // app.use(pinoHttpLoggerMiddleware);
 
   app.use(compressionMiddleware);
 

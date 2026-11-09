@@ -18,9 +18,9 @@ export const ERROR_CODES = {
     INVALID_TOKEN: 'AUTH_INVALID_TOKEN',
     EXPIRED_TOKEN: 'AUTH_EXPIRED_TOKEN',
   },
-  ACCOUNT: {
-    NOT_FOUND: 'ACCOUNT_NOT_FOUND',
-    ALREADY_EXISTS: 'ACCOUNT_ALREADY_EXISTS',
+  USER: {
+    NOT_FOUND: 'USER_NOT_FOUND',
+    ALREADY_EXISTS: 'USER_ALREADY_EXISTS',
   },
 } as const satisfies Record<string, Record<string, string>>;
 

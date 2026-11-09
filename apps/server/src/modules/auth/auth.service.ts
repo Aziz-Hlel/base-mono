@@ -19,22 +19,22 @@ export type { AuthTokens };
 
 class AuthService {
   async register(input: RegisterInput): Promise<AuthTokens> {
-    const existing = await prisma.account.findUnique({
+    const existing = await prisma.user.findUnique({
       where: { email: input.email },
       select: { id: true },
     });
 
     if (existing) {
       throw new ConflictException('Email already registered', {
-        code: ERROR_CODES.ACCOUNT.ALREADY_EXISTS,
+        code: ERROR_CODES.USER.ALREADY_EXISTS,
       });
     }
 
     const hashedPassword = await passwordService.hashPassword(input.password);
 
-    let account;
+    let user;
     try {
-      account = await prisma.account.create({
+      user = await prisma.user.create({
         data: {
           email: input.email,
           password: hashedPassword,
@@ -50,7 +50,7 @@ class AuthService {
         error.code === PrismaExceptionCodes.UNIQUE_CONSTRAINT
       ) {
         throw new ConflictException('Email already registered', {
-          code: ERROR_CODES.ACCOUNT.ALREADY_EXISTS,
+          code: ERROR_CODES.USER.ALREADY_EXISTS,
         });
       }
       throw error;
@@ -58,18 +58,18 @@ class AuthService {
 
     // Kept outside the try on purpose: a Redis failure while issuing the session must not be
     // mistaken for (or swallowed by) the DB error handling above.
-    return sessionService.issue(account.id, account.role);
+    return sessionService.issue(user.id, user.role);
   }
 
   async login(input: LoginInput): Promise<AuthTokens> {
-    const account = await prisma.account.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: input.email },
       select: { id: true, role: true, password: true },
     });
 
     const INVALID_CREDENTIALS = 'Invalid email or password';
 
-    if (!account || !account.password) {
+    if (!user || !user.password) {
       // Timing-safe: always hash to prevent timing attacks revealing account existence
       await passwordService.hashPassword(input.password);
       throw new UnauthorizedException(INVALID_CREDENTIALS, {
@@ -78,7 +78,7 @@ class AuthService {
       });
     }
 
-    const isValid = await passwordService.comparePassword(input.password, account.password);
+    const isValid = await passwordService.comparePassword(input.password, user.password);
     if (!isValid) {
       throw new UnauthorizedException(INVALID_CREDENTIALS, {
         code: ERROR_CODES.AUTH.INVALID_CREDENTIALS,
@@ -86,7 +86,7 @@ class AuthService {
       });
     }
 
-    return sessionService.issue(account.id, account.role);
+    return sessionService.issue(user.id, user.role);
   }
 
   // Thin delegations: the controller only talks to authService, and the rules live in sessionService.

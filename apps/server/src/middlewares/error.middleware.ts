@@ -11,7 +11,8 @@ export const globalErrorHandler = (
   if (res.headersSent) return next(error);
   const exception = toHttpException(error);
   const payload = exception.toResponse(req.originalUrl);
+  res.locals = exception.toResProdLog();
+
   req.log.error(exception.toReqLog(req.originalUrl), 'Error occurred:');
-  console.log(exception.toResponse(req.originalUrl));
   return res.status(exception.status).json(payload);
 };
