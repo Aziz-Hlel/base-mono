@@ -8,7 +8,7 @@ export type ApiError = {
   details?: Record<string, string | string[]>;
   path: string;
   timestamp: Date;
-  stack?: string;
+  stack?: string[];
   internalLog?: string | object;
   cause?: unknown;
 };

@@ -61,25 +61,26 @@ export class HttpException extends Error {
       details: this.details,
     };
     if (isDev()) {
-      apiResponse.internalLog = this.internalLog;
-      apiResponse.stack = this.stack;
-      apiResponse.cause = serializeUnknownError(this.cause);
+      if (this.internalLog) apiResponse.internalLog = this.internalLog;
+      if (this.stack) apiResponse.stack = this.stack.split('\n').map((line) => line.trim());
+      if (this.cause) apiResponse.cause = serializeUnknownError(this.cause);
     }
     return apiResponse;
   }
 
-  toLog(originalUrl: string): Record<string, unknown> {
-    return {
-      success: false,
+  toReqLog(originalUrl: string): Record<string, unknown> {
+    const payload: ReturnType<HttpException['toReqLog']> = {
+      status: this.status,
+      path: originalUrl,
       message: this.message,
       code: this.code,
-      clientMessage: this.clientMessage,
-      timestamp: new Date(),
-      path: originalUrl,
-      details: this.details,
-      internalLog: this.internalLog,
-      stack: this.stack,
-      cause: serializeUnknownError(this.cause),
     };
+    if (this.clientMessage) payload.clientMessage = this.clientMessage;
+    if (this.details) payload.details = this.details;
+    if (this.internalLog) payload.internalLog = this.internalLog;
+    if (this.stack) payload.stack = this.stack;
+    if (this.internalLog) payload.internalLog = serializeUnknownError(this.cause);
+
+    return payload;
   }
 }
