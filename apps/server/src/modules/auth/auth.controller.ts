@@ -1,5 +1,6 @@
 import { UnauthorizedException } from '@/exceptions';
 import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
+import { oauthReqSchema } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
 import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import type { Request, Response } from 'express';
 import { authConfig } from './auth.config';
@@ -25,6 +26,21 @@ class AuthController {
   login = async (req: Request, res: Response) => {
     const input = loginSchema.parse(req.body);
     const tokens = await authService.login(input);
+
+    res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
+      ...authConfig.cookieOptions,
+      maxAge: tokens.refreshCookieMaxAge,
+    });
+
+    return res.success({
+      data: { accessToken: tokens.accessToken },
+      message: 'Logged in successfully',
+    });
+  };
+
+  oauth = async (req: Request, res: Response) => {
+    const input = oauthReqSchema.parse(req.body);
+    const tokens = await authService.oauth(input);
 
     res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
       ...authConfig.cookieOptions,

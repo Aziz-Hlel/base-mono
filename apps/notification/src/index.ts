@@ -1,17 +1,25 @@
 import boostrap from './boostrap';
-import { NotificationFactory } from './worker.factory';
+import { DevicesService } from './devices.service';
+import { FirebaseProvider } from './firebase';
+import { NotificationProvider } from './notification.provider';
+import { NotificationService } from './notification.service';
+import { NotificationWorker } from './notification.worker';
 
 const execute = async () => {
   await boostrap();
-  const workers = new NotificationFactory();
+  const deviceService = new DevicesService();
+  const firebaseMessaging = new FirebaseProvider();
+  const notificationProvider = new NotificationProvider(firebaseMessaging.getMessaging());
+  const notificationService = new NotificationService(notificationProvider, deviceService);
+  const worker = new NotificationWorker(notificationService);
 
   process.on('SIGINT', async () => {
-    await workers.closeAll();
+    await worker.close();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
-    await workers.closeAll();
+    await worker.close();
     process.exit(0);
   });
 

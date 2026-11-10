@@ -1,20 +1,27 @@
-import type { DevicePreferredLanguage } from '@base-monorepo-v2/db/prisma';
+import z from 'zod';
+import { DevicePreferredLanguage } from '../../enums';
 
-type NotificationTopicMessage = {
-  type: 'topic';
-  topic: string;
-};
+const localizedTextSchema = z.record(z.enum(DevicePreferredLanguage), z.string());
 
-type NotificationDirectMessage = {
-  type: 'direct';
-  userIds: string[];
-};
+const notificationMessageBaseSchema = z.object({
+  title: localizedTextSchema,
+  body: localizedTextSchema,
+  data: z.record(z.string(), z.any()).optional(),
+});
 
-type NotificationMessageBase = {
-  title: Record<DevicePreferredLanguage, string>;
-  body: Record<DevicePreferredLanguage, string>;
-  data?: Record<string, any>;
-};
+const notificationTopicMessageSchema = notificationMessageBaseSchema.extend({
+  type: z.literal('topic'),
+  topic: z.string(),
+});
 
-export type NotificationMessage = NotificationMessageBase &
-  (NotificationTopicMessage | NotificationDirectMessage);
+const notificationDirectMessageSchema = notificationMessageBaseSchema.extend({
+  type: z.literal('direct'),
+  userIds: z.array(z.uuid()),
+});
+
+export const notificationMessageSchema = z.discriminatedUnion('type', [
+  notificationTopicMessageSchema,
+  notificationDirectMessageSchema,
+]);
+
+export type NotificationMessage = z.infer<typeof notificationMessageSchema>;

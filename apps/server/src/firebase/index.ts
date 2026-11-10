@@ -1,9 +1,9 @@
 import ENV from '@/env';
 import { type App, cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
-import { Auth, getAuth } from 'firebase-admin/auth';
+import { Auth, FirebaseAuthError, getAuth } from 'firebase-admin/auth';
 import { getMessaging, Messaging } from 'firebase-admin/messaging';
 
-class FirebaseService {
+class FirebaseProvider {
   private firebaseApp: App;
   private firebaseAuth: Auth;
   private firebaseMessaging: Messaging;
@@ -35,4 +35,4 @@ class FirebaseService {
   }
 }
 
-export const firebaseService = new FirebaseService();
+export const firebaseProvider = new FirebaseProvider();

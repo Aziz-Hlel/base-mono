@@ -2,7 +2,7 @@ import ENV from '@/env';
 import { type App, cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
 import { getMessaging, Messaging } from 'firebase-admin/messaging';
 
-class FirebaseService {
+export class FirebaseProvider {
   private firebaseApp: App;
   private firebaseMessaging: Messaging;
 
@@ -27,5 +27,3 @@ class FirebaseService {
     return this.firebaseMessaging;
   }
 }
-
-export const firebaseMessagingService = new FirebaseService().getMessaging();

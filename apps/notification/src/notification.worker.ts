@@ -1,20 +1,33 @@
 import QUEUE_NAMES from '@base-monorepo-v2/contracts/queues/names';
-import { type NotificationMessage } from '@base-monorepo-v2/contracts/queues/types/notification.message';
-import { Job, Worker } from 'bullmq';
-import { notificationService } from './notification.service';
+import {
+  type NotificationMessage,
+  notificationMessageSchema,
+} from '@base-monorepo-v2/contracts/queues/types/notification.message';
+import { Job, UnrecoverableError, Worker } from 'bullmq';
+import type { NotificationService } from './notification.service';
 import redis from './redis';
 
 export class NotificationWorker {
   private worker: Worker<NotificationMessage, void, string>;
+  private notificationService: NotificationService;
 
   handleJob = async (job: Job<NotificationMessage>) => {
-    const data = job.data;
-    await notificationService.pushNotification(data);
+    const parsed = notificationMessageSchema.safeParse(job.data);
+
+    if (!parsed.success) {
+      // A malformed message can never succeed, so fail now instead of using up the retries.
+      throw new UnrecoverableError(`Invalid notification message: ${parsed.error.message}`);
+    }
+
+    await this.notificationService.pushNotification(parsed.data);
   };
 
-  constructor() {
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+
     this.worker = new Worker(QUEUE_NAMES.notification, this.handleJob, {
       connection: redis,
+      concurrency: 2,
     });
 
     this.worker.on('active', (job) => {
@@ -33,10 +46,6 @@ export class NotificationWorker {
       console.error(`❌ Job id: ${job?.id} failed`, err);
     });
   }
-
-  getWorker = (): Worker<NotificationMessage, void, string> => {
-    return this.worker;
-  };
 
   close = async () => {
     await this.worker.close();

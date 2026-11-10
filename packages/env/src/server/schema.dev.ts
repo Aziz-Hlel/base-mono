@@ -1,7 +1,7 @@
+import z from 'zod';
 import { devEnvs } from './NodeEnvs';
 import { awsBedrockSchema, minioSchema } from './envs.fields';
 import baseSchema from './schema.base';
-import z from 'zod';
 
 const devSchema = baseSchema.extend({
   NODE_ENV: z.enum(devEnvs),

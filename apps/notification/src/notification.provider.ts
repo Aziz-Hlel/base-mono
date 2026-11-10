@@ -1,3 +1,4 @@
+import type { DevicePreferredLanguage } from '@base-monorepo-v2/contracts/enums/index';
 import {
   MessagingErrorCode,
   type FidMulticastMessage,
@@ -5,8 +6,6 @@ import {
   type TopicMessage,
 } from 'firebase-admin/messaging';
 import logger from './logger';
-
-const MAX_FIDS_PER_REQUEST = 500;
 
 // The device is gone: safe to delete. Firebase can report a dead fid with either code.
 const UNREGISTERED_CODES = new Set<string>([
@@ -29,6 +28,14 @@ const REJECTED_CODES = new Set<string>([
   MessagingErrorCode.THIRD_PARTY_AUTH_ERROR,
   MessagingErrorCode.AUTHENTICATION_ERROR,
 ]);
+
+export type PushParams = {
+  fids: string[];
+  title: Record<DevicePreferredLanguage, string>;
+  body: Record<DevicePreferredLanguage, string>;
+  imgUrl: string;
+  videoUrl: string;
+};
 
 /** Every fid passed to `push` ends up in exactly one of these. */
 export type PushResult = {
@@ -60,6 +67,7 @@ const isUnregistered = (error: unknown): boolean =>
  */
 export class NotificationProvider {
   constructor(private readonly fcm: Pick<Messaging, 'sendEachForMulticast' | 'send'>) {}
+  private static MAX_FIDS_PER_REQUEST = 500;
 
   /** Accepts any number of fids. Resolves with the outcome of every fid and doesn't reject. */
   async push(message: FidMulticastMessage): Promise<PushResult> {
@@ -70,8 +78,12 @@ export class NotificationProvider {
       rejectedFids: [],
     };
 
-    for (let start = 0; start < message.fids.length; start += MAX_FIDS_PER_REQUEST) {
-      const fids = message.fids.slice(start, start + MAX_FIDS_PER_REQUEST);
+    for (
+      let start = 0;
+      start < message.fids.length;
+      start += NotificationProvider.MAX_FIDS_PER_REQUEST
+    ) {
+      const fids = message.fids.slice(start, start + NotificationProvider.MAX_FIDS_PER_REQUEST);
       await this.pushChunk({ ...message, fids }, result);
     }
 

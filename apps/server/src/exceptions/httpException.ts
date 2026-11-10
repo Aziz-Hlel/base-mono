@@ -26,7 +26,7 @@ export type HttpExceptionOptions = {
   /**
    *  Optional details to provide additional context about the error. This is usually used for validation errors
    */
-  details?: Record<string, string>;
+  details?: Record<string, any>;
 };
 
 export class HttpException extends Error {
@@ -38,10 +38,10 @@ export class HttpException extends Error {
 
   constructor(
     exception: keyof typeof apiErrorDefinitions,
-    message: string,
+    message?: string,
     options?: HttpExceptionOptions,
   ) {
-    super(message, { cause: options?.cause });
+    super(message ?? apiErrorDefinitions[exception].defaultMessage, { cause: options?.cause });
     this.status = apiErrorDefinitions[exception].status;
     this.code = options?.code ?? apiErrorDefinitions[exception].code;
     this.clientMessage = options?.clientMessage;

@@ -21,21 +21,16 @@
 import prisma from '@/db';
 import { UnauthorizedException } from '@/exceptions';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import crypto from 'node:crypto';
 import { authConfig } from './auth.config';
 import { jwtService, type RefreshTokenPayload } from './jwt.service';
 import { tokenStoreService } from './token-store.service';
 
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  refreshCookieMaxAge: number;
-}
-
 class SessionService {
   /** Start a new session for an account (after register / login). */
-  async issue(accountId: string, role: AccountRole): Promise<AuthTokens> {
+  async issue(accountId: string, role: AccountRole): Promise<AuthTokenRes> {
     // tokenId is a per-token handle: it is the Redis key suffix, which lets us revoke ONE
     // device's session without knowing the raw token, and detect reuse of an old one.
     const tokenId = crypto.randomUUID();
@@ -57,7 +52,7 @@ class SessionService {
    * Every failure surfaces as AUTH_INVALID_SESSION. The client only needs to know
    * "log in again", and telling it *why* (expired? reused?) would only help an attacker.
    */
-  async rotate(rawRefreshToken: string): Promise<AuthTokens> {
+  async rotate(rawRefreshToken: string): Promise<AuthTokenRes> {
     const payload = this.verifyOrInvalidSession(rawRefreshToken);
 
     // Atomic check-and-delete (Redis GETDEL): of two concurrent requests with the same token,
