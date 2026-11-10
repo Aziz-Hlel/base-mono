@@ -1,12 +1,15 @@
 import ENV from '@/env';
 import { isProd } from '@base-monorepo-v2/env/server';
 import path from 'node:path';
+import type { IStorageProvider } from './interface/storage.interface';
+import { createStorageProvider } from './storage.provider';
+import type { GeneratePresignedUrlParams } from './types/PresignedUrl';
 
-export class StorageProvider implements IStorageProvider {
+export class StorageService implements IStorageProvider {
   private storageProvider = createStorageProvider();
   client = this.storageProvider.client;
 
-  async generatePresignedUrl(params: PresignedUrlGenerator): Promise<string> {
+  async generatePresignedUrl(params: GeneratePresignedUrlParams): Promise<string> {
     return this.storageProvider.generatePresignedUrl(params);
   }
 
@@ -35,4 +38,4 @@ export class StorageProvider implements IStorageProvider {
   }
 }
 
-export const storageProvider = new StorageProvider();
+export const storageProvider = new StorageService();

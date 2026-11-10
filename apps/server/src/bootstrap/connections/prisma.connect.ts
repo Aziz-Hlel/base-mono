@@ -1,14 +1,14 @@
 import prisma from '@/db';
-import logServiceInit from '../utils/logServiceInit';
+import logServiceConnect from '../utils/logServiceConnect';
 
-const prismaConnect = async () => {
+const isPrismaConnected = async () => {
   try {
     await prisma.$connect();
-    logServiceInit('Prisma');
+    logServiceConnect('Prisma');
   } catch (error) {
     console.error('❌ Prisma connection error:', error);
     process.exit(1);
   }
 };
 
-export default prismaConnect;
+export default isPrismaConnected;

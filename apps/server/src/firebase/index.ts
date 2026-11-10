@@ -1,6 +1,7 @@
+import logServiceConnect from '@/bootstrap/utils/logServiceConnect';
 import ENV from '@/env';
 import { type App, cert, getApp, getApps, initializeApp } from 'firebase-admin/app';
-import { Auth, FirebaseAuthError, getAuth } from 'firebase-admin/auth';
+import { Auth, getAuth } from 'firebase-admin/auth';
 import { getMessaging, Messaging } from 'firebase-admin/messaging';
 
 class FirebaseProvider {
@@ -12,12 +13,20 @@ class FirebaseProvider {
     try {
       const serviceAccount = JSON.parse(ENV.FIREBASE_CERT);
       const app = initializeApp({ credential: cert(serviceAccount) });
-      console.log(`✅ SUCCESS : Firebase initialized successfully`);
       return app;
     } catch (err) {
-      throw new Error(`Firebase initialization failed`, { cause: err });
+      throw new Error(`❌ ERROR : Firebase initialization failed`, { cause: err });
     }
   };
+
+  public async checkConnection(): Promise<void> {
+    try {
+      await this.firebaseApp.options.credential?.getAccessToken();
+      logServiceConnect('Firebase');
+    } catch (err) {
+      throw new Error(`❌ ERROR : Firebase check failed`, { cause: err });
+    }
+  }
 
   constructor() {
     const isFirebaseInitialized = getApps().length > 0;

@@ -1,7 +1,11 @@
 // src/types/express.d.ts
 import type { AccountRole } from '@base-monorepo-v2/db/prisma';
 import 'express';
-import type { ApiCursorResponse, ApiPaginatedDataResponse, ApiSimpleDataResponse } from './api';
+import type {
+  ApiCursorResponse,
+  ApiPaginatedDataResponse,
+  ApiSimpleDataResponse,
+} from './api/apiEnvelopRes';
 
 /**
  * Parameters for standardized API success responses.

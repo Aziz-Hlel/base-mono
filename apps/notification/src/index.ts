@@ -7,8 +7,9 @@ import { NotificationWorker } from './notification.worker';
 
 const execute = async () => {
   await boostrap();
-  const deviceService = new DevicesService();
   const firebaseMessaging = new FirebaseProvider();
+  await firebaseMessaging.checkConnection();
+  const deviceService = new DevicesService();
   const notificationProvider = new NotificationProvider(firebaseMessaging.getMessaging());
   const notificationService = new NotificationService(notificationProvider, deviceService);
   const worker = new NotificationWorker(notificationService);
@@ -26,4 +27,7 @@ const execute = async () => {
   console.log('✅ SUCCESS : Workers are running');
 };
 
-execute();
+execute().catch((error) => {
+  console.error('❌ Startup failed', error);
+  process.exit(1);
+});

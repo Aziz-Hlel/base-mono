@@ -1,5 +1,5 @@
 import toHttpException from '@/exceptions/mapper/toHttpException';
-import type { ApiError } from '@/types/apiError';
+import type { ApiError } from '@/types/api/apiError';
 import type { NextFunction, Request, Response } from 'express';
 
 export const globalErrorHandler = (

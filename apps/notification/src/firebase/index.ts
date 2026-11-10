@@ -6,6 +6,14 @@ export class FirebaseProvider {
   private firebaseApp: App;
   private firebaseMessaging: Messaging;
 
+  public async checkConnection(): Promise<void> {
+    try {
+      await this.firebaseApp.options.credential?.getAccessToken();
+    } catch (err) {
+      throw new Error(`❌ ERROR : Firebase check failed`, { cause: err });
+    }
+  }
+
   private initFirebaseApp = (): App => {
     try {
       const serviceAccount = JSON.parse(ENV.FIREBASE_CERT);
@@ -13,7 +21,7 @@ export class FirebaseProvider {
       console.log(`✅ SUCCESS : Firebase initialized successfully`);
       return app;
     } catch (err) {
-      throw new Error(`Firebase initialization failed`, { cause: err });
+      throw new Error(`❌ ERROR : Firebase initialization failed`, { cause: err });
     }
   };
 

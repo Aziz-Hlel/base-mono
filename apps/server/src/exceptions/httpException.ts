@@ -1,4 +1,4 @@
-import type { ApiError } from '@/types/apiError';
+import type { ApiError } from '@/types/api/apiError';
 import { type ErrorCode } from '@base-monorepo-v2/contracts/exceptions/codes';
 import { isDev, isProd } from '@base-monorepo-v2/env/server';
 import apiErrorDefinitions from './data/Errors.object';
