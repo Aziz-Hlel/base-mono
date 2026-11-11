@@ -21,7 +21,7 @@ class FirebaseProvider {
 
   public async checkConnection(): Promise<void> {
     try {
-      await this.firebaseApp.options.credential?.getAccessToken();
+      await this.firebaseAuth.listUsers(1);
       logServiceConnect('Firebase');
     } catch (err) {
       throw new Error(`❌ ERROR : Firebase check failed`, { cause: err });

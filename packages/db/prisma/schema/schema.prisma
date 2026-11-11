@@ -9,7 +9,7 @@ datasource db {
   provider = "postgresql"
 }
 
-enum AccountRole {
+enum UserRole {
   SYSTEM
   SUPER_ADMIN
   ADMIN
@@ -27,13 +27,13 @@ enum Gender {
 }
 
 model User {
-  id              String      @id @default(uuid()) @db.Uuid
-  email           String      @db.VarChar(255)
-  password        String?     @db.VarChar(255)
-  role            AccountRole @default(USER)
-  authId          String?     @db.VarChar(255)
-  username        String?     @db.VarChar(255)
-  isEmailVerified Boolean     @default(false)
+  id              String   @id @default(uuid()) @db.Uuid
+  email           String   @db.VarChar(255)
+  password        String?  @db.VarChar(255)
+  role            UserRole @default(USER)
+  authId          String?  @db.VarChar(255)
+  username        String?  @db.VarChar(255)
+  isEmailVerified Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

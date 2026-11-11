@@ -8,6 +8,7 @@ import { securityMiddleware } from '@/middlewares/security.middleware';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import appRoutes from './app.routes';
+import openApiRouter from './doc.route';
 
 export function createExpressApp() {
   const app = express();
@@ -31,6 +32,8 @@ export function createExpressApp() {
   app.use(responseEnvelope);
 
   app.use('/api', appRoutes);
+
+  app.use('/api-docs', openApiRouter);
 
   app.use(notFoundHandler);
 

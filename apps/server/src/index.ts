@@ -1,8 +1,11 @@
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { z } from 'zod';
 import { createExpressApp } from './app';
 import initializeServices from './bootstrap';
 import ENV from './env';
 
-async function bootstrap() {
+async function start() {
+  extendZodWithOpenApi(z);
   await initializeServices();
 
   const app = createExpressApp();
@@ -15,4 +18,4 @@ async function bootstrap() {
   });
 }
 
-bootstrap();
+start();

@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@/exceptions';
 import { HttpException } from '@/exceptions/httpException';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import { jwtService } from '@/modules/auth/jwt.service';
+import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { RequestHandler } from 'express';
 
 export class AuthMiddleware {
@@ -28,7 +28,7 @@ export class AuthMiddleware {
 
     try {
       const payload = jwtService.verifyAccessToken(token);
-      req.user = {
+      (req as any).user = {
         id: payload.id,
         role: payload.role,
       };

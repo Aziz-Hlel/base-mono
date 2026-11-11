@@ -15,7 +15,7 @@ import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/auth
 import type { LoginInput } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
 import type { OauthReq } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
 import type { RegisterInput } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
-import { Prisma, type AccountRole } from '@base-monorepo-v2/db/prisma';
+import { Prisma, type UserRole } from '@base-monorepo-v2/db/prisma';
 import { passwordService } from './password.service';
 import { sessionService } from './session.service';
 
@@ -135,7 +135,7 @@ class AuthService {
     authId: string,
     email: string,
     emailVerified: boolean,
-  ): Promise<{ id: string; role: AccountRole }> {
+  ): Promise<{ id: string; role: UserRole }> {
     const exisitingUser = await prisma.user.findUnique({
       where: { email },
       select: { id: true, role: true, email: true, isEmailVerified: true, authId: true },
@@ -175,7 +175,6 @@ class AuthService {
         select: { id: true, role: true },
       });
     } catch (error) {
-      // TODO : this is not bullet proof it can cause an infinite loop
       // Two concurrent first sign-ins can both reach this create. The loser re-reads the winner's row.
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

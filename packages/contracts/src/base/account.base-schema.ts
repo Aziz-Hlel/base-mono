@@ -1,5 +1,5 @@
 import z from 'zod';
-import { AccountRole, AccountStatus } from '../enums';
+import { AccountStatus, UserRole } from '../enums';
 import { zodEmail } from './shared/zodEmail';
 
 export const accountBaseSchema = {
@@ -12,6 +12,6 @@ export const accountBaseSchema = {
     .min(8, 'Password must be at least 8 characters')
     .max(72, 'Password must be at most 72 characters'),
 
-  role: z.enum(AccountRole),
+  role: z.enum(UserRole),
   status: z.enum(AccountStatus),
 };

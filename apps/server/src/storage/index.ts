@@ -5,7 +5,7 @@ import type { IStorageProvider } from './interface/storage.interface';
 import { createStorageProvider } from './storage.provider';
 import type { GeneratePresignedUrlParams } from './types/PresignedUrl';
 
-export class StorageService implements IStorageProvider {
+export class StorageProvider implements IStorageProvider {
   private storageProvider = createStorageProvider();
   client = this.storageProvider.client;
 
@@ -26,7 +26,7 @@ export class StorageService implements IStorageProvider {
     return `${folder}${safeBase}-${timestamp}${ext}`;
   }
 
-  async verifyConnection() {
+  async checkConnection() {
     // const Bucket = ENV.NODE_ENV === 'dev' ? ENV.MINIO_BUCKET : 'ENV.AWS_S3_BUCKET'; // * Adjust l8ter
     try {
       // await this.client.send(new HeadBucketCommand({ Bucket }));
@@ -38,4 +38,4 @@ export class StorageService implements IStorageProvider {
   }
 }
 
-export const storageProvider = new StorageService();
+export const storageProvider = new StorageProvider();

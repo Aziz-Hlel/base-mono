@@ -1,4 +1,5 @@
 import { UnauthorizedException } from '@/exceptions';
+import type { AuthRequest } from '@/types/api/authRequest';
 import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
 import { oauthReqSchema } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
 import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
@@ -16,7 +17,7 @@ class AuthController {
       maxAge: tokens.refreshCookieMaxAge,
     });
 
-    return res.success({
+    res.success({
       status: 201,
       data: { accessToken: tokens.accessToken },
       message: 'Account created successfully',
@@ -32,7 +33,7 @@ class AuthController {
       maxAge: tokens.refreshCookieMaxAge,
     });
 
-    return res.success({
+    res.success({
       data: { accessToken: tokens.accessToken },
       message: 'Logged in successfully',
     });
@@ -47,7 +48,7 @@ class AuthController {
       maxAge: tokens.refreshCookieMaxAge,
     });
 
-    return res.success({
+    res.success({
       data: { accessToken: tokens.accessToken },
       message: 'Logged in successfully',
     });
@@ -83,13 +84,13 @@ class AuthController {
       maxAge: tokens.refreshCookieMaxAge,
     });
 
-    return res.success({
+    res.success({
       data: { accessToken: tokens.accessToken },
       message: 'Tokens refreshed successfully',
     });
   };
 
-  logout = async (req: Request, res: Response) => {
+  logout = async (req: AuthRequest, res: Response) => {
     const user = req.user!; // set by authenticate middleware
     const allDevices = req.query.allDevices === 'true';
 
@@ -119,14 +120,14 @@ class AuthController {
 
     res.clearCookie(authConfig.refreshCookieName, { ...authConfig.cookieOptions });
 
-    return res.success({
+    res.success({
       data: null,
       message: allDevices ? 'Logged out from all devices' : 'Logged out successfully',
     });
   };
 
-  me = async (req: Request, res: Response) => {
-    return res.success({
+  me = async (req: AuthRequest, res: Response) => {
+    res.success({
       data: { id: req.user!.id, role: req.user!.role },
       message: 'ok',
     });
