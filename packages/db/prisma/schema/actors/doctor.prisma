@@ -1,0 +1,38 @@
+enum MedicalSpecialty {
+    MEDICAL_ONCOLOGIST
+    RADIATION_ONCOLOGIST
+    SURGICAL_ONCOLOGIST
+    HEMATOLOGIST
+    PEDIATRIC_ONCOLOGIST
+    PSYCHO_ONCOLOGIST // emotional support
+    PSYCHOLOGIST
+    DIETITIAN // personalized nutrition
+    PHYSIOTHERAPIST // wellness / rehab
+    PALLIATIVE_CARE
+    GENERAL_PRACTITIONER
+    NURSE
+}
+
+model Doctor {
+    id String @id @db.Uuid
+
+    titleEn String? @db.VarChar(50) // "Dr.", "Prof."
+    titleAr String? @db.VarChar(50) // "دكتور", "استشاري"
+    bioEn   String? @db.Text
+    bioAr   String? @db.Text
+
+    specialty         MedicalSpecialty
+    subSpecialties    MedicalSpecialty[]
+    cancerFocus       CancerType[] // used to match patients
+    practiceStartYear Int? // derive years of experience (won't go stale)
+
+    // Credentials & verification (important for a health app)
+    licenseNumber String @db.VarChar(100)
+
+    profile Profile @relation(fields: [id], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("doctors")
+}

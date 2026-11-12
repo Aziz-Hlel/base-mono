@@ -1,0 +1,50 @@
+enum GuardianRelationship {
+    FAMILY
+    PARENT
+    SPOUSE
+    CHILD
+    SIBLING
+    RELATIVE
+    FRIEND
+    CAREGIVER
+    OTHER
+}
+
+enum GuardianLinkStatus {
+    PENDING
+    ACCEPTED
+    REVOKED
+}
+
+model Guardian {
+    id      String  @id @db.Uuid
+    profile Profile @relation(fields: [id], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    guardianPatient GuardianPatient?
+
+    @@map("guardians")
+}
+
+model GuardianPatient {
+    id String @id @db.Uuid
+
+    relationship GuardianRelationship
+    linkStatus   GuardianLinkStatus   @default(PENDING)
+
+    // TODO: Permissions granted by the patient
+    canViewMedicalInfo    Boolean @default(false)
+    canManageAppointments Boolean @default(false)
+    canManageMedications  Boolean @default(false)
+    receivesNotifications Boolean @default(true)
+
+    guardianId String   @unique @db.Uuid
+    guardian   Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)
+
+    patientId String  @db.Uuid
+    patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+    @@unique([guardianId, patientId])
+}

@@ -1,10 +1,10 @@
 import z from 'zod';
-import { accountBaseSchema } from '../../base/account.base-schema';
+import { userBaseSchema } from '../../base/user.base-schema';
 
 export const loginSchema = z
   .object({
-    email: accountBaseSchema.email,
-    password: accountBaseSchema.password,
+    email: userBaseSchema.email,
+    password: userBaseSchema.password,
   })
   .meta({ id: 'LoginInput' });
 

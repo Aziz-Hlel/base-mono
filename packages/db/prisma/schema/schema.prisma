@@ -16,24 +16,20 @@ enum UserRole {
   USER
 }
 
-enum AccountStatus {
+enum UserStatus {
   ACTIVE
   INACTIVE
 }
 
-enum Gender {
-  MALE
-  FEMALE
-}
-
 model User {
-  id              String   @id @default(uuid()) @db.Uuid
-  email           String   @db.VarChar(255)
-  password        String?  @db.VarChar(255)
-  role            UserRole @default(USER)
-  authId          String?  @db.VarChar(255)
-  username        String?  @db.VarChar(255)
-  isEmailVerified Boolean  @default(false)
+  id              String     @id @default(uuid()) @db.Uuid
+  email           String     @db.VarChar(255)
+  password        String?    @db.VarChar(255)
+  role            UserRole   @default(USER)
+  authId          String?    @db.VarChar(255)
+  username        String?    @db.VarChar(255)
+  isEmailVerified Boolean    @default(false)
+  status          UserStatus @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,18 +42,33 @@ model User {
   @@map("users")
 }
 
-model Profile {
-  id        String    @id @default(uuid()) @db.Uuid
-  firstName String    @db.VarChar(255)
-  lastName  String    @db.VarChar(255)
-  gender    Gender
-  phone     String?   @db.VarChar(15)
-  birthday  DateTime? @db.Date
+enum Gender {
+  MALE
+  FEMALE
+}
 
-  user User @relation(fields: [id], references: [id])
+enum ProfileRole {
+  PATIENT
+  GUARDIAN
+  DOCTOR
+}
+
+model Profile {
+  id        String       @id @default(uuid()) @db.Uuid
+  firstName String       @db.VarChar(255)
+  lastName  String       @db.VarChar(255)
+  gender    Gender
+  phone     String?      @db.VarChar(15)
+  birthday  DateTime?    @db.Date
+  role      ProfileRole? @default(PATIENT)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [id], references: [id])
+  patient  Patient?
+  guardian Guardian?
+  doctor   Doctor?
 
   @@map("profiles")
 }

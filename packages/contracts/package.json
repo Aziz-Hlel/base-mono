@@ -16,5 +16,8 @@
   "dependencies": {
     "@base-monorepo-v2/db": "workspace:*",
     "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@base-monorepo-v2/config": "workspace:*"
   }
 }

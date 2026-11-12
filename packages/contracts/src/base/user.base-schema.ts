@@ -1,12 +1,24 @@
 import z from 'zod';
-import { Gender } from '../enums';
-import { zodString } from './shared/required-string.zod';
+import userRoleSchema from './enums/user-role.schema';
+import userStatusSchema from './enums/user-status.schema';
+import { zodEmail } from './shared/zodEmail';
+import { zodNullableString } from './shared/string.zod';
 
 export const userBaseSchema = {
   id: z.uuid(),
-  firstName: zodString('First name'),
-  lastName: zodString('Last name'),
-  gender: z.enum(Gender),
-  phone: z.string().trim().max(15).nullable(),
-  birthday: z.iso.date().nullable(),
+  email: zodEmail(),
+  password: z
+    .string('Password is required')
+    .trim()
+    .min(1, 'Password must not be empty')
+    .min(8, 'Password must be at least 8 characters')
+    .max(72, 'Password must be at most 72 characters'),
+
+  role: userRoleSchema,
+  authId: z.string(),
+  username: zodNullableString('Username'),
+  isVerified: z.boolean(),
+  status: userStatusSchema,
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 };

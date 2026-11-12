@@ -22,7 +22,7 @@ import prisma from '@/db';
 import { UnauthorizedException } from '@/exceptions';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
-import type { AccountRole } from '@base-monorepo-v2/db/prisma';
+import type { UserRole } from '@base-monorepo-v2/db/prisma';
 import crypto from 'node:crypto';
 import { authConfig } from './auth.config';
 import { jwtService, type RefreshTokenPayload } from './jwt.service';
@@ -30,7 +30,7 @@ import { tokenStoreService } from './token-store.service';
 
 class SessionService {
   /** Start a new session for an account (after register / login). */
-  async issue(accountId: string, role: AccountRole): Promise<AuthTokenRes> {
+  async issue(accountId: string, role: UserRole): Promise<AuthTokenRes> {
     // tokenId is a per-token handle: it is the Redis key suffix, which lets us revoke ONE
     // device's session without knowing the raw token, and detect reuse of an old one.
     const tokenId = crypto.randomUUID();

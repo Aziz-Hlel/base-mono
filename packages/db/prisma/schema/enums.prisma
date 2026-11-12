@@ -1,0 +1,11 @@
+enum CancerType {
+    BREAST
+    LUNG
+    COLORECTAL
+    PROSTATE
+    LEUKEMIA
+    LYMPHOMA
+    CERVICAL
+    THYROID
+    OTHER
+}

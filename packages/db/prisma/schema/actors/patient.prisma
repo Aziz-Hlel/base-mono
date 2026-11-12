@@ -1,0 +1,59 @@
+enum CancerStage {
+    STAGE_0
+    STAGE_I
+    STAGE_II
+    STAGE_III
+    STAGE_IV
+}
+
+enum JourneyStage {
+    NEWLY_DIAGNOSED
+    IN_TREATMENT
+    POST_TREATMENT // recovery
+    SURVIVORSHIP
+    PALLIATIVE
+}
+
+enum DietaryRestriction {
+    VEGETARIAN
+    VEGAN
+    GLUTEN_FREE
+    LACTOSE_FREE
+    LOW_SODIUM
+    DIABETIC
+    SOFT_FOOD // swallowing / mouth sores during treatment
+}
+
+enum ActivityLevel {
+    SEDENTARY
+    LIGHT
+    MODERATE
+    ACTIVE
+}
+
+model Patient {
+    id String @id @db.Uuid // = Profile.id
+
+    // Diagnosis
+    cancerType    CancerType?
+    cancerSubtype String?      @db.VarChar(255) // e.g. "HER2+", "triple negative"
+    cancerStage   CancerStage?
+
+    // Journey (drives what content and features the app shows)
+    journeyStage JourneyStage @default(NEWLY_DIAGNOSED)
+
+    // Nutrition & wellness personalization
+    allergies           String[]
+    dietaryRestrictions DietaryRestriction[]
+    activityLevel       ActivityLevel?
+
+    profile   Profile           @relation(fields: [id], references: [id], onDelete: Cascade)
+    guardians GuardianPatient[]
+
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+
+    @@index([journeyStage])
+    @@index([cancerType])
+    @@map("patients")
+}
