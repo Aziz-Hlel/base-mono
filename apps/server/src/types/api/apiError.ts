@@ -6,6 +6,7 @@ export type ApiError = {
   code?: ErrorCode;
   clientMessage?: string;
   details?: Record<string, string | string[]>;
+  debug?: Record<string, any>;
   path: string;
   timestamp: Date;
   stack?: string[];

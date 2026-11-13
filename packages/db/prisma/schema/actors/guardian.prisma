@@ -23,7 +23,7 @@ model Guardian {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    guardianPatient GuardianPatient?
+    guardianPatient GuardianPatient[]
 
     @@map("guardians")
 }
@@ -31,7 +31,7 @@ model Guardian {
 model GuardianPatient {
     id String @id @db.Uuid
 
-    relationship GuardianRelationship
+    relationship GuardianRelationship?
     linkStatus   GuardianLinkStatus   @default(PENDING)
 
     // TODO: Permissions granted by the patient

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@base-monorepo-v2/db": "workspace:*",
+    "dayjs": "^1.11.23",
     "zod": "catalog:"
   },
   "devDependencies": {

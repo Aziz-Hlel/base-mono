@@ -11,8 +11,10 @@ export const globalErrorHandler = (
   if (res.headersSent) return next(error);
   const exception = toHttpException(error);
   const payload = exception.toResponse(req.originalUrl);
-  res.locals = exception.toResProdLog();
 
+  // TODO : look into these two i think you just need one not both
+  res.locals = exception.toResProdLog();
   req.log.error(exception.toReqLog(req.originalUrl), 'Error occurred:');
+
   return res.status(exception.status).json(payload);
 };

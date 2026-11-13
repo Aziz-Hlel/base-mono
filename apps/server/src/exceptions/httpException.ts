@@ -27,6 +27,12 @@ export type HttpExceptionOptions = {
    *  Optional details to provide additional context about the error. This is usually used for validation errors
    */
   details?: Record<string, any>;
+
+  /**
+   * Debugging information for internal use only. This can be used to provide additional information about the error
+   * and will not be exposed in production unlike details
+   */
+  debug?: Record<string, any>;
 };
 
 export class HttpException extends Error {
@@ -35,6 +41,7 @@ export class HttpException extends Error {
   clientMessage?: string;
   internalLog?: string | object;
   details?: Record<string, string>;
+  debug?: Record<string, any>;
 
   constructor(
     exception: keyof typeof apiErrorDefinitions,
@@ -47,6 +54,7 @@ export class HttpException extends Error {
     this.clientMessage = options?.clientMessage;
     this.internalLog = options?.internalLog;
     this.details = options?.details;
+    this.debug = options?.debug;
   }
 
   toResponse(originalUrl: string): ApiError {
@@ -63,6 +71,7 @@ export class HttpException extends Error {
       if (this.internalLog) apiResponse.internalLog = this.internalLog;
       if (this.stack) apiResponse.stack = this.stack.split('\n').map((line) => line.trim());
       if (this.cause) apiResponse.cause = serializeUnknownError(this.cause);
+      if (this.debug) apiResponse.debug = this.debug;
     }
     return apiResponse;
   }
@@ -79,6 +88,7 @@ export class HttpException extends Error {
     if (this.internalLog) payload.internalLog = this.internalLog;
     if (this.stack) payload.stack = this.stack;
     if (this.cause) payload.cause = serializeUnknownError(this.cause);
+    if (isDev() && this.debug) payload.debug = this.debug;
 
     return payload;
   }
@@ -95,6 +105,7 @@ export class HttpException extends Error {
     if (this.internalLog) payload.internalLog = this.internalLog;
     if (this.stack) payload.stack = this.stack;
     if (this.cause) payload.cause = serializeUnknownError(this.cause);
+    if (isDev() && this.debug) payload.debug = this.debug;
 
     return payload;
   }

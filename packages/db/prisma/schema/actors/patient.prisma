@@ -11,7 +11,6 @@ enum JourneyStage {
     IN_TREATMENT
     POST_TREATMENT // recovery
     SURVIVORSHIP
-    PALLIATIVE
 }
 
 enum DietaryRestriction {
@@ -50,8 +49,8 @@ model Patient {
     profile   Profile           @relation(fields: [id], references: [id], onDelete: Cascade)
     guardians GuardianPatient[]
 
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@index([journeyStage])
     @@index([cancerType])
