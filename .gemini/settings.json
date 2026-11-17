@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "command(Get-ChildItem)",
+      "command(Get-Content)",
+      "command(Select-String)",
+      "command(Get-Item)",
+      "command(Test-Path)",
+      "command(ls)",
+      "command(cat)",
+      "command(git status)",
+      "command(git diff)",
+      "command(git log)"
+    ],
+    "ask": ["command(*)"]
+  }
+}

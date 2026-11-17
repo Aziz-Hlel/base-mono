@@ -1,0 +1,1 @@
+- add db:generate to the post install or something otherwise you'll have coe in red that s depending on the gneerated files of prisma which could make confusion for some people not used to prisma

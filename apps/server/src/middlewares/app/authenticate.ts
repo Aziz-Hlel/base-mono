@@ -4,7 +4,7 @@ import { jwtService } from '@/modules/auth/jwt.service';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { RequestHandler } from 'express';
 
-export class AuthMiddleware {
+class AuthMiddleware {
   private stripBearerPrefix(token: string): string {
     return token.slice(7);
   }

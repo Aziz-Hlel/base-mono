@@ -8,7 +8,7 @@ export const createProfileReqSchema = z
     gender: profileBaseSchema.gender,
     phone: profileBaseSchema.phone,
     birthday: profileBaseSchema.birthday,
-    role: profileBaseSchema.role,
+    avatarId: z.uuid().nullable(),
   })
   .meta({
     id: 'CreateProfileReq',

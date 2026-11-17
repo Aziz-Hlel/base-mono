@@ -1,6 +1,17 @@
 import { z } from 'zod';
 import { guardianPatientBaseSchema } from '../../base/guardian-patient.base-schema';
 
+export const updateGuardianPatientParamsSchema = z
+  .object({
+    guardianId: guardianPatientBaseSchema.guardianId,
+    patientId: guardianPatientBaseSchema.patientId,
+  })
+  .meta({
+    id: 'UpdateGuardianPatientParams',
+  });
+
+export type UpdateGuardianPatientParams = z.infer<typeof updateGuardianPatientParamsSchema>;
+
 export const updateGuardianPatientReqSchema = z
   .object({
     relationship: guardianPatientBaseSchema.relationship,

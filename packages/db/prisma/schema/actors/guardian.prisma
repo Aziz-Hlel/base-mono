@@ -29,7 +29,7 @@ model Guardian {
 }
 
 model GuardianPatient {
-    id String @id @db.Uuid
+    id String @id @default(uuid()) @db.Uuid
 
     relationship GuardianRelationship?
     linkStatus   GuardianLinkStatus   @default(PENDING)

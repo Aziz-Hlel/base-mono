@@ -1,0 +1,31 @@
+enum MediaStatus {
+  PENDING
+  CONFIRMED
+  DELETED
+  FAILED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+model Media {
+  id       String      @id @default(uuid()) @db.Uuid
+  key      String      @unique @db.VarChar(255)
+  baseName String      @db.VarChar(255)
+  type     MediaType
+  mimeType String      @db.VarChar(255)
+  fileSize Int?
+  status   MediaStatus @default(PENDING)
+  blurHash String?     @db.VarChar(255)
+  order    Int?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  confirmedAt DateTime?
+
+  profile Profile? @relation
+}

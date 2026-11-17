@@ -73,8 +73,8 @@ importers:
         specifier: workspace:*
         version: link:packages/config
       '@infisical/cli':
-        specifier: ^0.44.11
-        version: 0.44.15
+        specifier: ^0.45.8
+        version: 0.45.10
       '@trivago/prettier-plugin-sort-imports':
         specifier: ^6.0.2
         version: 6.0.2(prettier@3.9.8)
@@ -994,8 +994,8 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@infisical/cli@0.44.15':
-    resolution: {integrity: sha512-v1PdV/MPnOrhUfSAMvjxW3URA1mK5nQYy4f7akKX1QyxHbXVWTOaVZCf4r8/abJ5CKDLyuWGIhxjc3Mg63eu9g==}
+  '@infisical/cli@0.45.10':
+    resolution: {integrity: sha512-W56iTpCeucEIgiDqV72czuw7f7R4XX83AP75CGkq8nHTMQSLpJwpwRA8Ozvh3dWXQI5BCQY34ZHg4cu+4FNhrw==}
     hasBin: true
 
   '@ioredis/commands@1.5.0':
@@ -5273,7 +5273,7 @@ snapshots:
     dependencies:
       hono: 4.13.8
 
-  '@infisical/cli@0.44.15':
+  '@infisical/cli@0.45.10':
     dependencies:
       tar: 7.5.23
       yauzl: 3.4.0

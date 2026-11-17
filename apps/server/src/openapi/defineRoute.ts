@@ -144,6 +144,29 @@ const registerOpenApiRoute = <
   });
 };
 
+// export const defineRoute = <
+//   TBody extends z.ZodType = z.ZodType<unknown>,
+//   TParams extends z.ZodType = z.ZodType<Request['params']>,
+//   TQuery extends z.ZodType = z.ZodType<Request['query']>,
+//   TAuth extends boolean = true,
+//   TResBody extends z.ZodType = z.ZodType,
+// >(
+//   params: ApiRoute<TBody, TParams, TQuery, TAuth, TResBody>,
+// ) => {
+//   const middlewares = [];
+//   if (params.auth) middlewares.push(authMiddleware);
+//   if (Object.keys(params.validate).length > 0) middlewares.push(validateMiddleware);
+//   if (Object.keys(params.userRoles).length > 0) middlewares.push(requireUserRoles);
+
+//   const requestHandler = asyncHandler(params.controller);
+//   // Call as a method on the router: detaching it (const fn = router[method]) loses `this`
+//   params.router[params.method](params.path, ...middlewares, requestHandler);
+
+//   registerOpenApiRoute(params);
+
+//   return params;
+// };
+
 export const defineRoute = <
   TBody extends z.ZodType = z.ZodType<unknown>,
   TParams extends z.ZodType = z.ZodType<Request['params']>,
@@ -153,7 +176,7 @@ export const defineRoute = <
 >(
   params: ApiRoute<TBody, TParams, TQuery, TAuth, TResBody>,
 ) => {
-  const routerWithMethod = params.router[params.method];
+  const routerWithMethod = params.router[params.method].bind(params.router);
 
   const middlewares = [];
   if (params.auth) middlewares.push(authMiddleware);
@@ -161,7 +184,7 @@ export const defineRoute = <
   if (Object.keys(params.userRoles).length > 0) middlewares.push(requireUserRoles);
 
   const requestHandler = asyncHandler(params.controller);
-  routerWithMethod(params.path, [...middlewares, requestHandler]);
+  routerWithMethod(params.path, ...middlewares, requestHandler);
 
   registerOpenApiRoute(params);
 

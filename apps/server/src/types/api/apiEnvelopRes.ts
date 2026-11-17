@@ -1,12 +1,12 @@
 type SucessStatusCodes = 200 | 201 | 204;
 
-export interface ApiSimpleDataResponse<T = any> {
+export interface ApiSimpleDataResponse<T> {
   status?: SucessStatusCodes;
   message: string;
   data: T;
 }
 
-export interface ApiPaginatedDataResponse<T = any> {
+export interface ApiPaginatedDataResponse<T> {
   status?: SucessStatusCodes;
   message: string;
   data: T[];
@@ -18,7 +18,7 @@ export interface ApiPaginatedDataResponse<T = any> {
   };
 }
 
-export interface ApiCursorResponse<T = any> {
+export interface ApiCursorResponse<T> {
   status?: SucessStatusCodes;
   message: string;
   data: T[];

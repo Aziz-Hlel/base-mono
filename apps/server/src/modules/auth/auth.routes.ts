@@ -1,7 +1,7 @@
 import { asyncHandler } from '@/core/async-handler';
-import { authMiddleware } from '@/middlewares/authenticate';
 import { Router } from 'express';
 import { authController } from './auth.controller';
+import { authMiddleware } from '@/middlewares/app/authenticate';
 
 const authRouter = Router();
 

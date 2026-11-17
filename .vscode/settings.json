@@ -23,5 +23,24 @@
   // Terminal settings
   "terminal.integrated.suggest.enabled": true,
   "terminal.integrated.suggest.quickSuggestions": {},
-  "terminal.integrated.shellIntegration.enabled": true
+  "terminal.integrated.shellIntegration.enabled": true,
+
+  // Gemini Terminal settings
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.autoApprove": {
+    "Get-Content": true,
+    "Get-ChildItem": true,
+    "Select-String": true,
+    "Get-Item": true,
+    "Test-Path": true,
+    "ls": true,
+    "dir": true,
+    "cat": true,
+    "git status": true,
+    "git diff": true,
+    "git log": true,
+    "Remove-Item": false,
+    "rm": false,
+    "del": false
+  }
 }

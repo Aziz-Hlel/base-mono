@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { profileBaseSchema } from '../../base/profile.base-schema';
+import { mediaResponseSchema } from '../media/media.res';
 
 export const profileResSchema = z
   .object({
@@ -10,6 +11,7 @@ export const profileResSchema = z
     phone: profileBaseSchema.phone,
     birthday: profileBaseSchema.birthday,
     role: profileBaseSchema.role,
+    avatar: mediaResponseSchema.nullable(),
     createdAt: profileBaseSchema.createdAt,
     updatedAt: profileBaseSchema.updatedAt,
   })

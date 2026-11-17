@@ -12,8 +12,8 @@ model Device {
     id  String @id @default(uuid()) @db.Uuid
     fid String @unique
 
-    userId String  @db.Uuid
-    user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @db.Uuid
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     platform     DevicePlatform
     appVersion   String?

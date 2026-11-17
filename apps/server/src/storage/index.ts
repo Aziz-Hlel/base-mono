@@ -5,7 +5,7 @@ import type { IStorageProvider } from './interface/storage.interface';
 import { createStorageProvider } from './storage.provider';
 import type { GeneratePresignedUrlParams } from './types/PresignedUrl';
 
-export class StorageProvider implements IStorageProvider {
+class StorageService implements IStorageProvider {
   private storageProvider = createStorageProvider();
   client = this.storageProvider.client;
 
@@ -38,4 +38,4 @@ export class StorageProvider implements IStorageProvider {
   }
 }
 
-export const storageProvider = new StorageProvider();
+export const storageService = new StorageService();
