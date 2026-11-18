@@ -1,18 +1,17 @@
 import prisma from '@/db';
-import PrismaExceptionCodes from '@/db/PrismaExceptionCodes';
+import PrismaExceptionCodes from '@/db/errors/codes';
 import { BadRequestException } from '@/exceptions';
 import type { CreateProfileReq } from '@base-monorepo-v2/contracts/schemas/profile/create-profile.req';
 import type { UpdateProfileReq } from '@base-monorepo-v2/contracts/schemas/profile/update-profile.req';
 import { Prisma } from '@base-monorepo-v2/db/prisma';
-import type { AccessTokenPayload } from '../auth/jwt.service';
 import { ProfileMapper } from './profile.mapper';
 
 class ProfileService {
-  createMe = async (user: AccessTokenPayload, input: CreateProfileReq) => {
+  create = async (userId: string, input: CreateProfileReq) => {
     try {
       const createProfile = await prisma.profile.create({
         data: {
-          id: user.id,
+          id: userId,
           firstName: input.firstName,
           lastName: input.lastName,
           phone: input.phone,
@@ -39,10 +38,10 @@ class ProfileService {
     }
   };
 
-  updateMe = async (user: AccessTokenPayload, input: UpdateProfileReq) => {
+  update = async (userId: string, input: UpdateProfileReq) => {
     const updateProfile = await prisma.profile.update({
       where: {
-        id: user.id,
+        id: userId,
       },
       data: {
         firstName: input.firstName,

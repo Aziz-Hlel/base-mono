@@ -4,7 +4,7 @@ import { patientMinimalResSchema } from '../patient/patient-minimal.res';
 import { profileMinimalResSchema } from '../profile/profile-minimal.res';
 import { userMinimalResSchema } from '../user/user-minimal.res';
 
-export const guardianMinimalResSchema = z
+export const guardianMinimalWithPatientsResSchema = z
   .object({
     id: guardianBaseSchema.id,
     user: userMinimalResSchema,
@@ -14,7 +14,7 @@ export const guardianMinimalResSchema = z
     updatedAt: guardianBaseSchema.updatedAt,
   })
   .meta({
-    id: 'GuardianMinimalRes',
+    id: 'GuardianMinimalWithPatientsRes',
   });
 
-export type GuardianMinimalRes = z.infer<typeof guardianMinimalResSchema>;
+export type GuardianMinimalWithPatientsRes = z.infer<typeof guardianMinimalWithPatientsResSchema>;

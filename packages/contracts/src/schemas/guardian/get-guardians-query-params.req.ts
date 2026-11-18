@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { baseQueryParamsSchema } from '../../base/shared/query-params.base-schema';
-import type { GuardianMinimalRes } from './guardian-minimal.res';
+import type { GuardianMinimalWithPatientsRes } from './guardian-minimal-with-patients.res';
 
-type TableRowType = GuardianMinimalRes;
+type TableRowType = GuardianMinimalWithPatientsRes;
 type TableRowKeys = keyof TableRowType;
 
 const sortableFields = ['createdAt', 'updatedAt'] as const satisfies TableRowKeys[];

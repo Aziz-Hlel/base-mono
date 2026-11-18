@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { userBaseSchema } from '../../base/user.base-schema';
 
-export const requestGuardianPatientLinkReqSchema = z
+export const createGuardianshipReqSchema = z
   .object({
     email: userBaseSchema.email,
   })
   .meta({
-    id: 'RequestGuardianPatientLinkReq',
+    id: 'CreateGuardianshipReq',
     description: 'Email of the patient the guardian wants to link with',
   });
 
-export type RequestGuardianPatientLinkReq = z.infer<typeof requestGuardianPatientLinkReqSchema>;
+export type CreateGuardianshipReq = z.infer<typeof createGuardianshipReqSchema>;

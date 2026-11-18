@@ -1,11 +1,11 @@
 import prisma from '@/db';
+import { isUniqueViolationOn } from '@/db/errors/helper';
 import { ConflictException, ForbiddenException, NotFoundException } from '@/exceptions';
 import { PageMapper } from '@/mapper/page.mapper';
 import { passwordService } from '@/modules/auth/password.service';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { GuardianQueryParamsTypes } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardians-query-params.req';
-import type { RequestGuardianPatientLinkReq } from '@base-monorepo-v2/contracts/schemas/guardian/request-guardian-patient-link.req';
-import type { UpdateGuardianPatientReq } from '@base-monorepo-v2/contracts/schemas/guardian/update-guardian-patient.req';
+import type { LinkPatientGuardianReq } from '@base-monorepo-v2/contracts/schemas/guardian/link-patient-guardian.req';
 import type { UpdateGuardianReq } from '@base-monorepo-v2/contracts/schemas/guardian/update-guardian.req';
 import {
   GuardianLinkStatus,
@@ -13,6 +13,7 @@ import {
   UserRole,
   type Prisma,
 } from '@base-monorepo-v2/db/prisma';
+import { GuardianshipMapper } from '../guardianship/guardianship.mapper';
 import { GuardianMapper } from './guardian.mapper';
 
 class GuardianService {
@@ -48,7 +49,7 @@ class GuardianService {
         orderBy,
         include: {
           profile: { include: { user: true, avatar: true } },
-          guardianPatient: {
+          guardianships: {
             include: {
               patient: {
                 include: {
@@ -62,7 +63,7 @@ class GuardianService {
       prisma.guardian.count({ where }),
     ]);
 
-    const data = content.map(GuardianMapper.toMinimalRes);
+    const data = content.map(GuardianMapper.toMinimalWithPatientsRes);
 
     const pageResponse = PageMapper.toPageRes({
       query,
@@ -83,7 +84,7 @@ class GuardianService {
             avatar: true,
           },
         },
-        guardianPatient: {
+        guardianships: {
           include: {
             patient: {
               include: {
@@ -191,44 +192,29 @@ class GuardianService {
     return this.getById(id);
   };
 
-  updateGuardianPatient = async (
-    guardianId: string,
-    patientId: string,
-    data: UpdateGuardianPatientReq,
-  ) => {
-    const existing = await prisma.guardianPatient.findUnique({
-      where: {
-        guardianId_patientId: {
-          guardianId,
-          patientId,
-        },
-      },
-    });
-
-    if (!existing) {
-      throw new NotFoundException(
-        `Guardian-patient relation for guardian ${guardianId} and patient ${patientId} not found`,
-      );
-    }
-
-    const updated = await prisma.guardianPatient.update({
-      where: {
-        guardianId_patientId: {
-          guardianId,
-          patientId,
-        },
-      },
-      data,
-    });
-
-    return GuardianMapper.toGuardianPatientRes(updated);
-  };
-
-  requestPatientLink = async (guardianId: string, data: RequestGuardianPatientLinkReq) => {
-    const patientUser = await prisma.user.findUnique({
+  linkPatient = async (guardianId: string, data: LinkPatientGuardianReq) => {
+    const guardianQuery = prisma.guardian.findUnique({ where: { id: guardianId } });
+    const patientQuery = prisma.user.findUnique({
       where: { email: data.email },
-      include: { profile: { include: { patient: true } } },
+      include: {
+        profile: {
+          include: {
+            patient: {
+              include: {
+                guardianships: { where: { guardianId } },
+              },
+            },
+          },
+        },
+      },
     });
+    const [guardian, patientUser] = await Promise.all([guardianQuery, patientQuery]);
+
+    if (!guardian) {
+      throw new NotFoundException(`Guardian with id ${guardianId} not found`, {
+        code: ERROR_CODES.GUARDIAN.NOT_FOUND,
+      });
+    }
 
     const patient = patientUser?.profile?.patient;
 
@@ -238,58 +224,35 @@ class GuardianService {
       });
     }
 
-    const guardian = await prisma.guardian.findUnique({
-      where: { id: guardianId },
-      include: {
-        guardianPatient: {
-          where: {
-            patientId: patient.id,
-          },
+    if (patient.guardianships.length > 0) {
+      throw new ConflictException(
+        'A guardianship between this guardian and patient already exists',
+        {
+          code: ERROR_CODES.GUARDIANSHIP.ALREADY_EXISTS,
         },
-      },
-    });
-
-    if (!guardian) {
-      throw new NotFoundException('Guardian not found for this user', {
-        code: ERROR_CODES.GUARDIAN.NOT_FOUND,
-      });
+      );
     }
 
-    const existingLink = guardian.guardianPatient[0];
-
-    if (existingLink && existingLink.linkStatus === GuardianLinkStatus.ACCEPTED) {
-      throw new ConflictException('Guardian is already linked with this patient', {
-        code: ERROR_CODES.GUARDIAN_PATIENT.ALREADY_LINKED,
-      });
-    }
-
-    if (existingLink && existingLink.linkStatus === GuardianLinkStatus.PENDING) {
-      throw new ConflictException('A link request with this patient already exists', {
-        code: ERROR_CODES.GUARDIAN_PATIENT.PENDING_ALREADY_EXISTS,
-      });
-    }
-
-    if (existingLink && existingLink.linkStatus === GuardianLinkStatus.REVOKED) {
-      const link = await prisma.guardianPatient.update({
-        where: { id: existingLink.id },
+    try {
+      const guardianship = await prisma.guardianship.create({
         data: {
+          guardianId,
           patientId: patient.id,
           linkStatus: GuardianLinkStatus.PENDING,
         },
       });
-
-      return GuardianMapper.toGuardianPatientRes(link);
+      return GuardianshipMapper.toRes(guardianship);
+    } catch (error) {
+      if (isUniqueViolationOn(error, ['guardianId', 'patientId'])) {
+        throw new ConflictException(
+          'A guardianship between this guardian and patient already exists',
+          {
+            code: ERROR_CODES.GUARDIANSHIP.ALREADY_EXISTS,
+          },
+        );
+      }
+      throw error;
     }
-
-    const link = await prisma.guardianPatient.create({
-      data: {
-        guardianId,
-        patientId: patient.id,
-        linkStatus: GuardianLinkStatus.PENDING,
-      },
-    });
-
-    return GuardianMapper.toGuardianPatientRes(link);
   };
 }
 

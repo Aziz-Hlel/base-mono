@@ -1,10 +1,14 @@
 import type { Request, RequestHandler } from 'express';
-import type { ZodType } from 'zod';
+import type { z, ZodType } from 'zod';
 
-export const validateMiddleware = (schemas: {
-  body?: ZodType;
-  params?: ZodType<Request['params']>;
-  query?: ZodType<Request['query']>;
+export const validateMiddleware = <
+  TBody extends ZodType = z.ZodType<unknown>,
+  TParams extends ZodType = z.ZodType<Request['params']>,
+  TQuery extends ZodType = z.ZodType<Request['query']>,
+>(schemas: {
+  body?: TBody;
+  params?: TParams;
+  query?: TQuery;
 }): RequestHandler => {
   return async (req, _res, next) => {
     try {

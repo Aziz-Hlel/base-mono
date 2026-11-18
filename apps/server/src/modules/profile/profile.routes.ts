@@ -32,7 +32,7 @@ route()
 
     controller: async (req, res) => {
       const user = req.user;
-      const data = await profileService.updateMe(user, req.body);
+      const data = await profileService.update(user.id, req.body);
 
       res.json({
         message: 'Profile updated successfully',
@@ -66,7 +66,7 @@ route()
 
     controller: async (req, res) => {
       const user = req.user;
-      const data = await profileService.createMe(user, req.body);
+      const data = await profileService.create(user.id, req.body);
 
       res.json({
         message: 'Profile created successfully',

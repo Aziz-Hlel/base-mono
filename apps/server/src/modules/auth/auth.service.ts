@@ -6,7 +6,7 @@
  * jwt.service or token-store.service here, that logic probably belongs in session.service.
  */
 import prisma from '@/db';
-import PrismaExceptionCodes from '@/db/PrismaExceptionCodes';
+import PrismaExceptionCodes from '@/db/errors/codes';
 import { ConflictException, UnauthorizedException } from '@/exceptions';
 import logger from '@/logger';
 import { oauthProvider } from '@/oauth';
@@ -20,7 +20,7 @@ import { passwordService } from './password.service';
 import { sessionService } from './session.service';
 
 class AuthService {
-  async register(input: RegisterInput): Promise<AuthTokenRes> {
+  async register(input: RegisterInput): Promise<{ id: string; role: UserRole }> {
     const existing = await prisma.user.findUnique({
       where: { email: input.email },
       select: { id: true },
@@ -34,15 +34,16 @@ class AuthService {
 
     const hashedPassword = await passwordService.hashPassword(input.password);
 
-    let user;
     try {
-      user = await prisma.user.create({
+      const user = await prisma.user.create({
         data: {
           email: input.email,
           password: hashedPassword,
         },
         select: { id: true, role: true },
       });
+
+      return user;
     } catch (error) {
       // The findUnique above is a fast path; this catch is the real guarantee. Two concurrent
       // registrations can both pass the check, and the DB unique constraint is what stops the second.
@@ -57,10 +58,6 @@ class AuthService {
       }
       throw error;
     }
-
-    // Kept outside the try on purpose: a Redis failure while issuing the session must not be
-    // mistaken for (or swallowed by) the DB error handling above.
-    return sessionService.issue(user.id, user.role);
   }
 
   async login(input: LoginInput): Promise<AuthTokenRes> {

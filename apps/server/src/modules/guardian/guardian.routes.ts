@@ -1,15 +1,11 @@
 import { route } from '@/openapi/routeBuilder';
 import { guardianIdParamSchema } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardian-params.req';
 import { guardianQueryParams } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardians-query-params.req';
-import { guardianMinimalResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-minimal.res';
-import { guardianPatientResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-patient.res';
+import { guardianMinimalWithPatientsResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-minimal-with-patients.res';
 import { guardianResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian.res';
-import { requestGuardianPatientLinkReqSchema } from '@base-monorepo-v2/contracts/schemas/guardian/request-guardian-patient-link.req';
-import {
-  updateGuardianPatientParamsSchema,
-  updateGuardianPatientReqSchema,
-} from '@base-monorepo-v2/contracts/schemas/guardian/update-guardian-patient.req';
+import { linkPatientGuardianReqSchema } from '@base-monorepo-v2/contracts/schemas/guardian/link-patient-guardian.req';
 import { updateGuardianReqSchema } from '@base-monorepo-v2/contracts/schemas/guardian/update-guardian.req';
+import { guardianshipResSchema } from '@base-monorepo-v2/contracts/schemas/guardianship/guardianship.res';
 import allAdminRoles from '@base-monorepo-v2/contracts/utils/roles/all-admin-roles';
 import express from 'express';
 import { guardianService } from './guardian.service';
@@ -32,7 +28,7 @@ route()
     validate: {
       query: guardianQueryParams.schema,
     },
-    response: guardianMinimalResSchema,
+    response: guardianMinimalWithPatientsResSchema,
     responses: {
       '200': {
         description: 'Guardians fetched successfully',
@@ -126,48 +122,6 @@ route()
     },
   });
 
-// POST /api/guardians/patient-links
-route()
-  .router(guardianRouter)
-  .method('post')
-  .path('/patient-links')
-  .openapiPath('/api/guardians/patient-links')
-  .operationId('requestGuardianPatientLink')
-  .summary('Request link with a patient')
-  .description(
-    'The current guardian requests to link with a patient identified by email. The link is created with PENDING status.',
-  )
-  .tags('Guardians')
-  .define({
-    userRoles: [],
-    auth: true,
-    validate: {
-      body: requestGuardianPatientLinkReqSchema,
-    },
-    response: guardianPatientResSchema,
-    responses: {
-      '201': {
-        description: 'Link request sent successfully',
-        schema: guardianPatientResSchema,
-      },
-      '404': {
-        description: 'Guardian or patient not found',
-      },
-      '409': {
-        description: 'A link request already exists or guardian is already linked',
-      },
-    },
-
-    controller: async (req, res) => {
-      const data = await guardianService.requestPatientLink(req.user.id, req.body);
-
-      res.status(201).json({
-        message: 'Link request sent successfully',
-        data,
-      });
-    },
-  });
-
 // PUT /api/guardians/:id
 route()
   .router(guardianRouter)
@@ -207,40 +161,45 @@ route()
     },
   });
 
-// PUT /api/guardians/:guardianId/patients/:patientId
+// POST /api/guardians/:id/guardian-patients/link
 route()
   .router(guardianRouter)
-  .method('put')
-  .path('/:guardianId/patients/:patientId')
-  .openapiPath('/api/guardians/{guardianId}/patients/{patientId}')
-  .operationId('updateGuardianPatient')
-  .summary('Update guardian patient relationship')
-  .description('Update relationship and permissions between a guardian and a patient.')
+  .method('post')
+  .path('/:id/guardian-patients/link')
+  .openapiPath('/api/guardians/{id}/guardian-patients/link')
+  .operationId('linkPatientGuardian')
+  .summary('Link patient with guardian (admin)')
+  .description(
+    'Admin-only: creates a PENDING guardianship between the guardian and the patient identified by email. Fails if the relation already exists.',
+  )
   .tags('Guardians')
   .define({
     userRoles: allAdminRoles,
     auth: true,
     validate: {
-      params: updateGuardianPatientParamsSchema,
-      body: updateGuardianPatientReqSchema,
+      params: guardianIdParamSchema,
+      body: linkPatientGuardianReqSchema,
     },
-    response: guardianPatientResSchema,
+    response: guardianshipResSchema,
     responses: {
-      '200': {
-        description: 'Guardian patient relationship updated successfully',
-        schema: guardianPatientResSchema,
+      '201': {
+        description: 'Patient linked with guardian successfully',
+        schema: guardianshipResSchema,
       },
       '404': {
-        description: 'Guardian-patient relationship not found',
+        description: 'Guardian or patient not found',
+      },
+      '409': {
+        description: 'Guardianship between this guardian and patient already exists',
       },
     },
 
     controller: async (req, res) => {
-      const { guardianId, patientId } = req.params;
-      const data = await guardianService.updateGuardianPatient(guardianId, patientId, req.body);
+      const { id } = req.params;
+      const data = await guardianService.linkPatient(id, req.body);
 
-      res.json({
-        message: 'Guardian patient relationship updated successfully',
+      res.status(201).json({
+        message: 'Patient linked with guardian successfully',
         data,
       });
     },

@@ -23,16 +23,16 @@ model Guardian {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    guardianPatient GuardianPatient[]
+    guardianships Guardianship[]
 
     @@map("guardians")
 }
 
-model GuardianPatient {
+model Guardianship {
     id String @id @default(uuid()) @db.Uuid
 
     relationship GuardianRelationship?
-    linkStatus   GuardianLinkStatus   @default(PENDING)
+    linkStatus   GuardianLinkStatus    @default(PENDING)
 
     // TODO: Permissions granted by the patient
     canViewMedicalInfo    Boolean @default(false)
@@ -40,11 +40,12 @@ model GuardianPatient {
     canManageMedications  Boolean @default(false)
     receivesNotifications Boolean @default(true)
 
-    guardianId String   @unique @db.Uuid
+    guardianId String   @db.Uuid
     guardian   Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)
 
     patientId String  @db.Uuid
     patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
     @@unique([guardianId, patientId])
+	@@map("guardianship")
 }

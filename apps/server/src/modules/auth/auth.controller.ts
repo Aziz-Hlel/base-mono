@@ -6,11 +6,13 @@ import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/registe
 import type { Request, Response } from 'express';
 import { authConfig } from './auth.config';
 import { authService } from './auth.service';
+import { sessionService } from './session.service';
 
 class AuthController {
   register = async (req: Request, res: Response) => {
     const input = registerSchema.parse(req.body);
-    const tokens = await authService.register(input);
+    const user = await authService.register(input);
+    const tokens = await sessionService.issue(user.id, user.role);
 
     res.cookie(authConfig.refreshCookieName, tokens.refreshToken, {
       ...authConfig.cookieOptions,

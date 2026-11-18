@@ -2,10 +2,20 @@ import prisma from '@/db';
 import { ConflictException, ForbiddenException, NotFoundException } from '@/exceptions';
 import { PageMapper } from '@/mapper/page.mapper';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import type { CreateFullPatientReq } from '@base-monorepo-v2/contracts/schemas/patient/create-full-patient.req';
 import type { CreatePatientReq } from '@base-monorepo-v2/contracts/schemas/patient/create-patient.req';
 import type { PatientQueryParamsTypes } from '@base-monorepo-v2/contracts/schemas/patient/get-patients-query-params.req';
+import type { LinkGuardianPatientReq } from '@base-monorepo-v2/contracts/schemas/patient/link-guardian-patient.req';
 import type { UpdatePatientReq } from '@base-monorepo-v2/contracts/schemas/patient/update-patient.req';
-import { ProfileRole, UserRole, type Prisma } from '@base-monorepo-v2/db/prisma';
+import {
+  GuardianLinkStatus,
+  ProfileRole,
+  UserRole,
+  type Prisma,
+} from '@base-monorepo-v2/db/prisma';
+import { authService } from '../auth/auth.service';
+import { GuardianshipMapper } from '../guardianship/guardianship.mapper';
+import { profileService } from '../profile/profile.service';
 import { PatientMapper } from './patient.mapper';
 
 class PatientService {
@@ -77,6 +87,17 @@ class PatientService {
     }
 
     return PatientMapper.toDetailedRes(patient);
+  };
+
+  createFull = async (data: CreateFullPatientReq) => {
+    // 1. Create the user (handles duplicate-email conflict internally)
+    const user = await authService.register(data.user);
+
+    // 2. Create the profile linked to the new user
+    await profileService.create(user.id, data.profile);
+
+    // 3. Create the patient record (also sets profile role to PATIENT)
+    return this.create(user.id, data.patient);
   };
 
   create = async (profileId: string, data: CreatePatientReq) => {
@@ -157,6 +178,58 @@ class PatientService {
     });
 
     return this.getById(id);
+  };
+
+  linkGuardian = async (patientId: string, data: LinkGuardianPatientReq) => {
+    const patientQuery = prisma.patient.findUnique({ where: { id: patientId } });
+    const guardianQuery = prisma.user.findUnique({
+      where: { email: data.email },
+      include: {
+        profile: {
+          include: {
+            guardian: {
+              include: {
+                guardianships: { where: { patientId } },
+              },
+            },
+          },
+        },
+      },
+    });
+    const [patient, guardianUser] = await Promise.all([patientQuery, guardianQuery]);
+
+    if (!patient) {
+      throw new NotFoundException(`Patient with id ${patientId} not found`, {
+        code: ERROR_CODES.PATIENT.NOT_FOUND,
+      });
+    }
+
+    const guardian = guardianUser?.profile?.guardian;
+
+    if (!guardian) {
+      throw new NotFoundException(`No guardian found with email ${data.email}`, {
+        code: ERROR_CODES.GUARDIAN.NOT_FOUND,
+      });
+    }
+
+    if (guardian.guardianships.length > 0) {
+      throw new ConflictException(
+        'A guardianship between this guardian and patient already exists',
+        {
+          code: ERROR_CODES.GUARDIANSHIP.ALREADY_EXISTS,
+        },
+      );
+    }
+
+    const guardianship = await prisma.guardianship.create({
+      data: {
+        guardianId: guardian.id,
+        patientId,
+        linkStatus: GuardianLinkStatus.ACCEPTED,
+      },
+    });
+
+    return GuardianshipMapper.toRes(guardianship);
   };
 }
 

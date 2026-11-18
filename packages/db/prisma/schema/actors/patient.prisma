@@ -47,7 +47,7 @@ model Patient {
     activityLevel       ActivityLevel?
 
     profile   Profile           @relation(fields: [id], references: [id], onDelete: Cascade)
-    guardians GuardianPatient[]
+    guardianships Guardianship[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
