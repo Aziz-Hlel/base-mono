@@ -10,6 +10,7 @@ export class GuardianshipMapper {
       relationship: guardianship.relationship,
       linkStatus: guardianship.linkStatus,
       canViewFeelingLogs: guardianship.canViewFeelingLogs,
+      canViewDiaryNotes: guardianship.canViewDiaryNotes,
       canViewMedicalInfo: guardianship.canViewMedicalInfo,
       canManageAppointments: guardianship.canManageAppointments,
       canManageMedications: guardianship.canManageMedications,

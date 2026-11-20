@@ -9,15 +9,17 @@ import { cursorQueryParamsSchema } from '@base-monorepo-v2/contracts/types/Curso
 import allAdminRoles from '@base-monorepo-v2/contracts/utils/roles/all-admin-roles';
 import express from 'express';
 import { feelingLogService } from './feeling-log.service';
+import canReadPatientFeelingLogs from '@/middlewares/app/canReadPatientFeelingLogs';
+import { listFeelingLogParamsSchema } from '@base-monorepo-v2/contracts/schemas/feeling-log/list-feeling-log-params.req';
 
-const feelingLogRouter = express.Router();
+const feelingLogRouter = express.Router({ mergeParams: true });
 
 // GET /api/feeling-logs
 route()
   .router(feelingLogRouter)
   .method('get')
   .path('/')
-  .openapiPath('/api/feeling-logs')
+  .openapiPath('/api/patients/{patientId}/feeling-logs')
   .operationId('listMyFeelingLogs')
   .summary('List my feeling logs')
   .description(
@@ -26,10 +28,11 @@ route()
   .tags('Feeling Logs')
   .define({
     userRoles: [],
-    middlewares: [isPatient],
+    middlewares: [canReadPatientFeelingLogs('patientId')],
     auth: true,
     validate: {
       query: cursorQueryParamsSchema,
+      params: listFeelingLogParamsSchema,
     },
     response: feelingLogResSchema,
     responses: {
@@ -43,7 +46,8 @@ route()
     },
 
     controller: async (req, res) => {
-      const cursorData = await feelingLogService.listByCursor(req.user.id, req.query);
+      const patientId = req.params.patientId;
+      const cursorData = await feelingLogService.listByCursor(patientId, req.query);
 
       res.json({
         message: 'Feeling logs fetched successfully',
@@ -57,7 +61,7 @@ route()
   .router(feelingLogRouter)
   .method('post')
   .path('/')
-  .openapiPath('/api/feeling-logs')
+  .openapiPath('/api/patients/{patientId}/feeling-logs')
   .operationId('createFeelingLog')
   .summary('Log how I feel')
   .description(
@@ -97,7 +101,7 @@ route()
   .router(feelingLogRouter)
   .method('get')
   .path('/:id')
-  .openapiPath('/api/feeling-logs/{id}')
+  .openapiPath('/api/patients/{patientId}/feeling-logs/{id}')
   .operationId('getFeelingLogById')
   .summary('Get feeling log by ID')
   .description(
@@ -146,7 +150,7 @@ route()
   .router(feelingLogRouter)
   .method('put')
   .path('/:id')
-  .openapiPath('/api/feeling-logs/{id}')
+  .openapiPath('/api/patients/{patientId}/feeling-logs/{id}')
   .operationId('updateFeelingLog')
   .summary('Update feeling log')
   .description('The current patient updates one of their own feeling logs.')

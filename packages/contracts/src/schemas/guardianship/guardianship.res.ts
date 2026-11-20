@@ -7,6 +7,7 @@ export const guardianshipResSchema = z
     relationship: guardianshipBaseSchema.relationship,
     linkStatus: guardianshipBaseSchema.linkStatus,
     canViewFeelingLogs: guardianshipBaseSchema.canViewFeelingLogs,
+    canViewDiaryNotes: guardianshipBaseSchema.canViewDiaryNotes,
     canViewMedicalInfo: guardianshipBaseSchema.canViewMedicalInfo,
     canManageAppointments: guardianshipBaseSchema.canManageAppointments,
     canManageMedications: guardianshipBaseSchema.canManageMedications,

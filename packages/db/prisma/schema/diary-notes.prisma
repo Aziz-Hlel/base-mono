@@ -1,0 +1,18 @@
+model DiaryNotes {
+  id        String @id @default(uuid())
+  profileId String @db.Uuid
+  feed      Feed?
+
+  title String @db.VarChar(255)
+  text  String @db.Text
+
+  media Media[]
+
+  profile Profile @relation(fields: [profileId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId, createdAt])
+  @@map("diary_notes")
+}

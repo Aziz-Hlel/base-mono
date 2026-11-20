@@ -1,0 +1,45 @@
+enum FeedStatus {
+    APPROVED
+    PENDING
+    REJECTED
+}
+
+enum ReactionType {
+    LIKE
+    HEART
+}
+
+model FeedReaction {
+    feedId    String       @db.Uuid
+    profileId String       @db.Uuid
+    reaction  ReactionType
+
+    feed    Feed    @relation(fields: [feedId], references: [id])
+    profile Profile @relation(fields: [profileId], references: [id])
+
+    createdAt DateTime @default(now())
+
+    @@id([feedId, profileId])
+    @@map("feed_reactions")
+}
+
+model Feed {
+    id          String @id @db.Uuid
+    diaryNoteId String @unique
+
+    status       FeedStatus            @default(PENDING)
+    isPinned     Boolean               @default(false)
+    journeyStage JourneyStage
+    relationShip GuardianRelationship?
+    feedLikes    FeedReaction[]
+
+    diaryNote DiaryNotes @relation(fields: [diaryNoteId], references: [id])
+
+    approvedAt DateTime?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([status, approvedAt])
+    @@index([isPinned])
+    @@map("feeds")
+}

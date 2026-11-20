@@ -17,7 +17,7 @@ enum GuardianLinkStatus {
 }
 
 model Guardian {
-    id      String  @id @db.Uuid
+    id      String  @id @default(uuid()) @db.Uuid
     profile Profile @relation(fields: [id], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
@@ -35,7 +35,8 @@ model Guardianship {
     linkStatus   GuardianLinkStatus    @default(PENDING)
 
     // TODO: Permissions granted by the patient
-    canViewFeelingLogs     Boolean @default(false)
+    canViewFeelingLogs    Boolean @default(false)
+    canViewDiaryNotes     Boolean @default(false)
     canViewMedicalInfo    Boolean @default(false)
     canManageAppointments Boolean @default(false)
     canManageMedications  Boolean @default(false)

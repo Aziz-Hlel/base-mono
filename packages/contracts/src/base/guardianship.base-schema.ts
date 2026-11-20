@@ -7,6 +7,7 @@ export const guardianshipBaseSchema = {
   relationship: guardianRelationshipSchema.nullable(),
   linkStatus: guardianLinkStatusSchema,
   canViewFeelingLogs: z.boolean(),
+  canViewDiaryNotes: z.boolean(),
   canViewMedicalInfo: z.boolean(),
   canManageAppointments: z.boolean(),
   canManageMedications: z.boolean(),

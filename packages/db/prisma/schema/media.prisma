@@ -27,5 +27,6 @@ model Media {
   deletedAt   DateTime?
   confirmedAt DateTime?
 
-  profile Profile? @relation
+  profile    Profile?     @relation
+  diaryNotes DiaryNotes[]
 }

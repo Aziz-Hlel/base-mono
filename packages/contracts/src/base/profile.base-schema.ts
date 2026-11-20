@@ -8,9 +8,10 @@ export const profileBaseSchema = {
   firstName: zodString('First name'),
   lastName: zodString('Last name'),
   gender: genderSchema,
-  phone: zodNullableString('Phone'),
+  phone: zodNullableString('Phone', { max: 15 }),
   birthday: z.iso.date().nullable(),
   role: profileRoleSchema.nullable(),
+  avatarId: z.uuid().nullable(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 };
