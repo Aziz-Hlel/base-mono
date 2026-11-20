@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseQueryParamsSchema } from '../../base/shared/query-params.base-schema';
+import { baseQueryParamsSchema } from '../../request-parameters/query-params.base-schema';
 import type { GuardianMinimalWithPatientsRes } from './guardian-minimal-with-patients.res';
 
 type TableRowType = GuardianMinimalWithPatientsRes;

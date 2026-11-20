@@ -3,6 +3,7 @@ import PrismaExceptionCodes from '@/db/errors/codes';
 import { BadRequestException } from '@/exceptions';
 import type { CreateProfileReq } from '@base-monorepo-v2/contracts/schemas/profile/create-profile.req';
 import type { UpdateProfileReq } from '@base-monorepo-v2/contracts/schemas/profile/update-profile.req';
+import { parseISODate } from '@base-monorepo-v2/contracts/utils/dayjs/utc';
 import { Prisma } from '@base-monorepo-v2/db/prisma';
 import { ProfileMapper } from './profile.mapper';
 
@@ -16,7 +17,7 @@ class ProfileService {
           lastName: input.lastName,
           phone: input.phone,
           gender: input.gender,
-          birthday: input.birthday,
+          birthday: parseISODate(input.birthday),
           avatarId: input.avatarId,
         },
         include: {

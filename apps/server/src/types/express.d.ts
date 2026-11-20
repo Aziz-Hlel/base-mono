@@ -1,13 +1,14 @@
 // src/types/express.d.ts
-import type { PageRes } from '@base-monorepo-v2/contracts/types/Page';
+import type { Page } from '@base-monorepo-v2/contracts/types/Page';
 import 'express';
 import type { ApiCursorResponse, ApiSimpleDataResponse } from './api/apiEnvelopRes';
+import type { Cursor } from '@base-monorepo-v2/contracts/types/Cursor';
 
 /**
  * Parameters for standardized API success responses.
  * If `status` is not provided, it defaults to HTTP `200` (OK).
  */
-export type SucessResponseParams<T> = ApiSimpleDataResponse<T> | PageRes<T> | ApiCursorResponse<T>;
+export type SucessResponseParams<T> = ApiSimpleDataResponse<T> | Page<T> | Cursor<T>;
 
 declare global {
   namespace Express {

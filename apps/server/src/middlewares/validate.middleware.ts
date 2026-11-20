@@ -13,7 +13,8 @@ export const validateMiddleware = <
   return async (req, _res, next) => {
     try {
       if (schemas.body) req.body = await schemas.body.parseAsync(req.body);
-      if (schemas.params) req.params = await schemas.params.parseAsync(req.params);
+      if (schemas.params)
+        req.params = (await schemas.params.parseAsync(req.params)) as Request['params'];
       if (schemas.query) {
         // Express 5: req.query is a getter, so plain assignment throws.
         Object.defineProperty(req, 'query', {

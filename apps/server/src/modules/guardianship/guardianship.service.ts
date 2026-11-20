@@ -1,7 +1,8 @@
 import prisma from '@/db';
-import { ConflictException, NotFoundException } from '@/exceptions';
+import { ConflictException, NotFoundException, NotImplementedException } from '@/exceptions';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { CreateGuardianshipReq } from '@base-monorepo-v2/contracts/schemas/guardianship/create-guardianship.req';
+import type { RespondGuardianshipRequestReq } from '@base-monorepo-v2/contracts/schemas/guardianship/respond-guardianship-request.req';
 import type { UpdateGuardianshipStatusReq } from '@base-monorepo-v2/contracts/schemas/guardianship/update-guardianship-status.req';
 import type { UpdateGuardianshipReq } from '@base-monorepo-v2/contracts/schemas/guardianship/update-guardianship.req';
 import { GuardianLinkStatus } from '@base-monorepo-v2/db/prisma';
@@ -41,27 +42,31 @@ class GuardianshipService {
 
     const existing = guardian.guardianships[0];
 
-    if (existing && existing.linkStatus === GuardianLinkStatus.ACCEPTED) {
-      throw new ConflictException('Guardian is already linked with this patient', {
-        code: ERROR_CODES.GUARDIANSHIP.ALREADY_LINKED,
-      });
-    }
+    if (existing) {
+      switch (existing.linkStatus) {
+        case GuardianLinkStatus.ACCEPTED: {
+          throw new ConflictException('Guardian is already linked with this patient', {
+            code: ERROR_CODES.GUARDIANSHIP.ALREADY_LINKED,
+          });
+        }
+        case GuardianLinkStatus.PENDING: {
+          throw new ConflictException('A link request with this patient already exists', {
+            code: ERROR_CODES.GUARDIANSHIP.PENDING_ALREADY_EXISTS,
+          });
+        }
+        case GuardianLinkStatus.REVOKED: {
+          const guardianship = await prisma.guardianship.update({
+            where: { id: existing.id },
+            data: {
+              linkStatus: GuardianLinkStatus.PENDING,
+            },
+          });
 
-    if (existing && existing.linkStatus === GuardianLinkStatus.PENDING) {
-      throw new ConflictException('A link request with this patient already exists', {
-        code: ERROR_CODES.GUARDIANSHIP.PENDING_ALREADY_EXISTS,
-      });
-    }
-
-    if (existing && existing.linkStatus === GuardianLinkStatus.REVOKED) {
-      const guardianship = await prisma.guardianship.update({
-        where: { id: existing.id },
-        data: {
-          linkStatus: GuardianLinkStatus.PENDING,
-        },
-      });
-
-      return GuardianshipMapper.toRes(guardianship);
+          return GuardianshipMapper.toRes(guardianship);
+        }
+        default:
+          throw new NotImplementedException();
+      }
     }
 
     const guardianship = await prisma.guardianship.create({
@@ -71,6 +76,37 @@ class GuardianshipService {
         linkStatus: GuardianLinkStatus.PENDING,
       },
     });
+
+    return GuardianshipMapper.toRes(guardianship);
+  };
+
+  getById = async (id: string) => {
+    const guardianship = await prisma.guardianship.findUnique({
+      where: { id },
+    });
+
+    if (!guardianship) {
+      throw new NotFoundException(`Guardianship with id ${id} not found`, {
+        code: ERROR_CODES.GUARDIANSHIP.NOT_FOUND,
+      });
+    }
+
+    return GuardianshipMapper.toRes(guardianship);
+  };
+
+  getByPatientIdAndGuardianId = async (patientId: string, guardianId: string) => {
+    const guardianship = await prisma.guardianship.findUnique({
+      where: {
+        guardianId_patientId: { patientId, guardianId },
+        linkStatus: GuardianLinkStatus.ACCEPTED,
+      },
+    });
+
+    if (!guardianship) {
+      throw new NotFoundException('Guardianship not found', {
+        code: ERROR_CODES.GUARDIANSHIP.NOT_FOUND,
+      });
+    }
 
     return GuardianshipMapper.toRes(guardianship);
   };
@@ -94,6 +130,27 @@ class GuardianshipService {
         canManageAppointments: data.canManageAppointments,
         canManageMedications: data.canManageMedications,
         receivesNotifications: data.receivesNotifications,
+      },
+    });
+
+    return GuardianshipMapper.toRes(updated);
+  };
+
+  respondToRequest = async (id: string, data: RespondGuardianshipRequestReq) => {
+    const existing = await prisma.guardianship.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      throw new NotFoundException(`Guardianship with id ${id} not found`, {
+        code: ERROR_CODES.GUARDIANSHIP.NOT_FOUND,
+      });
+    }
+
+    const updated = await prisma.guardianship.update({
+      where: { id },
+      data: {
+        linkStatus: data.linkStatus,
       },
     });
 

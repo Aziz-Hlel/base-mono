@@ -1,13 +1,16 @@
 import { ForbiddenException } from '@/exceptions';
+import isPatientOrAdmin from '@/middlewares/app/isPatientOrAdim';
 import { route } from '@/openapi/routeBuilder';
 import { guardianshipResSchema } from '@base-monorepo-v2/contracts/schemas/guardianship/guardianship.res';
 import { updateGuardianshipStatusReqSchema } from '@base-monorepo-v2/contracts/schemas/guardianship/update-guardianship-status.req';
 import { createFullPatientReqSchema } from '@base-monorepo-v2/contracts/schemas/patient/create-full-patient.req';
 import { createPatientReqSchema } from '@base-monorepo-v2/contracts/schemas/patient/create-patient.req';
 import { patientGuardianParamsSchema } from '@base-monorepo-v2/contracts/schemas/patient/get-patient-guardian-params.req';
+import { patientGuardiansParamsSchema } from '@base-monorepo-v2/contracts/schemas/patient/get-patient-guardians-params.req';
 import { patientIdParamSchema } from '@base-monorepo-v2/contracts/schemas/patient/get-patient-params.req';
 import { patientQueryParams } from '@base-monorepo-v2/contracts/schemas/patient/get-patients-query-params.req';
 import { linkGuardianPatientReqSchema } from '@base-monorepo-v2/contracts/schemas/patient/link-guardian-patient.req';
+import { listPatientGuardiansResSchema } from '@base-monorepo-v2/contracts/schemas/patient/list-patient-guardians.res';
 import { patientDetailedResSchema } from '@base-monorepo-v2/contracts/schemas/patient/patient-detailed.res';
 import { patientMinimalResSchema } from '@base-monorepo-v2/contracts/schemas/patient/patient-minimal.res';
 import { updatePatientReqSchema } from '@base-monorepo-v2/contracts/schemas/patient/update-patient.req';
@@ -29,7 +32,7 @@ route()
   .description('Get all patients with pagination and optional search.')
   .tags('Patients')
   .define({
-    userRoles: allAdminRoles,
+    userRoles: [],
     auth: true,
     validate: {
       query: patientQueryParams.schema,
@@ -49,6 +52,44 @@ route()
       res.json({
         message: 'Patients fetched successfully',
         ...paginatedData,
+      });
+    },
+  });
+
+// GET /api/patients/:id
+route()
+  .router(patientRouter)
+  .method('get')
+  .path('/:id')
+  .openapiPath('/api/patients/{id}')
+  .operationId('getPatientById')
+  .summary('Get patient by ID')
+  .description('Retrieve detailed information for a specific patient by ID.')
+  .tags('Patients')
+  .define({
+    userRoles: [],
+    auth: true,
+    validate: {
+      params: patientIdParamSchema,
+    },
+    response: patientDetailedResSchema,
+    responses: {
+      '200': {
+        description: 'Patient fetched successfully',
+        schema: patientDetailedResSchema,
+      },
+      '404': {
+        description: 'Patient not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { id } = req.params;
+      const data = await patientService.getById(id);
+
+      res.json({
+        message: 'Patient fetched successfully',
+        data,
       });
     },
   });
@@ -146,7 +187,7 @@ route()
   .description('Update patient medical and wellness information by ID.')
   .tags('Patients')
   .define({
-    userRoles: allAdminRoles,
+    userRoles: [],
     auth: true,
     validate: {
       params: patientIdParamSchema,
@@ -169,6 +210,57 @@ route()
 
       res.json({
         message: 'Patient updated successfully',
+        data,
+      });
+    },
+  });
+
+// GET /api/patients/:patientId/guardians
+route()
+  .router(patientRouter)
+  .method('get')
+  .path('/:patientId/guardians')
+  .openapiPath('/api/patients/{patientId}/guardians')
+  .operationId('listPatientGuardians')
+  .summary('List patient guardians')
+  .description(
+    'Retrieve all guardians linked to a patient with their link status and permissions. Only the patient themself or an admin can access it.',
+  )
+  .tags('Patients')
+  .define({
+    userRoles: [],
+    middlewares: [isPatientOrAdmin],
+    auth: true,
+    validate: {
+      params: patientGuardiansParamsSchema,
+    },
+    response: listPatientGuardiansResSchema,
+    responses: {
+      '200': {
+        description: 'Patient guardians fetched successfully',
+        schema: listPatientGuardiansResSchema,
+      },
+      '403': {
+        description: 'Current user is not this patient or an admin',
+      },
+      '404': {
+        description: 'Patient not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { patientId } = req.params;
+
+      const isAdmin = allAdminRoles.some((role) => role === req.user.role);
+
+      if (!isAdmin && req.user.id !== patientId) {
+        throw new ForbiddenException('You can only view guardians of your own patient account');
+      }
+
+      const data = await patientService.listGuardians(patientId);
+
+      res.json({
+        message: 'Patient guardians fetched successfully',
         data,
       });
     },
@@ -225,20 +317,20 @@ route()
     },
   });
 
-// POST /api/patients/:id/guardian-patients/link
+// POST /api/patients/:id/guardianships/link
 route()
   .router(patientRouter)
   .method('post')
-  .path('/:id/guardian-patients/link')
-  .openapiPath('/api/patients/{id}/guardian-patients/link')
+  .path('/:id/guardianships/link')
+  .openapiPath('/api/patients/{id}/guardianships/link')
   .operationId('linkGuardianPatient')
-  .summary('Link guardian with patient (admin)')
+  .summary('Link guardian with patient')
   .description(
-    'Admin-only: creates a guardianship between the patient and the guardian identified by email. Fails if the relation already exists.',
+    'Creates a guardianship between the patient and the guardian identified by email. Fails if the relation already exists.',
   )
   .tags('Patients')
   .define({
-    userRoles: allAdminRoles,
+    userRoles: [],
     auth: true,
     validate: {
       params: patientIdParamSchema,

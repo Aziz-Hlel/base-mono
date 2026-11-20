@@ -14,6 +14,7 @@ import {
   type Prisma,
 } from '@base-monorepo-v2/db/prisma';
 import { GuardianshipMapper } from '../guardianship/guardianship.mapper';
+import { PatientMapper } from '../patient/patient.mapper';
 import { GuardianMapper } from './guardian.mapper';
 
 class GuardianService {
@@ -190,6 +191,38 @@ class GuardianService {
     ]);
 
     return this.getById(id);
+  };
+
+  listPatients = async (guardianId: string) => {
+    const guardian = await prisma.guardian.findUnique({
+      where: { id: guardianId },
+      include: {
+        guardianships: {
+          include: {
+            patient: {
+              include: {
+                profile: {
+                  include: {
+                    user: true,
+                    avatar: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!guardian) {
+      throw new NotFoundException(`Guardian with id ${guardianId} not found`, {
+        code: ERROR_CODES.GUARDIAN.NOT_FOUND,
+      });
+    }
+
+    return guardian.guardianships.map((guardianship) =>
+      PatientMapper.toMinimalRes(guardianship.patient),
+    );
   };
 
   linkPatient = async (guardianId: string, data: LinkPatientGuardianReq) => {

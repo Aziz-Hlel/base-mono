@@ -1,3 +1,4 @@
+import type { GuardianMinimalRes } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-minimal.res';
 import type { GuardianMinimalWithPatientsRes } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-minimal-with-patients.res';
 import type { GuardianRes } from '@base-monorepo-v2/contracts/schemas/guardian/guardian.res';
 import type { Prisma } from '@base-monorepo-v2/db/prisma';
@@ -41,6 +42,25 @@ export class GuardianMapper {
       ),
       createdAt: guardian.createdAt.toISOString(),
       updatedAt: guardian.updatedAt.toISOString(),
+    };
+  };
+
+  static toMinimalRes = (
+    guardian: Prisma.GuardianGetPayload<{
+      include: {
+        profile: {
+          include: {
+            user: true;
+            avatar: true;
+          };
+        };
+      };
+    }>,
+  ): GuardianMinimalRes => {
+    return {
+      id: guardian.id,
+      user: UserMapper.toMinimalRes(guardian.profile.user),
+      profile: ProfileMapper.toMinimalRes(guardian.profile),
     };
   };
 

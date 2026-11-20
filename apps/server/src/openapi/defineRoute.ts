@@ -3,6 +3,7 @@ import { authMiddleware } from '@/middlewares/app/authenticate';
 import requireUserRoles from '@/middlewares/app/requirePermission.middleware';
 import { validateMiddleware } from '@/middlewares/validate.middleware';
 import type { AccessTokenPayload } from '@/modules/auth/jwt.service';
+import type { AuthRequest } from '@/types/api/authRequest';
 import type { SucessResponseParams } from '@/types/express';
 import type { RouteParameter } from '@asteasolutions/zod-to-openapi/dist/openapi-registry';
 import type { UserRole } from '@base-monorepo-v2/db/prisma';
@@ -58,6 +59,7 @@ export type ApiRoute<
 
   auth: TAuth;
   userRoles: UserRole[];
+  middlewares?: ((req: AuthRequest, res: Response, next: NextFunction) => void)[];
 
   validate: {
     body?: TBody;
@@ -155,11 +157,13 @@ export const defineRoute = <
 ) => {
   const routerWithMethod = params.router[params.method].bind(params.router);
 
-  const middlewares = [];
+  let middlewares: ((req: any, res: Response, next: NextFunction) => void)[] = [];
+
   if (params.auth) middlewares.push(authMiddleware);
   if (Object.keys(params.validate).length > 0)
     middlewares.push(validateMiddleware(params.validate));
   if (Object.keys(params.userRoles).length > 0) middlewares.push(requireUserRoles);
+  if (params.middlewares) middlewares = middlewares.concat(params.middlewares);
 
   const requestHandler = asyncHandler(params.controller);
   routerWithMethod(params.path, ...middlewares, requestHandler);

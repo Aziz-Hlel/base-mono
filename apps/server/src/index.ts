@@ -3,10 +3,12 @@ import { z } from 'zod';
 import { createExpressApp } from './app';
 import initializeServices from './bootstrap';
 import ENV from './env';
+import seed from './seed';
 
 async function start() {
   extendZodWithOpenApi(z);
   await initializeServices();
+  await seed();
 
   const app = createExpressApp();
   app.on('mount', (error) => {

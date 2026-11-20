@@ -35,6 +35,7 @@ model Guardianship {
     linkStatus   GuardianLinkStatus    @default(PENDING)
 
     // TODO: Permissions granted by the patient
+    canViewFeelingLogs     Boolean @default(false)
     canViewMedicalInfo    Boolean @default(false)
     canManageAppointments Boolean @default(false)
     canManageMedications  Boolean @default(false)
@@ -47,5 +48,5 @@ model Guardianship {
     patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 
     @@unique([guardianId, patientId])
-	@@map("guardianship")
+    @@map("guardianship")
 }

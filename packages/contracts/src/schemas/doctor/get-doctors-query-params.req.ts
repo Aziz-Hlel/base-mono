@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { baseQueryParamsSchema } from '../../base/shared/query-params.base-schema';
+import { baseQueryParamsSchema } from '../../request-parameters/query-params.base-schema';
 import type { DoctorMinimalRes } from './doctor-minimal.res';
 
 type TableRowType = DoctorMinimalRes;

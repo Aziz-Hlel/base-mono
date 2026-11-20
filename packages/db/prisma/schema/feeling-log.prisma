@@ -1,0 +1,45 @@
+enum FeelingSymptom {
+    MILD_NAUSEA // غثيان خفيف
+    LIMB_TINGLING // وخز في الأطراف
+    DRY_MOUTH // جفاف الحلق والريق
+    JOINT_PAIN // ألم في المفاصل
+}
+
+enum SymptomPattern {
+    CONTINUOUS // مستمر
+    INTERMITTENT // متقطع أو عابر
+}
+
+enum SymptomOnset {
+    THIS_MORNING // منذ الصباح الباكر
+    LAST_NIGHT // منذ الليلة الماضية
+    YESTERDAY
+    FEW_DAYS_AGO
+    CUSTOM_DATE // patient picked a date
+}
+
+model FeelingLog {
+    id String @id @default(uuid()) @db.Uuid
+
+    patientId String  @db.Uuid
+    patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+    // Daily comfort indicators — each 1..10 (range enforced in contracts/zod)
+    energyLevel     Int @db.SmallInt // 1 = needs full rest, 10 = active & energetic
+    fatigueLevel    Int @db.SmallInt // 1 = light & active, 10 = heavy limbs
+    mentalClarity   Int @db.SmallInt // 1 = foggy, 10 = fully clear
+    moodLevel       Int @db.SmallInt // 1 = sad / anxious, 10 = joyful & grateful
+    physicalComfort Int @db.SmallInt // 1 = constant pain, 10 = fully comfortable
+
+    // Symptoms (empty array = "no new symptoms today")
+    symptoms         FeelingSymptom[]
+    symptomPattern   SymptomPattern?
+    symptomOnset     SymptomOnset
+    symptomStartedAt DateTime? // always filled, including for presets
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([patientId, createdAt])
+    @@map("feeling_logs")
+}

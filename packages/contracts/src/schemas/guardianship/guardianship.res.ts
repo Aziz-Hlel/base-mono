@@ -6,12 +6,11 @@ export const guardianshipResSchema = z
     id: guardianshipBaseSchema.id,
     relationship: guardianshipBaseSchema.relationship,
     linkStatus: guardianshipBaseSchema.linkStatus,
+    canViewFeelingLogs: guardianshipBaseSchema.canViewFeelingLogs,
     canViewMedicalInfo: guardianshipBaseSchema.canViewMedicalInfo,
     canManageAppointments: guardianshipBaseSchema.canManageAppointments,
     canManageMedications: guardianshipBaseSchema.canManageMedications,
     receivesNotifications: guardianshipBaseSchema.receivesNotifications,
-    guardianId: guardianshipBaseSchema.guardianId,
-    patientId: guardianshipBaseSchema.patientId,
   })
   .meta({
     id: 'GuardianshipRes',

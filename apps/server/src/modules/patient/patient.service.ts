@@ -90,13 +90,10 @@ class PatientService {
   };
 
   createFull = async (data: CreateFullPatientReq) => {
-    // 1. Create the user (handles duplicate-email conflict internally)
     const user = await authService.register(data.user);
 
-    // 2. Create the profile linked to the new user
     await profileService.create(user.id, data.profile);
 
-    // 3. Create the patient record (also sets profile role to PATIENT)
     return this.create(user.id, data.patient);
   };
 
@@ -178,6 +175,36 @@ class PatientService {
     });
 
     return this.getById(id);
+  };
+
+  listGuardians = async (patientId: string) => {
+    const patient = await prisma.patient.findUnique({
+      where: { id: patientId },
+      include: {
+        guardianships: {
+          include: {
+            guardian: {
+              include: {
+                profile: {
+                  include: {
+                    user: true,
+                    avatar: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!patient) {
+      throw new NotFoundException(`Patient with id ${patientId} not found`, {
+        code: ERROR_CODES.PATIENT.NOT_FOUND,
+      });
+    }
+
+    return patient.guardianships.map(GuardianshipMapper.toPatientGuardianRes);
   };
 
   linkGuardian = async (patientId: string, data: LinkGuardianPatientReq) => {

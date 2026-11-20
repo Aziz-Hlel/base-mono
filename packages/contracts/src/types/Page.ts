@@ -7,7 +7,7 @@ export type Pageable = {
   totalPages: number;
 };
 
-export type PageRes<T> = {
+export type Page<T> = {
   data: T[];
   pagination: Pageable;
 };

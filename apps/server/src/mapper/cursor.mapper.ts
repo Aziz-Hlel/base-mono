@@ -1,12 +1,15 @@
+import type { Cursor } from '@base-monorepo-v2/contracts/types/Cursor';
+
 export class CursorMapper {
-  static toCursor<T>(params: { data: T[]; nextCursor: string | null }) {
-    const { data: items, nextCursor } = params;
+  static toCursor<T>(params: { data: T[]; nextCursor: string | null; limit: number }): Cursor<T> {
+    const { data, nextCursor, limit } = params;
 
     return {
-      items,
-      meta: {
+      data,
+      pagination: {
         nextCursor,
         hasNext: !!nextCursor,
+        limit,
       },
     };
   }

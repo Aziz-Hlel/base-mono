@@ -1,13 +1,20 @@
+import { ForbiddenException } from '@/exceptions';
+import canReadPatientFeelingLogs from '@/middlewares/app/canReadPatientFeelingLogs';
 import { route } from '@/openapi/routeBuilder';
+import { feelingLogResSchema } from '@base-monorepo-v2/contracts/schemas/feeling-log/feeling-log.res';
 import { guardianIdParamSchema } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardian-params.req';
+import { guardianPatientParamsSchema } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardian-patient-params.req';
 import { guardianQueryParams } from '@base-monorepo-v2/contracts/schemas/guardian/get-guardians-query-params.req';
 import { guardianMinimalWithPatientsResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian-minimal-with-patients.res';
 import { guardianResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/guardian.res';
 import { linkPatientGuardianReqSchema } from '@base-monorepo-v2/contracts/schemas/guardian/link-patient-guardian.req';
+import { listGuardianPatientsResSchema } from '@base-monorepo-v2/contracts/schemas/guardian/list-guardian-patients.res';
 import { updateGuardianReqSchema } from '@base-monorepo-v2/contracts/schemas/guardian/update-guardian.req';
 import { guardianshipResSchema } from '@base-monorepo-v2/contracts/schemas/guardianship/guardianship.res';
+import { cursorQueryParamsSchema } from '@base-monorepo-v2/contracts/types/Cursor';
 import allAdminRoles from '@base-monorepo-v2/contracts/utils/roles/all-admin-roles';
 import express from 'express';
+import { feelingLogService } from '../feeling-log/feeling-log.service';
 import { guardianService } from './guardian.service';
 
 const guardianRouter = express.Router();
@@ -81,6 +88,54 @@ route()
       res.json({
         message: 'Guardian fetched successfully',
         data: guardian,
+      });
+    },
+  });
+
+// GET /api/guardians/:id/patients
+route()
+  .router(guardianRouter)
+  .method('get')
+  .path('/:id/patients')
+  .openapiPath('/api/guardians/{id}/patients')
+  .operationId('listGuardianPatients')
+  .summary('List guardian patients')
+  .description(
+    'Retrieve all patients linked to a guardian with minimal info. Only the guardian themselves or an admin can access it.',
+  )
+  .tags('Guardians')
+  .define({
+    userRoles: [],
+    auth: true,
+    validate: {
+      params: guardianIdParamSchema,
+    },
+    response: listGuardianPatientsResSchema,
+    responses: {
+      '200': {
+        description: 'Guardian patients fetched successfully',
+        schema: listGuardianPatientsResSchema,
+      },
+      '403': {
+        description: 'Current user is not this guardian or an admin',
+      },
+      '404': {
+        description: 'Guardian not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { id } = req.params;
+
+      const isAdmin = allAdminRoles.some((role) => role === req.user.role);
+
+      if (!isAdmin && req.user.id !== id) throw new ForbiddenException();
+
+      const data = await guardianService.listPatients(id);
+
+      res.json({
+        message: 'Guardian patients fetched successfully',
+        data,
       });
     },
   });
@@ -161,12 +216,12 @@ route()
     },
   });
 
-// POST /api/guardians/:id/guardian-patients/link
+// POST /api/guardians/:id/guardianships/link
 route()
   .router(guardianRouter)
   .method('post')
-  .path('/:id/guardian-patients/link')
-  .openapiPath('/api/guardians/{id}/guardian-patients/link')
+  .path('/:id/guardianships/link')
+  .openapiPath('/api/guardians/{id}/guardianships/link')
   .operationId('linkPatientGuardian')
   .summary('Link patient with guardian (admin)')
   .description(
@@ -201,6 +256,52 @@ route()
       res.status(201).json({
         message: 'Patient linked with guardian successfully',
         data,
+      });
+    },
+  });
+
+// GET /api/guardians/:id/patients/:patientId/feeling-logs
+route()
+  .router(guardianRouter)
+  .method('get')
+  .path('/:id/patients/:patientId/feeling-logs')
+  .openapiPath('/api/guardians/{id}/patients/{patientId}/feeling-logs')
+  .operationId('listPatientFeelingLogsForGuardian')
+  .summary("List a patient's feeling logs (guardian view)")
+  .description(
+    'Retrieve feeling logs for a patient the guardian has an active guardianship over. Only the guardian themselves or an admin can access it.',
+  )
+  .tags('Guardians')
+  .define({
+    userRoles: [],
+    auth: true,
+    middlewares: [canReadPatientFeelingLogs('patientId')],
+    response: feelingLogResSchema,
+    validate: {
+      params: guardianPatientParamsSchema,
+      query: cursorQueryParamsSchema,
+    },
+    responses: {
+      '200': {
+        description: 'Feeling logs fetched successfully',
+      },
+      '403': {
+        description:
+          'Current user is not this guardian, or no active guardianship exists for this patient',
+      },
+      '404': {
+        description: 'Guardian not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { patientId } = req.params;
+
+      const data = await feelingLogService.listByCursor(patientId, req.query);
+
+      res.json({
+        message: 'Feeling logs fetched successfully',
+        ...data,
       });
     },
   });
