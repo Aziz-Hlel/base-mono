@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { guardianSeedData } from '../data/dev';
+import { guardianSeedData } from '../data/dev/actors';
 
 class GuardianSeedService {
   public async seed() {

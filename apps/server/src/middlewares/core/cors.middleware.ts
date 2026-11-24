@@ -6,7 +6,7 @@ export function corsMiddleware() {
   return cors({
     origin: hasEnvProdFields(ENV) ? ENV.ALLOWED_ORIGIN_PATTERNS : '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-Client'],
     exposedHeaders: ['Content-Length'],
     credentials: true,
     maxAge: 86400, // cache preflight for 24h

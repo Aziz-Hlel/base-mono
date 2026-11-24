@@ -63,6 +63,11 @@ export const ERROR_CODES = {
     NOT_FOUND: 'DOCTOR_NOT_FOUND',
     ALREADY_EXISTS: 'DOCTOR_ALREADY_EXISTS',
   },
+  CHATROOM: {
+    NOT_FOUND: 'CHATROOM_NOT_FOUND',
+    SELF_CHAT: 'CHATROOM_SELF_CHAT',
+    NOT_ALLOWED: 'CHATROOM_NOT_ALLOWED',
+  },
 } as const satisfies Record<string, Record<string, string>>;
 
 export const ALL_ERROR_CODES = Object.values(ERROR_CODES).flatMap((group) => Object.values(group));

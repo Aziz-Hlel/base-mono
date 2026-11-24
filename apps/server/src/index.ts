@@ -1,9 +1,11 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+import { createServer } from 'node:http';
 import { z } from 'zod';
 import { createExpressApp } from './app';
 import initializeServices from './bootstrap';
 import ENV from './env';
 import seed from './seed';
+import { createSocketServer } from './socket';
 
 async function start() {
   extendZodWithOpenApi(z);
@@ -15,7 +17,10 @@ async function start() {
     console.error('❌ ERROR : oops Server failed to start', error);
     process.exit(1);
   });
-  app.listen(ENV.API_PORT, () => {
+  const httpServer = createServer(app);
+  createSocketServer(httpServer);
+
+  httpServer.listen(ENV.API_PORT, () => {
     console.log(`✅ SUCCESS : Server running on port ${ENV.API_PORT}`);
   });
 }

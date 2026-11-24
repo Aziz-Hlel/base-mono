@@ -1,6 +1,6 @@
 import prisma from '@/db';
 import { passwordService } from '@/modules/auth/password.service';
-import { userSeedData } from '../data/dev';
+import { userSeedData } from '../data/dev/actors';
 
 class UserSeedService {
   public async seed() {

@@ -1,5 +1,6 @@
 import authRouter from '@/modules/auth/auth.routes';
 import calendarRouter from '@/modules/calendar/calendar.routes';
+import chatRouter from '@/modules/chat/chat.routes';
 import diaryNoteRouter from '@/modules/diary-note/diary-note.routes';
 import doctorRouter from '@/modules/doctor/doctor.routes';
 import feedRouter from '@/modules/feed/feed.routes';
@@ -24,5 +25,6 @@ appRoutes.use('/patients/:patientId/feeling-logs', feelingLogRouter);
 appRoutes.use('/patients/:patientId/calendars', calendarRouter);
 appRoutes.use('/profiles/:profileId/diary-notes', diaryNoteRouter);
 appRoutes.use('/feeds', feedRouter);
+appRoutes.use('/chats', chatRouter);
 
 export default appRoutes;

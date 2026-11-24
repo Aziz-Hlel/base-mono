@@ -1,5 +1,5 @@
 import prisma from '@/db';
-import { doctorSeedData } from '../data/dev';
+import { doctorSeedData } from '../data/dev/actors';
 
 class DoctorSeedService {
   public async seed() {

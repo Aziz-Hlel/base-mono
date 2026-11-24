@@ -1,0 +1,58 @@
+model ChatroomMember {
+    chatroomId String   @db.Uuid
+    chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+
+    profileId String  @db.Uuid
+    profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+    lastReadAt DateTime?
+    joinedAt   DateTime  @default(now())
+
+    @@id([chatroomId, profileId])
+    @@index([profileId])
+}
+
+model Message {
+    id      String @id @default(uuid()) @db.Uuid
+    content String @db.Text
+
+    senderId String  @db.Uuid
+    sender   Profile @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+    chatroomId String   @db.Uuid
+    chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+
+    lastMessage Chatroom? @relation("lastMessage")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([chatroomId, createdAt(sort: Desc)])
+}
+
+enum ChatroomType {
+    MEDICAL
+    GUARDIANSHIP
+    ADMIN
+    SUPPORT
+}
+
+model Chatroom {
+    id   String       @id @default(uuid()) @db.Uuid
+    type ChatroomType
+
+    // Sorted "profileA_profileB" for direct rooms; null for support/group rooms
+    directKey String? @unique
+
+    lastMessageId String?   @unique @db.Uuid
+    lastMessage   Message?  @relation("lastMessage", fields: [lastMessageId], references: [id], onDelete: SetNull)
+    lastMessageAt DateTime?
+
+    messages Message[]
+    members  ChatroomMember[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([lastMessageAt(sort: Desc)])
+}

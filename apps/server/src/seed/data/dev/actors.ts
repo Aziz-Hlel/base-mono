@@ -163,7 +163,7 @@ const userSeedData = {
 const profileSeedData = {
   // patients
   patient1: {
-    id: genUuid('patient1'),
+    id: userSeedData.patient1.id,
     firstName: 'Alice',
     lastName: 'Martin',
     gender: Gender.FEMALE,
@@ -172,7 +172,7 @@ const profileSeedData = {
     role: ProfileRole.PATIENT,
   },
   patient2: {
-    id: genUuid('patient2'),
+    id: userSeedData.patient2.id,
     firstName: 'Bob',
     lastName: 'Johnson',
     gender: Gender.MALE,
@@ -181,7 +181,7 @@ const profileSeedData = {
     role: ProfileRole.PATIENT,
   },
   patient3: {
-    id: genUuid('patient3'),
+    id: userSeedData.patient3.id,
     firstName: 'Clara',
     lastName: 'Nguyen',
     gender: Gender.FEMALE,
@@ -190,7 +190,7 @@ const profileSeedData = {
     role: ProfileRole.PATIENT,
   },
   patient4: {
-    id: genUuid('patient4'),
+    id: userSeedData.patient4.id,
     firstName: 'David',
     lastName: 'Smith',
     gender: Gender.MALE,
@@ -199,7 +199,7 @@ const profileSeedData = {
     role: ProfileRole.PATIENT,
   },
   patient5: {
-    id: genUuid('patient5'),
+    id: userSeedData.patient5.id,
     firstName: 'Eva',
     lastName: 'Brown',
     gender: Gender.FEMALE,
@@ -209,7 +209,7 @@ const profileSeedData = {
   },
   // doctors
   doctor1: {
-    id: genUuid('doctor1'),
+    id: userSeedData.doctor1.id,
     firstName: 'Frank',
     lastName: 'Garcia',
     gender: Gender.MALE,
@@ -218,7 +218,7 @@ const profileSeedData = {
     role: ProfileRole.DOCTOR,
   },
   doctor2: {
-    id: genUuid('doctor2'),
+    id: userSeedData.doctor2.id,
     firstName: 'Grace',
     lastName: 'Lee',
     gender: Gender.FEMALE,
@@ -227,7 +227,7 @@ const profileSeedData = {
     role: ProfileRole.DOCTOR,
   },
   doctor3: {
-    id: genUuid('doctor3'),
+    id: userSeedData.doctor3.id,
     firstName: 'Henry',
     lastName: 'Wilson',
     gender: Gender.MALE,
@@ -236,7 +236,7 @@ const profileSeedData = {
     role: ProfileRole.DOCTOR,
   },
   doctor4: {
-    id: genUuid('doctor4'),
+    id: userSeedData.doctor4.id,
     firstName: 'Irene',
     lastName: 'Taylor',
     gender: Gender.FEMALE,
@@ -245,7 +245,7 @@ const profileSeedData = {
     role: ProfileRole.DOCTOR,
   },
   doctor5: {
-    id: genUuid('doctor5'),
+    id: userSeedData.doctor5.id,
     firstName: 'James',
     lastName: 'Anderson',
     gender: Gender.MALE,
@@ -255,7 +255,7 @@ const profileSeedData = {
   },
   // guardians
   guardian1: {
-    id: genUuid('guardian1'),
+    id: userSeedData.guardian1.id,
     firstName: 'Karen',
     lastName: 'Thomas',
     gender: Gender.FEMALE,
@@ -264,7 +264,7 @@ const profileSeedData = {
     role: ProfileRole.GUARDIAN,
   },
   guardian2: {
-    id: genUuid('guardian2'),
+    id: userSeedData.guardian2.id,
     firstName: 'Liam',
     lastName: 'Jackson',
     gender: Gender.MALE,
@@ -273,7 +273,7 @@ const profileSeedData = {
     role: ProfileRole.GUARDIAN,
   },
   guardian3: {
-    id: genUuid('guardian3'),
+    id: userSeedData.guardian3.id,
     firstName: 'Mia',
     lastName: 'White',
     gender: Gender.FEMALE,
@@ -282,7 +282,7 @@ const profileSeedData = {
     role: ProfileRole.GUARDIAN,
   },
   guardian4: {
-    id: genUuid('guardian4'),
+    id: userSeedData.guardian4.id,
     firstName: 'Noah',
     lastName: 'Harris',
     gender: Gender.MALE,
@@ -291,7 +291,7 @@ const profileSeedData = {
     role: ProfileRole.GUARDIAN,
   },
   guardian5: {
-    id: genUuid('guardian5'),
+    id: userSeedData.guardian5.id,
     firstName: 'Olivia',
     lastName: 'Clark',
     gender: Gender.FEMALE,
@@ -305,7 +305,7 @@ const profileSeedData = {
 
 const patientSeedData = {
   patient1: {
-    id: genUuid('patient1'),
+    id: userSeedData.patient1.id,
     cancerType: CancerType.BREAST,
     cancerSubtype: 'HER2+',
     cancerStage: CancerStage.STAGE_II,
@@ -315,7 +315,7 @@ const patientSeedData = {
     activityLevel: ActivityLevel.LIGHT,
   },
   patient2: {
-    id: genUuid('patient2'),
+    id: userSeedData.patient2.id,
     cancerType: CancerType.LUNG,
     cancerSubtype: 'Non-small cell',
     cancerStage: CancerStage.STAGE_III,
@@ -325,7 +325,7 @@ const patientSeedData = {
     activityLevel: ActivityLevel.SEDENTARY,
   },
   patient3: {
-    id: genUuid('patient3'),
+    id: userSeedData.patient3.id,
     cancerType: CancerType.LEUKEMIA,
     cancerSubtype: null,
     cancerStage: CancerStage.STAGE_I,
@@ -335,7 +335,7 @@ const patientSeedData = {
     activityLevel: ActivityLevel.LIGHT,
   },
   patient4: {
-    id: genUuid('patient4'),
+    id: userSeedData.patient4.id,
     cancerType: CancerType.COLORECTAL,
     cancerSubtype: null,
     cancerStage: CancerStage.STAGE_II,
@@ -345,7 +345,7 @@ const patientSeedData = {
     activityLevel: ActivityLevel.MODERATE,
   },
   patient5: {
-    id: genUuid('patient5'),
+    id: userSeedData.patient5.id,
     cancerType: CancerType.THYROID,
     cancerSubtype: null,
     cancerStage: CancerStage.STAGE_I,
@@ -360,7 +360,7 @@ const patientSeedData = {
 
 const doctorSeedData = {
   doctor1: {
-    id: genUuid('doctor1'),
+    id: userSeedData.doctor1.id,
     titleEn: 'Dr.',
     titleAr: 'دكتور',
     bioEn: 'Oncologist specializing in breast cancer treatment with over 15 years of experience.',
@@ -372,7 +372,7 @@ const doctorSeedData = {
     licenseNumber: 'LIC-2008-001',
   },
   doctor2: {
-    id: genUuid('doctor2'),
+    id: userSeedData.doctor2.id,
     titleEn: 'Dr.',
     titleAr: 'دكتورة',
     bioEn: 'Radiation oncologist focused on lung and colorectal cancers.',
@@ -384,7 +384,7 @@ const doctorSeedData = {
     licenseNumber: 'LIC-2012-002',
   },
   doctor3: {
-    id: genUuid('doctor3'),
+    id: userSeedData.doctor3.id,
     titleEn: 'Prof.',
     titleAr: 'أستاذ',
     bioEn: 'Hematologist with expertise in leukemia and lymphoma.',
@@ -396,7 +396,7 @@ const doctorSeedData = {
     licenseNumber: 'LIC-2003-003',
   },
   doctor4: {
-    id: genUuid('doctor4'),
+    id: userSeedData.doctor4.id,
     titleEn: 'Dr.',
     titleAr: 'دكتورة',
     bioEn: 'Psycho-oncologist supporting patients through emotional and psychological challenges.',
@@ -408,7 +408,7 @@ const doctorSeedData = {
     licenseNumber: 'LIC-2015-004',
   },
   doctor5: {
-    id: genUuid('doctor5'),
+    id: userSeedData.doctor5.id,
     titleEn: 'Dr.',
     titleAr: 'دكتور',
     bioEn: 'Surgical oncologist with decades of experience in prostate and thyroid surgeries.',
@@ -425,19 +425,19 @@ const doctorSeedData = {
 
 const guardianSeedData = {
   guardian1: {
-    id: genUuid('guardian1'),
+    id: userSeedData.guardian1.id,
   },
   guardian2: {
-    id: genUuid('guardian2'),
+    id: userSeedData.guardian2.id,
   },
   guardian3: {
-    id: genUuid('guardian3'),
+    id: userSeedData.guardian3.id,
   },
   guardian4: {
-    id: genUuid('guardian4'),
+    id: userSeedData.guardian4.id,
   },
   guardian5: {
-    id: genUuid('guardian5'),
+    id: userSeedData.guardian5.id,
   },
 } as const satisfies Record<string, Prisma.GuardianUncheckedCreateInput>;
 
@@ -447,8 +447,8 @@ const guardianshipSeedData = {
   // patient1 ← guardian1 & guardian2
   guardianship1: {
     id: genUuid('guardianship1'),
-    guardianId: genUuid('guardian1'),
-    patientId: genUuid('patient1'),
+    guardianId: guardianSeedData.guardian1.id,
+    patientId: patientSeedData.patient1.id,
     relationship: GuardianRelationship.PARENT,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
@@ -458,8 +458,8 @@ const guardianshipSeedData = {
   },
   guardianship2: {
     id: genUuid('guardianship2'),
-    guardianId: genUuid('guardian2'),
-    patientId: genUuid('patient1'),
+    guardianId: guardianSeedData.guardian2.id,
+    patientId: patientSeedData.patient1.id,
     relationship: GuardianRelationship.SPOUSE,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
@@ -470,8 +470,8 @@ const guardianshipSeedData = {
   // patient2 ← guardian3 & guardian4
   guardianship3: {
     id: genUuid('guardianship3'),
-    guardianId: genUuid('guardian3'),
-    patientId: genUuid('patient2'),
+    guardianId: guardianSeedData.guardian3.id,
+    patientId: patientSeedData.patient2.id,
     relationship: GuardianRelationship.SIBLING,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
@@ -481,8 +481,8 @@ const guardianshipSeedData = {
   },
   guardianship4: {
     id: genUuid('guardianship4'),
-    guardianId: genUuid('guardian4'),
-    patientId: genUuid('patient2'),
+    guardianId: guardianSeedData.guardian4.id,
+    patientId: patientSeedData.patient2.id,
     relationship: GuardianRelationship.CAREGIVER,
     linkStatus: GuardianLinkStatus.PENDING,
     canViewMedicalInfo: false,

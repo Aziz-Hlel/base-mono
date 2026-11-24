@@ -1,6 +1,6 @@
 import prisma from '@/db';
 import { parseISODate } from '@base-monorepo-v2/contracts/utils/dayjs/utc';
-import { profileSeedData } from '../data/dev';
+import { profileSeedData } from '../data/dev/actors';
 
 class ProfileSeedService {
   public async seed() {
