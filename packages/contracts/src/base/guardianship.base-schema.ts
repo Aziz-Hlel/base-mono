@@ -9,9 +9,9 @@ export const guardianshipBaseSchema = {
   canViewFeelingLogs: z.boolean(),
   canViewDiaryNotes: z.boolean(),
   canViewMedicalInfo: z.boolean(),
-  canManageAppointments: z.boolean(),
-  canManageMedications: z.boolean(),
-  receivesNotifications: z.boolean(),
+  canViewAppointments: z.boolean(),
+  canViewMedications: z.boolean(),
+  canReceiveNotifications: z.boolean(),
   guardianId: z.uuid(),
   patientId: z.uuid(),
 };

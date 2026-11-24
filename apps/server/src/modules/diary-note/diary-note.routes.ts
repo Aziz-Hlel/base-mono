@@ -7,8 +7,9 @@ import { listDiaryNoteParamsSchema } from '@base-monorepo-v2/contracts/schemas/d
 import { updateDiaryNoteReqSchema } from '@base-monorepo-v2/contracts/schemas/diary-note/update-diary-note.req';
 import { cursorQueryParamsSchema } from '@base-monorepo-v2/contracts/types/Cursor';
 import express from 'express';
+import z from 'zod';
 import { diaryNoteService } from './diary-note.service';
-import canReadDiaryNotes from '@/middlewares/app/canReadDiaryNotes';
+import canReadDiaryNotes from './middlewares/canReadDiaryNotes';
 
 const diaryNoteRouter = express.Router({ mergeParams: true });
 
@@ -182,6 +183,49 @@ route()
 
       res.json({
         message: 'Diary note updated successfully',
+        data,
+      });
+    },
+  });
+
+// DELETE /api/profiles/:profileId/diary-notes/:id
+route()
+  .router(diaryNoteRouter)
+  .method('delete')
+  .path('/:id')
+  .openapiPath('/api/profiles/{profileId}/diary-notes/{id}')
+  .operationId('deleteDiaryNote')
+  .summary('Delete diary note')
+  .description(
+    "The profile owner deletes one of their diary notes. Its feed post and that post's reactions are deleted too; attached media is kept.",
+  )
+  .tags('Diary Notes')
+  .define({
+    userRoles: [],
+    middlewares: [isProfileOwner('profileId')],
+    auth: true,
+    validate: {
+      params: diaryNoteIdParamSchema,
+    },
+    response: z.null(),
+    responses: {
+      '200': {
+        description: 'Diary note deleted successfully',
+      },
+      '403': {
+        description: 'Current user is not the owner of this profile',
+      },
+      '404': {
+        description: 'Diary note not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { id, profileId } = req.params;
+      const data = await diaryNoteService.delete(id, profileId);
+
+      res.json({
+        message: 'Diary note deleted successfully',
         data,
       });
     },

@@ -3,10 +3,10 @@ import { feedBaseSchema } from '../../base/feed.base-schema';
 
 export const updateFeedReqSchema = z
   .object({
-    status: feedBaseSchema.status.optional(),
-    isPinned: feedBaseSchema.isPinned.optional(),
-    journeyStage: feedBaseSchema.journeyStage.optional(),
-    relationShip: feedBaseSchema.relationShip.optional(),
+    status: feedBaseSchema.status,
+    isPinned: feedBaseSchema.isPinned,
+    journeyStage: feedBaseSchema.journeyStage,
+    relationShip: feedBaseSchema.relationShip,
   })
   .meta({
     id: 'UpdateFeedReq',

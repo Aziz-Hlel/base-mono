@@ -127,9 +127,9 @@ class GuardianshipService {
       data: {
         relationship: data.relationship,
         canViewMedicalInfo: data.canViewMedicalInfo,
-        canManageAppointments: data.canManageAppointments,
-        canManageMedications: data.canManageMedications,
-        receivesNotifications: data.receivesNotifications,
+        canViewAppointments: data.canViewAppointments,
+        canViewMedications: data.canViewMedications,
+        canReceiveNotifications: data.canReceiveNotifications,
       },
     });
 

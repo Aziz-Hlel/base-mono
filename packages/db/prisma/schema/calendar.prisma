@@ -1,0 +1,24 @@
+enum CalendarType {
+    DOCTOR_APPOINTMENT
+    CHECKUP
+    CHEMOTHERAPY
+}
+
+model Calendar {
+    id String @id @default(uuid()) @db.Uuid
+
+    title       String
+    description String?
+
+    type       CalendarType @default(DOCTOR_APPOINTMENT)
+    doctorName String?
+    clinicName String?
+
+    patientId String  @db.Uuid
+    patient   Patient @relation(fields: [patientId], references: [id])
+
+    startDate DateTime  @default(now())
+    endDate   DateTime? @default(now())
+
+    @@map("calendar")
+}

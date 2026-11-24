@@ -9,9 +9,9 @@ export const guardianshipResSchema = z
     canViewFeelingLogs: guardianshipBaseSchema.canViewFeelingLogs,
     canViewDiaryNotes: guardianshipBaseSchema.canViewDiaryNotes,
     canViewMedicalInfo: guardianshipBaseSchema.canViewMedicalInfo,
-    canManageAppointments: guardianshipBaseSchema.canManageAppointments,
-    canManageMedications: guardianshipBaseSchema.canManageMedications,
-    receivesNotifications: guardianshipBaseSchema.receivesNotifications,
+    canViewAppointments: guardianshipBaseSchema.canViewAppointments,
+    canViewMedications: guardianshipBaseSchema.canViewMedications,
+    canReceiveNotifications: guardianshipBaseSchema.canReceiveNotifications,
   })
   .meta({
     id: 'GuardianshipRes',

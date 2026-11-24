@@ -1,9 +1,9 @@
 import { ForbiddenException } from '@/exceptions';
+import isAdmin from '@/middlewares/app/utils/isAdmin';
 import { guardianshipService } from '@/modules/guardianship/guardianship.service';
 import type { AuthRequest } from '@/types/api/authRequest';
 import type { NextFunction, Response } from 'express';
 import z from 'zod';
-import isAdmin from './utils/isAdmin';
 
 const canReadDiaryNotes = (profileIdKey: string = 'patientId') => {
   return async (req: AuthRequest, _: Response, next: NextFunction) => {

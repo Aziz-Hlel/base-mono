@@ -94,6 +94,23 @@ class DiaryNoteService {
     return DiaryNoteMapper.toRes(diaryNote);
   };
 
+  delete = async (id: string, profileId: string) => {
+    const existing = await prisma.diaryNotes.findFirst({
+      where: { id, profileId },
+      select: { id: true },
+    });
+
+    if (!existing) {
+      throw new NotFoundException(`Diary note with id ${id} not found`, {
+        code: ERROR_CODES.DIARY_NOTE.NOT_FOUND,
+      });
+    }
+
+    await prisma.diaryNotes.delete({ where: { id } });
+
+    return null;
+  };
+
   private assertMediaExists = async (mediaIds: string[]) => {
     const uniqueIds = [...new Set(mediaIds)];
     if (uniqueIds.length === 0) return;

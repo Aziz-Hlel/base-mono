@@ -1,5 +1,5 @@
 model DiaryNotes {
-  id        String @id @default(uuid())
+  id        String @id @default(uuid()) @db.Uuid
   profileId String @db.Uuid
   feed      Feed?
 

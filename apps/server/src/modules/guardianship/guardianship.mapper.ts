@@ -12,9 +12,9 @@ export class GuardianshipMapper {
       canViewFeelingLogs: guardianship.canViewFeelingLogs,
       canViewDiaryNotes: guardianship.canViewDiaryNotes,
       canViewMedicalInfo: guardianship.canViewMedicalInfo,
-      canManageAppointments: guardianship.canManageAppointments,
-      canManageMedications: guardianship.canManageMedications,
-      receivesNotifications: guardianship.receivesNotifications,
+      canViewAppointments: guardianship.canViewAppointments,
+      canViewMedications: guardianship.canViewMedications,
+      canReceiveNotifications: guardianship.canReceiveNotifications,
     };
   };
 
@@ -40,9 +40,9 @@ export class GuardianshipMapper {
       linkStatus: guardianship.linkStatus,
       canViewFeelingLogs: guardianship.canViewFeelingLogs,
       canViewMedicalInfo: guardianship.canViewMedicalInfo,
-      canManageAppointments: guardianship.canManageAppointments,
-      canManageMedications: guardianship.canManageMedications,
-      receivesNotifications: guardianship.receivesNotifications,
+      canViewAppointments: guardianship.canViewAppointments,
+      canViewMedications: guardianship.canViewMedications,
+      canReceiveNotifications: guardianship.canReceiveNotifications,
       guardian: GuardianMapper.toMinimalRes(guardianship.guardian),
     };
   };

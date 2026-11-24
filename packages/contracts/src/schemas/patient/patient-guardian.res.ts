@@ -9,9 +9,9 @@ export const patientGuardianResSchema = z
     linkStatus: guardianshipBaseSchema.linkStatus,
     canViewFeelingLogs: guardianshipBaseSchema.canViewFeelingLogs,
     canViewMedicalInfo: guardianshipBaseSchema.canViewMedicalInfo,
-    canManageAppointments: guardianshipBaseSchema.canManageAppointments,
-    canManageMedications: guardianshipBaseSchema.canManageMedications,
-    receivesNotifications: guardianshipBaseSchema.receivesNotifications,
+    canViewAppointments: guardianshipBaseSchema.canViewAppointments,
+    canViewMedications: guardianshipBaseSchema.canViewMedications,
+    canReceiveNotifications: guardianshipBaseSchema.canReceiveNotifications,
     guardian: guardianMinimalResSchema,
   })
   .meta({

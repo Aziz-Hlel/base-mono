@@ -452,9 +452,9 @@ const guardianshipSeedData = {
     relationship: GuardianRelationship.PARENT,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
-    canManageAppointments: true,
-    canManageMedications: false,
-    receivesNotifications: true,
+    canViewAppointments: true,
+    canViewMedications: false,
+    canReceiveNotifications: true,
   },
   guardianship2: {
     id: genUuid('guardianship2'),
@@ -463,9 +463,9 @@ const guardianshipSeedData = {
     relationship: GuardianRelationship.SPOUSE,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
-    canManageAppointments: false,
-    canManageMedications: true,
-    receivesNotifications: true,
+    canViewAppointments: false,
+    canViewMedications: true,
+    canReceiveNotifications: true,
   },
   // patient2 ← guardian3 & guardian4
   guardianship3: {
@@ -475,9 +475,9 @@ const guardianshipSeedData = {
     relationship: GuardianRelationship.SIBLING,
     linkStatus: GuardianLinkStatus.ACCEPTED,
     canViewMedicalInfo: true,
-    canManageAppointments: true,
-    canManageMedications: false,
-    receivesNotifications: true,
+    canViewAppointments: true,
+    canViewMedications: false,
+    canReceiveNotifications: true,
   },
   guardianship4: {
     id: genUuid('guardianship4'),
@@ -486,9 +486,9 @@ const guardianshipSeedData = {
     relationship: GuardianRelationship.CAREGIVER,
     linkStatus: GuardianLinkStatus.PENDING,
     canViewMedicalInfo: false,
-    canManageAppointments: false,
-    canManageMedications: false,
-    receivesNotifications: true,
+    canViewAppointments: false,
+    canViewMedications: false,
+    canReceiveNotifications: true,
   },
 } as const satisfies Record<string, Prisma.GuardianshipUncheckedCreateInput>;
 

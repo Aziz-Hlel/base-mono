@@ -38,9 +38,9 @@ model Guardianship {
     canViewFeelingLogs    Boolean @default(false)
     canViewDiaryNotes     Boolean @default(false)
     canViewMedicalInfo    Boolean @default(false)
-    canManageAppointments Boolean @default(false)
-    canManageMedications  Boolean @default(false)
-    receivesNotifications Boolean @default(true)
+    canViewAppointments Boolean @default(false)
+    canViewMedications  Boolean @default(false)
+    canReceiveNotifications Boolean @default(false)
 
     guardianId String   @db.Uuid
     guardian   Guardian @relation(fields: [guardianId], references: [id], onDelete: Cascade)

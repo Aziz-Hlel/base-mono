@@ -9,8 +9,8 @@ import { cursorQueryParamsSchema } from '@base-monorepo-v2/contracts/types/Curso
 import allAdminRoles from '@base-monorepo-v2/contracts/utils/roles/all-admin-roles';
 import express from 'express';
 import { feelingLogService } from './feeling-log.service';
-import canReadPatientFeelingLogs from '@/middlewares/app/canReadPatientFeelingLogs';
 import { listFeelingLogParamsSchema } from '@base-monorepo-v2/contracts/schemas/feeling-log/list-feeling-log-params.req';
+import canReadPatientFeelingLogs from './middlewares/canReadPatientFeelingLogs';
 
 const feelingLogRouter = express.Router({ mergeParams: true });
 

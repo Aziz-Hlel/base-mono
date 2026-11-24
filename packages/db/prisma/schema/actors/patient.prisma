@@ -46,12 +46,13 @@ model Patient {
     dietaryRestrictions DietaryRestriction[]
     activityLevel       ActivityLevel?
 
-    profile   Profile           @relation(fields: [id], references: [id], onDelete: Cascade)
+    profile       Profile        @relation(fields: [id], references: [id], onDelete: Cascade)
     guardianships Guardianship[]
     feelingLogs   FeelingLog[]
+    calendars     Calendar[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
 
     @@index([journeyStage])
     @@index([cancerType])

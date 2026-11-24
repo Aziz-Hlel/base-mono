@@ -14,8 +14,8 @@ model FeedReaction {
     profileId String       @db.Uuid
     reaction  ReactionType
 
-    feed    Feed    @relation(fields: [feedId], references: [id])
-    profile Profile @relation(fields: [profileId], references: [id])
+    feed    Feed    @relation(fields: [feedId], references: [id], onDelete: Cascade)
+    profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
     createdAt DateTime @default(now())
 
@@ -24,8 +24,7 @@ model FeedReaction {
 }
 
 model Feed {
-    id          String @id @db.Uuid
-    diaryNoteId String @unique
+    id String @id @default(uuid()) @db.Uuid
 
     status       FeedStatus            @default(PENDING)
     isPinned     Boolean               @default(false)
@@ -33,11 +32,11 @@ model Feed {
     relationShip GuardianRelationship?
     feedLikes    FeedReaction[]
 
-    diaryNote DiaryNotes @relation(fields: [diaryNoteId], references: [id])
+    diaryNote DiaryNotes @relation(fields: [id], references: [id], onDelete: Cascade)
 
     approvedAt DateTime?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @updatedAt
 
     @@index([status, approvedAt])
     @@index([isPinned])
