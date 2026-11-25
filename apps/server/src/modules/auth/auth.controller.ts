@@ -114,13 +114,6 @@ class AuthController {
       message: allDevices ? 'Logged out from all devices' : 'Logged out successfully',
     });
   };
-
-  me = async (req: AuthRequest, res: Response) => {
-    res.success({
-      data: { id: req.user!.id, role: req.user!.role },
-      message: 'ok',
-    });
-  };
 }
 
 export const authController = new AuthController();

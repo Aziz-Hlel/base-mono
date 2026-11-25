@@ -56,6 +56,51 @@ route()
     },
   });
 
+// POST /api/chats/:chatroomId/messages
+route()
+  .router(chatRouter)
+  .method('post')
+  .path('/:chatroomId/messages')
+  .openapiPath('/api/chats/{chatroomId}/messages')
+  .operationId('sendChatroomMessage')
+  .summary('Send message to chatroom')
+  .description(
+    'Send a message to an existing chatroom. Only members of the chatroom can send; admins can also send in support chatrooms. Use POST /api/chats/with/{profileId}/messages for the first message to someone.',
+  )
+  .tags('Chat')
+  .define({
+    userRoles: [],
+    middlewares: [canAccessChatroom('chatroomId')],
+    auth: true,
+    validate: {
+      params: listMessageParamsSchema,
+      body: sendMessageReqSchema,
+    },
+    response: messageResSchema,
+    responses: {
+      '201': {
+        description: 'Message sent successfully',
+        schema: messageResSchema,
+      },
+      '403': {
+        description: 'Current user is not a member of this chatroom',
+      },
+      '404': {
+        description: 'Chatroom not found',
+      },
+    },
+
+    controller: async (req, res) => {
+      const { chatroomId } = req.params;
+      const data = await chatService.sendMessage(chatroomId, req.user.id, req.body);
+
+      res.status(201).json({
+        message: 'Message sent successfully',
+        data,
+      });
+    },
+  });
+
 // POST /api/chats/with/:profileId/messages
 route()
   .router(chatRouter)

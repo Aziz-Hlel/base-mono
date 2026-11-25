@@ -13,9 +13,11 @@ import { oauthProvider } from '@/oauth';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
 import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
 import type { LoginInput } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
+import type { MeRes } from '@base-monorepo-v2/contracts/schemas/auth/me.res';
 import type { OauthReq } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
 import type { RegisterInput } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
 import { Prisma, type UserRole } from '@base-monorepo-v2/db/prisma';
+import { meInclude, MeMapper } from './me.mapper';
 import { passwordService } from './password.service';
 import { sessionService } from './session.service';
 
@@ -97,6 +99,22 @@ class AuthService {
   async logout(accountId: string, rawRefreshToken: string, allDevices = false): Promise<void> {
     if (allDevices) return sessionService.revokeAll(accountId);
     return sessionService.revoke(rawRefreshToken, accountId);
+  }
+
+  async getMe(userId: string): Promise<MeRes> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: meInclude,
+    });
+
+    // Valid token but the account is gone, so treat it as unauthenticated.
+    if (!user) {
+      throw new UnauthorizedException('Unauthorized', {
+        internalLog: { reason: 'Account from access token not found', userId },
+      });
+    }
+
+    return MeMapper.toRes(user);
   }
 
   async oauth(input: OauthReq): Promise<AuthTokenRes> {

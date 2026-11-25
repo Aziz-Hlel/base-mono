@@ -1,0 +1,31 @@
+enum NotificationSeverity {
+    INFO
+    SUCCESS
+    ERROR
+}
+
+enum NotificationKind {
+    CHAT
+    APPOINTMENT
+
+}
+
+model Notification {
+    id        String @id @default(uuid()) @db.Uuid
+    profileId String
+
+    kind NotificationKind 
+    title    String
+    content  String
+    params   Json
+    severity NotificationSeverity @default(INFO)
+    isRead   Boolean              @default(false)
+
+    profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([profileId, createdAt])
+    @@map("notifications")
+}

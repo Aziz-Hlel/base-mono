@@ -5,7 +5,8 @@ import type { CreateGuardianshipReq } from '@base-monorepo-v2/contracts/schemas/
 import type { RespondGuardianshipRequestReq } from '@base-monorepo-v2/contracts/schemas/guardianship/respond-guardianship-request.req';
 import type { UpdateGuardianshipStatusReq } from '@base-monorepo-v2/contracts/schemas/guardianship/update-guardianship-status.req';
 import type { UpdateGuardianshipReq } from '@base-monorepo-v2/contracts/schemas/guardianship/update-guardianship.req';
-import { GuardianLinkStatus } from '@base-monorepo-v2/db/prisma';
+import { toDirectKey } from '@/modules/chat/chat.utils';
+import { ChatroomType, GuardianLinkStatus, type Guardianship } from '@base-monorepo-v2/db/prisma';
 import { GuardianshipMapper } from './guardianship.mapper';
 
 class GuardianshipService {
@@ -147,6 +148,8 @@ class GuardianshipService {
       });
     }
 
+    if (data.linkStatus === GuardianLinkStatus.REVOKED) return this.revoke(existing);
+
     const updated = await prisma.guardianship.update({
       where: { id },
       data: {
@@ -178,6 +181,8 @@ class GuardianshipService {
       );
     }
 
+    if (data.linkStatus === GuardianLinkStatus.REVOKED) return this.revoke(existing);
+
     const updated = await prisma.guardianship.update({
       where: { id: existing.id },
       data: {
@@ -186,6 +191,22 @@ class GuardianshipService {
     });
 
     return GuardianshipMapper.toRes(updated);
+  };
+
+  // Revoking deletes the guardianship and the guardian-patient chatroom
+  // (its members and messages are deleted with it by cascade).
+  private revoke = async (existing: Guardianship) => {
+    await prisma.$transaction([
+      prisma.chatroom.deleteMany({
+        where: {
+          type: ChatroomType.GUARDIANSHIP,
+          directKey: toDirectKey(existing.guardianId, existing.patientId),
+        },
+      }),
+      prisma.guardianship.delete({ where: { id: existing.id } }),
+    ]);
+
+    return GuardianshipMapper.toRes({ ...existing, linkStatus: GuardianLinkStatus.REVOKED });
   };
 }
 

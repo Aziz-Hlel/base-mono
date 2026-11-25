@@ -2,10 +2,8 @@ import prisma from '@/db';
 import { isUniqueViolationOn } from '@/db/errors/helper';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@/exceptions';
 import { CursorMapper } from '@/mapper/cursor.mapper';
-import { getIO } from '@/socket';
-import { userRoom } from '@/socket/socket.types';
-import type { SendMessageReq } from '@base-monorepo-v2/contracts/schemas/chat/send-message.req';
 import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import type { SendMessageReq } from '@base-monorepo-v2/contracts/schemas/chat/send-message.req';
 import type { CursorQueryParams } from '@base-monorepo-v2/contracts/types/Cursor';
 import allAdminRoles from '@base-monorepo-v2/contracts/utils/roles/all-admin-roles';
 import {
@@ -15,17 +13,16 @@ import {
   type Prisma,
   type UserRole,
 } from '@base-monorepo-v2/db/prisma';
+import { notificationService } from '../notification/notification.service';
+import { chatEmitter } from './chat.emitter';
 import { ChatMapper } from './chat.mapper';
+import { toDirectKey } from './chat.utils';
 
 type ChatParticipant = {
   id: string;
   userRole: UserRole;
   profileRole: ProfileRole | null;
 };
-
-// Sorted so both people get the same key whoever starts the chat
-const toDirectKey = (profileIdA: string, profileIdB: string) =>
-  [profileIdA, profileIdB].sort().join('_');
 
 const isAdminRole = (role: UserRole) => allAdminRoles.some((adminRole) => adminRole === role);
 
@@ -50,29 +47,12 @@ class ChatService {
 
     const chatroomId = await this.findOrCreateDirectChatroom(type, sender.id, targetProfileId);
 
-    const message = await prisma.$transaction(async (tx) => {
-      const created = await tx.message.create({
-        data: { chatroomId, senderId: sender.id, content: data.content },
-      });
+    return this.createMessage(chatroomId, sender.id, data.content);
+  };
 
-      await tx.chatroom.update({
-        where: { id: chatroomId },
-        data: { lastMessageId: created.id, lastMessageAt: created.createdAt },
-      });
-
-      return created;
-    });
-
-    const messageRes = ChatMapper.toMessageRes(message);
-
-    // Emit only after the commit, so nobody sees a message that failed to save.
-    // The sender's room is included so their other devices get it too.
-    getIO()
-      .to(userRoom(targetProfileId))
-      .to(userRoom(sender.id))
-      .emit('chat:message:new', messageRes);
-
-    return messageRes;
+  // Access to the room is checked by the canAccessChatroom middleware
+  sendMessage = async (chatroomId: string, senderId: string, data: SendMessageReq) => {
+    return this.createMessage(chatroomId, senderId, data.content);
   };
 
   listMessagesByCursor = async (chatroomId: string, query: CursorQueryParams) => {
@@ -99,6 +79,32 @@ class ChatService {
       nextCursor,
       limit: query.limit,
     });
+  };
+
+  private createMessage = async (chatroomId: string, senderId: string, content: string) => {
+    const { message, chatroom } = await prisma.$transaction(async (tx) => {
+      const createdMessage = await tx.message.create({
+        data: { chatroomId, senderId, content },
+      });
+
+      const updatedChatroom = await tx.chatroom.update({
+        where: { id: chatroomId },
+        data: { lastMessageId: createdMessage.id, lastMessageAt: createdMessage.createdAt },
+        select: { type: true, members: { select: { profileId: true } } },
+      });
+
+      return { message: createdMessage, chatroom: updatedChatroom };
+    });
+
+    const messageRes = ChatMapper.toMessageRes(message);
+
+    const memberIds = chatroom.members.map((member) => member.profileId);
+    chatEmitter.messageCreated(messageRes, memberIds, chatroom.type);
+
+    const memberIdsWithoutSender = memberIds.filter((id) => id !== senderId);
+    notificationService.createChatNotification(memberIdsWithoutSender, messageRes);
+
+    return messageRes;
   };
 
   private getParticipant = async (profileId: string): Promise<ChatParticipant> => {
