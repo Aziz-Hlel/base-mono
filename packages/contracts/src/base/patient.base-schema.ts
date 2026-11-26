@@ -12,7 +12,7 @@ export const patientBaseSchema = {
   cancerSubtype: zodNullableString('Cancer subtype'),
   cancerStage: cancerStageSchema.nullable(),
   journeyStage: journeyStageSchema,
-  allergies: z.array(zodString('Allergy')),
+  allergies: z.array(zodString('Allergy', { min: 1 })).max(50),
   dietaryRestrictions: z.array(dietaryRestrictionSchema),
   activityLevel: activityLevelSchema.nullable(),
   createdAt: z.iso.datetime(),

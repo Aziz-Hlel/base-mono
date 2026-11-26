@@ -134,6 +134,7 @@ class AuthService {
       decoded.uid,
       decoded.email,
       decoded.email_verified === true,
+      input.username,
     );
 
     return sessionService.issue(user.id, user.role);
@@ -150,6 +151,7 @@ class AuthService {
     authId: string,
     email: string,
     emailVerified: boolean,
+    username?: string | null,
   ): Promise<{ id: string; role: UserRole }> {
     const exisitingUser = await prisma.user.findUnique({
       where: { email },
@@ -186,7 +188,7 @@ class AuthService {
 
     try {
       return await prisma.user.create({
-        data: { email, authId, isEmailVerified: emailVerified },
+        data: { email, authId, isEmailVerified: emailVerified, username },
         select: { id: true, role: true },
       });
     } catch (error) {
@@ -195,7 +197,7 @@ class AuthService {
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === PrismaExceptionCodes.UNIQUE_CONSTRAINT
       ) {
-        return this.resolveOauthUser(authId, email, emailVerified);
+        return this.resolveOauthUser(authId, email, emailVerified, username);
       }
       throw error;
     }
