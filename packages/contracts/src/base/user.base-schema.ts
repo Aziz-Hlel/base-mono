@@ -27,7 +27,7 @@ export const userBaseSchema = {
 
   role: userRoleSchema,
   authId: zodNullableString('Auth ID'),
-  username: zodNullableString('Username'),
+  username: z.string().trim(),
   isEmailVerified: z.boolean(),
   status: userStatusSchema,
   createdAt: z.iso.datetime(),
