@@ -20,6 +20,7 @@ export function createExpressApp() {
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   app.use(cookieParser());
+  app.use('/api-docs', openApiRouter);
 
   app.use(securityMiddleware());
 
@@ -32,8 +33,6 @@ export function createExpressApp() {
   app.use(responseEnvelope);
 
   app.use('/api', appRoutes);
-
-  app.use('/api-docs', openApiRouter);
 
   app.use(notFoundHandler);
 

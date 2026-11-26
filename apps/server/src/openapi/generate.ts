@@ -1,3 +1,4 @@
+import ENV from '@/env';
 import { OpenApiGeneratorV31 } from '@asteasolutions/zod-to-openapi';
 import { serverRegistry } from '.';
 
@@ -10,7 +11,7 @@ const openApiDoc = generator.generateDocument({
     version: '1.0.0',
     description: 'Production API documentation powered by Zod and Scalar',
   },
-  servers: [{ url: 'http://localhost:3000' }],
+  servers: [{ url: `http://localhost:${ENV.API_PORT}` }],
 });
 
 export default openApiDoc;

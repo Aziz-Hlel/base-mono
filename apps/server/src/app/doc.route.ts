@@ -1,16 +1,16 @@
 import openApiDoc from '@/openapi/generate';
-import { apiReference } from '@scalar/express-api-reference';
+import { Scalar } from '@scalar/express-api-reference';
 import { Router } from 'express';
 
 const openApiRouter = Router();
 
-openApiRouter.get('/api-docs/openapi.json', (_req, res) => {
+openApiRouter.get('/openapi.json', (_req, res) => {
   res.json(openApiDoc);
 });
 
 openApiRouter.use(
-  '/api-docs',
-  apiReference({
+  '/',
+  Scalar({
     spec: {
       content: openApiDoc,
     },

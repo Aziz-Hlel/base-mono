@@ -1,0 +1,12 @@
+{
+  "extends": "@excellense/config/tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "react": ["./node_modules/@types/react/index.d.ts"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}
