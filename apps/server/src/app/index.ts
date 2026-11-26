@@ -1,10 +1,10 @@
-import { compressionMiddleware } from '@/middlewares/compression';
-import { corsMiddleware } from '@/middlewares/cors.middleware';
+import { compressionMiddleware } from '@/middlewares/core/compression';
+import { corsMiddleware } from '@/middlewares/core/cors.middleware';
+import { securityMiddleware } from '@/middlewares/core/security.middleware';
 import { globalErrorHandler } from '@/middlewares/error.middleware';
 import pinoHttpLoggerMiddleware from '@/middlewares/logger.middleware';
 import notFoundHandler from '@/middlewares/notFoundHandler';
 import { responseEnvelope } from '@/middlewares/response.middleware';
-import { securityMiddleware } from '@/middlewares/security.middleware';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import appRoutes from './app.routes';

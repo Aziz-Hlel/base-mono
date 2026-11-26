@@ -8,9 +8,6 @@ export const NODE_ENV = z.enum(NODE_ENVS);
 export const API_PORT = z.coerce.number().positive();
 export const APP_NAME = z.string().nonempty('APP_NAME cannot be empty');
 
-// Firebase
-export const FIREBASE_CERT = z.string().trim();
-
 // DB
 export const dbSchema = {
   DB_USER: z.string().trim(),

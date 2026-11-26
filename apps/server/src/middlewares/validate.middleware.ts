@@ -1,15 +1,20 @@
 import type { Request, RequestHandler } from 'express';
-import type { ZodType } from 'zod';
+import type { z, ZodType } from 'zod';
 
-export const validateMiddleware = (schemas: {
-  body?: ZodType;
-  params?: ZodType<Request['params']>;
-  query?: ZodType<Request['query']>;
+export const validateMiddleware = <
+  TBody extends ZodType = z.ZodType<unknown>,
+  TParams extends ZodType = z.ZodType<Request['params']>,
+  TQuery extends ZodType = z.ZodType<Request['query']>,
+>(schemas: {
+  body?: TBody;
+  params?: TParams;
+  query?: TQuery;
 }): RequestHandler => {
   return async (req, _res, next) => {
     try {
       if (schemas.body) req.body = await schemas.body.parseAsync(req.body);
-      if (schemas.params) req.params = await schemas.params.parseAsync(req.params);
+      if (schemas.params)
+        req.params = (await schemas.params.parseAsync(req.params)) as Request['params'];
       if (schemas.query) {
         // Express 5: req.query is a getter, so plain assignment throws.
         Object.defineProperty(req, 'query', {

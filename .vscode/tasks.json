@@ -4,7 +4,7 @@
     {
       "label": "Docker",
       "type": "shell",
-      "command": "pnpm docker:local; pwsh", // `; pwsh`, so that the termianl doesn't close when you stop taks or when having an error
+      "command": "bun docker:local; pwsh", // `; pwsh`, so that the termianl doesn't close when you stop taks or when having an error
       "presentation": {
         "group": "dev",
         "reveal": "always",
@@ -15,7 +15,7 @@
     {
       "label": "Server",
       "type": "shell",
-      "command": "pnpm --filter server dev; pwsh",
+      "command": "bun --filter server dev; pwsh",
       "presentation": {
         "group": "dev",
         "reveal": "always",

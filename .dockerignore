@@ -8,8 +8,6 @@
 **/.output
 **/.svelte-kit
 **/.astro
-**/.turbo
-.turbo
 
 **/.wrangler
 **/.alchemy

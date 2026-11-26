@@ -6,21 +6,20 @@
  * jwt.service or token-store.service here, that logic probably belongs in session.service.
  */
 import prisma from '@/db';
-import PrismaExceptionCodes from '@/db/PrismaExceptionCodes';
-import { ConflictException, UnauthorizedException } from '@/exceptions';
-import logger from '@/logger';
-import { oauthProvider } from '@/oauth';
+import PrismaExceptionCodes from '@/db/errors/codes';
+import { ConflictException, NotFoundException, UnauthorizedException } from '@/exceptions';
 import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
 import type { AuthTokenRes } from '@excellense/contracts/schemas/auth/authToken.res';
 import type { LoginInput } from '@excellense/contracts/schemas/auth/login.req';
-import type { OauthReq } from '@excellense/contracts/schemas/auth/oauth.req';
+import type { MeRes } from '@excellense/contracts/schemas/auth/me.res';
 import type { RegisterInput } from '@excellense/contracts/schemas/auth/register.req';
 import { Prisma, type UserRole } from '@excellense/db/prisma';
+import { MeMapper } from './me.mapper';
 import { passwordService } from './password.service';
 import { sessionService } from './session.service';
 
 class AuthService {
-  async register(input: RegisterInput): Promise<AuthTokenRes> {
+  async register(input: RegisterInput): Promise<{ id: string; role: UserRole }> {
     const existing = await prisma.user.findUnique({
       where: { email: input.email },
       select: { id: true },
@@ -34,15 +33,17 @@ class AuthService {
 
     const hashedPassword = await passwordService.hashPassword(input.password);
 
-    let user;
     try {
-      user = await prisma.user.create({
+      const user = await prisma.user.create({
         data: {
+          username: input.username,
           email: input.email,
           password: hashedPassword,
         },
         select: { id: true, role: true },
       });
+
+      return user;
     } catch (error) {
       // The findUnique above is a fast path; this catch is the real guarantee. Two concurrent
       // registrations can both pass the check, and the DB unique constraint is what stops the second.
@@ -57,10 +58,6 @@ class AuthService {
       }
       throw error;
     }
-
-    // Kept outside the try on purpose: a Redis failure while issuing the session must not be
-    // mistaken for (or swallowed by) the DB error handling above.
-    return sessionService.issue(user.id, user.role);
   }
 
   async login(input: LoginInput): Promise<AuthTokenRes> {
@@ -102,88 +99,18 @@ class AuthService {
     return sessionService.revoke(rawRefreshToken, accountId);
   }
 
-  async oauth(input: OauthReq): Promise<AuthTokenRes> {
-    const decoded = await oauthProvider.verifyToken(input.token);
-
-    if (!decoded.email) {
-      throw new UnauthorizedException('Invalid token', {
-        code: ERROR_CODES.AUTH.INVALID_TOKEN,
-        internalLog: 'Firebase token has no email in decoded token',
-        details: {
-          tokenEmail: decoded.email,
-        },
-      });
-    }
-
-    const user = await this.resolveOauthUser(
-      decoded.uid,
-      decoded.email,
-      decoded.email_verified === true,
-    );
-
-    return sessionService.issue(user.id, user.role);
-  }
-
-  // TODO(security): linking trusts any token from the Firebase project and any email match.
-  //  1. email_verified and the sign-in provider are not checked. This is only safe while Google
-  //     and Apple are the only providers enabled in Firebase. If Email/Password is ever turned on,
-  //     anyone could claim an existing account with an unverified email.
-  //  2. The password is kept on link and register doesn't verify email ownership, so someone who
-  //     registered this email first can still log in with their password after the real owner
-  //     links Google or Apple. Add email verification to register, or clear unverified passwords here.
-  private async resolveOauthUser(
-    authId: string,
-    email: string,
-    emailVerified: boolean,
-  ): Promise<{ id: string; role: UserRole }> {
-    const exisitingUser = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true, role: true, email: true, isEmailVerified: true, authId: true },
+  async getMe(userId: string): Promise<MeRes> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
-    if (exisitingUser) {
-      const userUpdatedData: Prisma.UserUpdateInput = {};
-      if (exisitingUser.isEmailVerified !== emailVerified) {
-        userUpdatedData.isEmailVerified = emailVerified;
-      }
-      if (exisitingUser.authId && exisitingUser.authId !== authId) {
-        userUpdatedData.authId = authId;
-        logger.warn(
-          {
-            userId: exisitingUser.id,
-            email,
-            previousAuthId: exisitingUser.authId,
-            newAuthId: authId,
-          },
-          'OAuth authId overwritten',
-        );
-      }
-      if (Object.keys(userUpdatedData).length !== 0) {
-        await prisma.user.update({
-          where: { id: exisitingUser.id },
-          data: { isEmailVerified: true },
-          select: { id: true, role: true },
-        });
-      }
-
-      return exisitingUser;
-    }
-
-    try {
-      return await prisma.user.create({
-        data: { email, authId, isEmailVerified: emailVerified },
-        select: { id: true, role: true },
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`, {
+        code: ERROR_CODES.USER.NOT_FOUND,
       });
-    } catch (error) {
-      // Two concurrent first sign-ins can both reach this create. The loser re-reads the winner's row.
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === PrismaExceptionCodes.UNIQUE_CONSTRAINT
-      ) {
-        return this.resolveOauthUser(authId, email, emailVerified);
-      }
-      throw error;
     }
+
+    return MeMapper.toRes(user);
   }
 }
 

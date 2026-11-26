@@ -1,9 +1,10 @@
 import z from 'zod';
-import { accountBaseSchema } from '../../base/account.base-schema';
+import { userBaseSchema } from '../../base/user.base-schema';
 
 export const registerSchema = z.object({
-  email: accountBaseSchema.email,
-  password: accountBaseSchema.password,
+  username: userBaseSchema.username,
+  email: userBaseSchema.email,
+  password: userBaseSchema.password,
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

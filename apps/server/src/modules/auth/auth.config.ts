@@ -17,6 +17,13 @@ const refreshCookieName = 'refreshToken';
 
 const signatureAlgorithm = 'HS256';
 
+/**
+ * Native mobile apps send `X-Client: mobile`. They get the refresh token in the response
+ * body (to keep in Keychain/Keystore) and send it back in the body, instead of using cookies.
+ */
+const clientHeaderName = 'x-client';
+const mobileClientValue = 'mobile';
+
 const cookieOptions = {
   httpOnly: true,
   secure: isProd(),
@@ -32,4 +39,6 @@ export const authConfig = {
   cookieOptions,
   signatureAlgorithm,
   bcryptRounds,
+  clientHeaderName,
+  mobileClientValue,
 } as const;

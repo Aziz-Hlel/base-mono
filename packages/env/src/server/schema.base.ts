@@ -3,7 +3,6 @@ import {
   API_PORT,
   APP_NAME,
   dbSchema,
-  FIREBASE_CERT,
   jwtSchema,
   mobileVersionsSchema,
   redisSchema,
@@ -13,9 +12,6 @@ const baseSchema = z.object({
   // APP
   API_PORT,
   APP_NAME,
-
-  // FIREBASE
-  FIREBASE_CERT,
 
   // JWT
   ...jwtSchema,

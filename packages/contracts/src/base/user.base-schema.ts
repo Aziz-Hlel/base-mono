@@ -1,12 +1,32 @@
 import z from 'zod';
-import { Gender } from '../enums';
-import { zodString } from './shared/required-string.zod';
+import userRoleSchema from './enums/user-role.schema';
+import { zodString } from './shared/string.zod';
+import { zodEmail } from './shared/zodEmail';
 
 export const userBaseSchema = {
   id: z.uuid(),
-  firstName: zodString('First name'),
-  lastName: zodString('Last name'),
-  gender: z.enum(Gender),
-  phone: z.string().trim().max(15).nullable(),
-  birthday: z.iso.date().nullable(),
+  email: zodEmail(),
+  password: z
+    .string('Password is required')
+    // Unicode-normalize first so visually identical input (é vs e+◌́, full-width
+    // letters, NBSP) hashes the same on every device; later checks see the final value
+    .normalize('NFKC')
+    .min(1, 'Password must not be empty')
+    .min(8, 'Password must be at least 8 characters')
+    .refine((pw) => pw.trim().length > 0, 'Password must not be only spaces')
+    .refine(
+      (pw) => !/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}\p{Co}\p{Cs}\p{Cn}]/u.test(pw),
+      'Password contains invisible or unsupported characters',
+    )
+    .refine(
+      // bcrypt silently truncates input beyond 72 bytes (not characters)
+      (pw) => new TextEncoder().encode(pw).length <= 72,
+      'Password is too long (max 72 bytes; some characters use more than one)',
+    ),
+
+  role: userRoleSchema,
+  username: zodString('Username'),
+  isEmailVerified: z.boolean(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
 };

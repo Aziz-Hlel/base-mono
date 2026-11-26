@@ -12,7 +12,6 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Node.js** - Runtime environment
 - **Prisma** - TypeScript-first ORM
 - **PostgreSQL** - Database engine
-- **Turborepo** - Optimized monorepo build system
 
 ## Getting Started
 
