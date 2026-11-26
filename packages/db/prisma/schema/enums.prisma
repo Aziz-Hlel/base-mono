@@ -2,6 +2,8 @@ enum CancerType {
     BREAST
     LUNG
     COLORECTAL
+    UTERINE
+    BRAIN
     PROSTATE
     LEUKEMIA
     LYMPHOMA

@@ -55,7 +55,7 @@ enum ProfileRole {
 model Profile {
   id        String       @id @default(uuid()) @db.Uuid
   firstName String       @db.VarChar(255)
-  lastName  String       @db.VarChar(255)
+  lastName  String?      @db.VarChar(255)
   gender    Gender
   phone     String?      @db.VarChar(15)
   birthday  DateTime?    @db.Date

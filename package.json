@@ -17,7 +17,7 @@
     "env:pull:all": "pnpm run env:pull:local && pnpm run env:pull:server && pnpm run env:pull:db",
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "check-types": "turbo run check-types",
+    "check-types": "tsc --noEmit",
     "docker:local": "docker compose -f .\\docker\\compose.local.yml  --env-file config/.env.local up",
     "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
