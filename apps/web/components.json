@@ -13,8 +13,8 @@
   "iconLibrary": "lucide",
   "aliases": {
     "components": "@/components",
-    "utils": "@base-monorepo-v2/ui/lib/utils",
-    "ui": "@base-monorepo-v2/ui/components",
+    "utils": "@excellense/ui/lib/utils",
+    "ui": "@excellense/ui/components",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },

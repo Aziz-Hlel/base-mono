@@ -20,9 +20,9 @@
  */
 import prisma from '@/db';
 import { UnauthorizedException } from '@/exceptions';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
-import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
-import type { AccountRole } from '@base-monorepo-v2/db/prisma';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
+import type { AuthTokenRes } from '@excellense/contracts/schemas/auth/authToken.res';
+import type { AccountRole } from '@excellense/db/prisma';
 import crypto from 'node:crypto';
 import { authConfig } from './auth.config';
 import { jwtService, type RefreshTokenPayload } from './jwt.service';

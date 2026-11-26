@@ -2,8 +2,15 @@ import type { Route } from './+types/root';
 import Header from './components/header';
 import { ThemeProvider } from './components/theme-provider';
 import './index.css';
-import { Toaster } from '@base-monorepo-v2/ui/components/sonner';
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { Toaster } from '@excellense/ui/components/sonner';
+import {
+  isRouteErrorResponse,
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from 'react-router';
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -34,7 +41,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <ThemeProvider attribute='class' defaultTheme='dark' disableTransitionOnChange storageKey='vite-ui-theme'>
+    <ThemeProvider
+      attribute='class'
+      defaultTheme='dark'
+      disableTransitionOnChange
+      storageKey='vite-ui-theme'
+    >
       <div className='grid h-svh grid-rows-[auto_1fr]'>
         <Header />
         <Outlet />
@@ -50,7 +62,8 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let stack: string | undefined;
   if (isRouteErrorResponse(error)) {
     message = error.status === 404 ? '404' : 'Error';
-    details = error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
+    details =
+      error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;

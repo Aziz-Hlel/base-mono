@@ -1,11 +1,21 @@
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import * as React from 'react';
 
 function MessageGroup({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='message-group' className={cn('flex min-w-0 flex-col gap-1.5', className)} {...props} />;
+  return (
+    <div
+      data-slot='message-group'
+      className={cn('flex min-w-0 flex-col gap-1.5', className)}
+      {...props}
+    />
+  );
 }
 
-function Message({ className, align = 'start', ...props }: React.ComponentProps<'div'> & { align?: 'start' | 'end' }) {
+function Message({
+  className,
+  align = 'start',
+  ...props
+}: React.ComponentProps<'div'> & { align?: 'start' | 'end' }) {
   return (
     <div
       data-slot='message'

@@ -1,4 +1,4 @@
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import { Input as InputPrimitive } from '@base-ui/react/input';
 import * as React from 'react';
 

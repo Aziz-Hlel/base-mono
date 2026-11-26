@@ -1,8 +1,8 @@
 import { UnauthorizedException } from '@/exceptions';
 import type { AuthRequest } from '@/types/api/authRequest';
-import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
-import { oauthReqSchema } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
-import { registerSchema } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
+import { loginSchema } from '@excellense/contracts/schemas/auth/login.req';
+import { oauthReqSchema } from '@excellense/contracts/schemas/auth/oauth.req';
+import { registerSchema } from '@excellense/contracts/schemas/auth/register.req';
 import type { Request, Response } from 'express';
 import { authConfig } from './auth.config';
 import { authService } from './auth.service';

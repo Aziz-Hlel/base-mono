@@ -1,5 +1,5 @@
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
-import { Prisma } from '@base-monorepo-v2/db/prisma';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
+import { Prisma } from '@excellense/db/prisma';
 import { z, ZodError } from 'zod';
 import { BadRequestException, InternalServerErrorException } from '..';
 import { HttpException } from '../httpException';

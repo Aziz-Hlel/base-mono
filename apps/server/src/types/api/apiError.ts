@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@base-monorepo-v2/contracts/exceptions/codes';
+import type { ErrorCode } from '@excellense/contracts/exceptions/codes';
 
 export type ApiError = {
   success: false;

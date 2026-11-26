@@ -1,4 +1,4 @@
-import serverENV from '@base-monorepo-v2/env/server';
+import serverENV from '@excellense/env/server';
 
 const ENV = serverENV;
 

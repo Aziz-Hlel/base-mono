@@ -1,4 +1,4 @@
-import createRedisClient from '@base-monorepo-v2/redis';
+import createRedisClient from '@excellense/redis';
 
 const redis = createRedisClient();
 

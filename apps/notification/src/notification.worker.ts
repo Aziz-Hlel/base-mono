@@ -1,8 +1,8 @@
-import QUEUE_NAMES from '@base-monorepo-v2/contracts/queues/names';
+import QUEUE_NAMES from '@excellense/contracts/queues/names';
 import {
   type NotificationMessage,
   notificationMessageSchema,
-} from '@base-monorepo-v2/contracts/queues/types/notification.message';
+} from '@excellense/contracts/queues/types/notification.message';
 import { Job, UnrecoverableError, Worker } from 'bullmq';
 import type { NotificationService } from './notification.service';
 import redis from './redis';

@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@base-monorepo-v2/ui/components/button';
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { Button } from '@excellense/ui/components/button';
+import { cn } from '@excellense/ui/lib/utils';
 import {
   MessageScroller as MessageScrollerPrimitive,
   useMessageScroller,
@@ -11,11 +11,16 @@ import {
 import { ArrowDownIcon } from 'lucide-react';
 import * as React from 'react';
 
-function MessageScrollerProvider(props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>) {
+function MessageScrollerProvider(
+  props: React.ComponentProps<typeof MessageScrollerPrimitive.Provider>,
+) {
   return <MessageScrollerPrimitive.Provider {...props} />;
 }
 
-function MessageScroller({ className, ...props }: React.ComponentProps<typeof MessageScrollerPrimitive.Root>) {
+function MessageScroller({
+  className,
+  ...props
+}: React.ComponentProps<typeof MessageScrollerPrimitive.Root>) {
   return (
     <MessageScrollerPrimitive.Root
       data-slot='message-scroller'
@@ -102,7 +107,9 @@ function MessageScrollerButton({
       {children ?? (
         <>
           <ArrowDownIcon />
-          <span className='sr-only'>{direction === 'end' ? 'Scroll to end' : 'Scroll to start'}</span>
+          <span className='sr-only'>
+            {direction === 'end' ? 'Scroll to end' : 'Scroll to start'}
+          </span>
         </>
       )}
     </MessageScrollerPrimitive.Button>

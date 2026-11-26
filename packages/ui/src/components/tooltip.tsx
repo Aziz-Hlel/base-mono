@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 
 function TooltipProvider({ delay = 0, ...props }: TooltipPrimitive.Provider.Props) {

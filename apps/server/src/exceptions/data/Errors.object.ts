@@ -1,4 +1,4 @@
-import { ERROR_CODES, type GlobalErrorCode } from '@base-monorepo-v2/contracts/exceptions/codes';
+import { ERROR_CODES, type GlobalErrorCode } from '@excellense/contracts/exceptions/codes';
 
 const apiErrorDefinitions = {
   DATABASE_ERROR: {

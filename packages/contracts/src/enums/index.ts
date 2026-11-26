@@ -8,4 +8,4 @@
  * 🟢 You can import this file directly.
  */
 
-export * from '@base-monorepo-v2/db/prisma/enums';
+export * from '@excellense/db/prisma/enums';

@@ -1,4 +1,4 @@
-import prismaInstance from '@base-monorepo-v2/db';
+import prismaInstance from '@excellense/db';
 
 prismaInstance.$on('query', (e) => {
   const durationInMs = e.duration;

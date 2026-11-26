@@ -3,7 +3,7 @@ import { authMiddleware } from '@/middlewares/authenticate';
 import { validateMiddleware } from '@/middlewares/validate.middleware';
 import type { SucessResponseParams } from '@/types/express';
 import type { RouteParameter } from '@asteasolutions/zod-to-openapi/dist/openapi-registry';
-import type { UserRole } from '@base-monorepo-v2/db/prisma';
+import type { UserRole } from '@excellense/db/prisma';
 import type { NextFunction, Request, RequestHandler, Response, Router } from 'express';
 import type { z, ZodType } from 'zod';
 import { serverRegistry } from '.';

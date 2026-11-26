@@ -1,4 +1,4 @@
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import * as React from 'react';
 
 function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {

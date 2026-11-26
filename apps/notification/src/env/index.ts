@@ -1,4 +1,4 @@
-import { notificationEnv } from '@base-monorepo-v2/env/notification';
+import { notificationEnv } from '@excellense/env/notification';
 
 const ENV = notificationEnv;
 

@@ -1,4 +1,4 @@
-import { isProd } from '@base-monorepo-v2/env/server';
+import { isProd } from '@excellense/env/server';
 import pino, { type LogFn, type Logger } from 'pino';
 
 /**

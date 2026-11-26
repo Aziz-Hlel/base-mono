@@ -1,5 +1,5 @@
 {
-  "name": "@base-monorepo-v2/contracts",
+  "name": "@excellense/contracts",
   "private": true,
   "type": "module",
   "exports": {
@@ -14,7 +14,7 @@
     "build": "tsc --noEmit && tsc -p tsconfig.build.json"
   },
   "dependencies": {
-    "@base-monorepo-v2/db": "workspace:*",
+    "@excellense/db": "workspace:*",
     "zod": "catalog:"
   }
 }

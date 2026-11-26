@@ -6,21 +6,21 @@
     "build": "tsdown",
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.mjs"
+    "dev": "bun --watch src/index.ts",
+    "start": "bun dist/index.mjs"
   },
   "dependencies": {
-    "@base-monorepo-v2/env": "workspace:*",
-    "@base-monorepo-v2/redis": "workspace:*",
-    "@base-monorepo-v2/contracts": "workspace:*",
-    "@base-monorepo-v2/db": "workspace:*",
+    "@excellense/env": "workspace:*",
+    "@excellense/redis": "workspace:*",
+    "@excellense/contracts": "workspace:*",
+    "@excellense/db": "workspace:*",
     "bullmq": "catalog:",
     "firebase-admin": "catalog:",
     "pino": "catalog:",
     "ioredis": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "^0.23.0",
     "typescript": "catalog:"

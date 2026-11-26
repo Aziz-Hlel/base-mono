@@ -1,4 +1,4 @@
-import type { DevicePreferredLanguage } from '@base-monorepo-v2/contracts/enums/index';
+import type { DevicePreferredLanguage } from '@excellense/contracts/enums/index';
 import {
   MessagingErrorCode,
   type FidMulticastMessage,

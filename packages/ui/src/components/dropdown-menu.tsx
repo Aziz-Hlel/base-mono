@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import { ChevronRightIcon, CheckIcon } from 'lucide-react';
 import * as React from 'react';
@@ -24,7 +24,8 @@ function DropdownMenuContent({
   sideOffset = 4,
   className,
   ...props
-}: MenuPrimitive.Popup.Props & Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
+}: MenuPrimitive.Popup.Props &
+  Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
   return (
     <MenuPrimitive.Portal>
       <MenuPrimitive.Positioner

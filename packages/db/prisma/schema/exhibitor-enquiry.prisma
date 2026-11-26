@@ -1,0 +1,24 @@
+enum PreferredPackage {
+  STARTUP
+  STANDARD
+  PREMIUM
+}
+
+model ExhibitorEnquiry {
+  id                    String  @id @default(uuid()) @db.Uuid
+  companyName           String  @db.VarChar(255)
+  sector                String  @db.VarChar(255)
+  contactPerson         String  @db.VarChar(255)
+  email                 String  @db.VarChar(255)
+  phone                 String  @db.VarChar(30)
+  country               String  @db.VarChar(100)
+  companyWebsite        String? @db.VarChar(255)
+  preferredPackage      String  @db.VarChar(255)
+  technicalRequirements String? @db.Text
+  companyDescription    String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("exhibitor_enquiries")
+}

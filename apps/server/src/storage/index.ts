@@ -1,5 +1,5 @@
 import ENV from '@/env';
-import { isProd } from '@base-monorepo-v2/env/server';
+import { isProd } from '@excellense/env/server';
 import path from 'node:path';
 import type { IStorageProvider } from './interface/storage.interface';
 import { createStorageProvider } from './storage.provider';

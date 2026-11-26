@@ -13,11 +13,11 @@
  */
 import ENV from '@/env';
 import { UnauthorizedException } from '@/exceptions';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
 import {
   accessTokenPayloadSchema,
   type AccessTokenPayload,
-} from '@base-monorepo-v2/contracts/schemas/auth/accessTokenPaylod';
+} from '@excellense/contracts/schemas/auth/accessTokenPaylod';
 import jwt from 'jsonwebtoken';
 import { authConfig } from './auth.config';
 

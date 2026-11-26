@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@/exceptions';
 import { HttpException } from '@/exceptions/httpException';
 import { jwtService } from '@/modules/auth/jwt.service';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
 import type { RequestHandler } from 'express';
 
 export class AuthMiddleware {

@@ -1,5 +1,5 @@
 {
-  "name": "@base-monorepo-v2/redis",
+  "name": "@excellense/redis",
   "private": true,
   "type": "module",
   "exports": {
@@ -11,12 +11,12 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@base-monorepo-v2/env": "workspace:*",
+    "@excellense/env": "workspace:*",
     "ioredis": "catalog:",
     "dotenv": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "typescript": "catalog:"
   }
 }

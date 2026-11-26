@@ -1,4 +1,4 @@
-import { initCacheEnv } from '@base-monorepo-v2/env/cache';
+import { initCacheEnv } from '@excellense/env/cache';
 import Redis, { type RedisOptions } from 'ioredis';
 
 const cacheEnv = initCacheEnv();

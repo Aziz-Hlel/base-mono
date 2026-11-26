@@ -1,5 +1,5 @@
 import ENV from '@/env';
-import { hasEnvProdFields } from '@base-monorepo-v2/env/server';
+import { hasEnvProdFields } from '@excellense/env/server';
 import cors from 'cors';
 
 export function corsMiddleware() {

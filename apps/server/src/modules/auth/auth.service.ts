@@ -10,12 +10,12 @@ import PrismaExceptionCodes from '@/db/PrismaExceptionCodes';
 import { ConflictException, UnauthorizedException } from '@/exceptions';
 import logger from '@/logger';
 import { oauthProvider } from '@/oauth';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
-import type { AuthTokenRes } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
-import type { LoginInput } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
-import type { OauthReq } from '@base-monorepo-v2/contracts/schemas/auth/oauth.req';
-import type { RegisterInput } from '@base-monorepo-v2/contracts/schemas/auth/register.req';
-import { Prisma, type UserRole } from '@base-monorepo-v2/db/prisma';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
+import type { AuthTokenRes } from '@excellense/contracts/schemas/auth/authToken.res';
+import type { LoginInput } from '@excellense/contracts/schemas/auth/login.req';
+import type { OauthReq } from '@excellense/contracts/schemas/auth/oauth.req';
+import type { RegisterInput } from '@excellense/contracts/schemas/auth/register.req';
+import { Prisma, type UserRole } from '@excellense/db/prisma';
 import { passwordService } from './password.service';
 import { sessionService } from './session.service';
 

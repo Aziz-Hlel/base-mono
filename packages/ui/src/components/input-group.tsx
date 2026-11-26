@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@base-monorepo-v2/ui/components/button';
-import { Input } from '@base-monorepo-v2/ui/components/input';
-import { Textarea } from '@base-monorepo-v2/ui/components/textarea';
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { Button } from '@excellense/ui/components/button';
+import { Input } from '@excellense/ui/components/input';
+import { Textarea } from '@excellense/ui/components/textarea';
+import { cn } from '@excellense/ui/lib/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
@@ -35,7 +35,8 @@ const inputGroupAddonVariants = cva(
         'inline-end': 'order-last pr-2 has-[>button]:mr-[-0.3rem] has-[>kbd]:mr-[-0.15rem]',
         'block-start':
           'order-first w-full justify-start px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2',
-        'block-end': 'order-last w-full justify-start px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2',
+        'block-end':
+          'order-last w-full justify-start px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2',
       },
     },
     defaultVariants: {
@@ -141,4 +142,11 @@ function InputGroupTextarea({ className, ...props }: React.ComponentProps<'texta
   );
 }
 
-export { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupInput, InputGroupTextarea };
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupText,
+  InputGroupInput,
+  InputGroupTextarea,
+};

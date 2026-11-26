@@ -1,9 +1,43 @@
 {
-  "name": "base-monorepo-v2",
+  "name": "excellense-mono",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "packages/*"
+    ],
+    "catalog": {
+      "@types/node": "^26.4.1",
+      "@types/react": "^19.2.18",
+      "@types/react-dom": "^19.2.7",
+      "axios": "^1.16.1",
+      "bullmq": "5.71.0",
+      "dotenv": "^17.4.2",
+      "firebase-admin": "^14.5.0",
+      "ioredis": "5.9.3",
+      "lucide-react": "^1.41.0",
+      "next-themes": "^0.4.6",
+      "pino": "^10.3.1",
+      "react": "^19.2.8",
+      "react-dom": "^19.2.8",
+      "sonner": "^2.0.8",
+      "tailwindcss": "^4.3.3",
+      "typescript": "6.0.2",
+      "varlock": "1.18.0",
+      "zod": "^4.5.4"
+    }
+  },
+  "trustedDependencies": [
+    "@firebase/util",
+    "@infisical/cli",
+    "@prisma/client",
+    "@prisma/engines",
+    "bcrypt",
+    "esbuild",
+    "msgpackr-extract",
+    "prisma",
+    "protobufjs",
+    "sharp"
   ],
   "type": "module",
   "scripts": {
@@ -13,19 +47,19 @@
     "env:login": "infisical login",
     "env:pull:local": "infisical export --env=dev --path=/local --format=dotenv --output-file=./config/.env.local",
     "env:pull:server": "infisical export --env=dev --path=/server --format=dotenv --output-file=./apps/server/.env",
-    "env:pull:db": "infisical export --env=dev --path=/db --format=dotenv --output-file=./apps/db/.env",
-    "env:pull": "pnpm run env:pull:local && pnpm run env:pull:server",
+    "env:pull:db": "infisical export --env=dev --path=/db --format=dotenv --output-file=./packages/db/.env",
+    "env:pull:all": "bun run env:pull:local && bun run env:pull:server && bun run env:pull:db",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "check-types": "turbo run check-types",
     "docker:local": "docker compose -f .\\docker\\compose.local.yml  --env-file config/.env.local up",
     "dev:web": "turbo run dev -F web --",
     "dev:server": "turbo run dev -F server --",
-    "db:push": "turbo run db:push -F @base-monorepo-v2/db --",
-    "db:studio": "turbo run db:studio -F @base-monorepo-v2/db --",
-    "db:generate": "pnpm --filter @base-monorepo-v2/db db:generate",
-    "db:reset": "pnpm --filter @base-monorepo-v2/db db:reset",
-    "db:migrate": "pnpm --filter @base-monorepo-v2/db db:migrate",
+    "db:push": "turbo run db:push -F @excellense/db --",
+    "db:studio": "turbo run db:studio -F @excellense/db --",
+    "db:generate": "bun --filter @excellense/db db:generate",
+    "db:reset": "bun --filter @excellense/db db:reset",
+    "db:migrate": "bun --filter @excellense/db db:migrate",
     "db:start": "docker compose up -d postgres",
     "db:watch": "docker compose up postgres",
     "db:stop": "docker compose stop postgres",
@@ -41,7 +75,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "catalog:",
     "husky": "^9.1.7",
@@ -56,5 +90,5 @@
   "lint-staged": {
     "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,json,md}": "prettier --write --ignore-unknown"
   },
-  "packageManager": "pnpm@10.33.0"
+  "packageManager": "bun@1.4.5"
 }

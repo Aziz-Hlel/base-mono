@@ -1,5 +1,5 @@
 {
-  "name": "@base-monorepo-v2/db",
+  "name": "@excellense/db",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -16,14 +16,14 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@base-monorepo-v2/env": "workspace:*",
+    "@excellense/env": "workspace:*",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "pg": "^8.23.0",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "@types/pg": "^8.23.1",
     "dotenv": "catalog:",
     "prisma": "^7.10.0",

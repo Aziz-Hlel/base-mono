@@ -6,17 +6,17 @@
     "build": "tsdown",
     "check-types": "tsc --noEmit",
     "compile": "bun build --compile --no-compile-autoload-dotenv --minify --sourcemap --bytecode ./src/index.ts --outfile server",
-    "dev": "tsx watch src/index.ts",
-    "start": "node dist/index.mjs"
+    "dev": "bun --watch src/index.ts",
+    "start": "bun dist/index.mjs"
   },
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^9.1.0",
     "@aws-sdk/client-s3": "^3.1165.0",
     "@aws-sdk/s3-request-presigner": "^3.1165.0",
-    "@base-monorepo-v2/contracts": "workspace:*",
-    "@base-monorepo-v2/db": "workspace:*",
-    "@base-monorepo-v2/env": "workspace:*",
-    "@base-monorepo-v2/redis": "workspace:*",
+    "@excellense/contracts": "workspace:*",
+    "@excellense/db": "workspace:*",
+    "@excellense/env": "workspace:*",
+    "@excellense/redis": "workspace:*",
     "@scalar/express-api-reference": "^0.10.36",
     "@types/compression": "^1.8.1",
     "bcrypt": "^6.0.0",
@@ -36,7 +36,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",

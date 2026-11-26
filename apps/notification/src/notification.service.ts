@@ -1,4 +1,4 @@
-import type { NotificationMessage } from '@base-monorepo-v2/contracts/queues/types/notification.message';
+import type { NotificationMessage } from '@excellense/contracts/queues/types/notification.message';
 import type { DevicesService } from './devices.service';
 import { NotificationProvider } from './notification.provider';
 

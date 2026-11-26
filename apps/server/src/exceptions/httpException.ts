@@ -1,6 +1,6 @@
 import type { ApiError } from '@/types/api/apiError';
-import { type ErrorCode } from '@base-monorepo-v2/contracts/exceptions/codes';
-import { isDev, isProd } from '@base-monorepo-v2/env/server';
+import { type ErrorCode } from '@excellense/contracts/exceptions/codes';
+import { isDev, isProd } from '@excellense/env/server';
 import apiErrorDefinitions from './data/Errors.object';
 import { serializeUnknownError } from './helpers/serializeUnknownError';
 

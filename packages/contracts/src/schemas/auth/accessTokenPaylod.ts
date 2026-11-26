@@ -1,4 +1,4 @@
-import { UserRole } from '@base-monorepo-v2/db/prisma';
+import { UserRole } from '@excellense/db/prisma';
 import { z } from 'zod';
 
 export const accessTokenPayloadSchema = z.object({

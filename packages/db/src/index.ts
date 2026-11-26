@@ -1,4 +1,4 @@
-import { DB_ENV } from '@base-monorepo-v2/env/db';
+import { DB_ENV } from '@excellense/env/db';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../prisma/generated/client';
 

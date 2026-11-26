@@ -12,11 +12,11 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@base-monorepo-v2/ui/components",
-    "utils": "@base-monorepo-v2/ui/lib/utils",
-    "hooks": "@base-monorepo-v2/ui/hooks",
-    "lib": "@base-monorepo-v2/ui/lib",
-    "ui": "@base-monorepo-v2/ui/components"
+    "components": "@excellense/ui/components",
+    "utils": "@excellense/ui/lib/utils",
+    "hooks": "@excellense/ui/hooks",
+    "lib": "@excellense/ui/lib",
+    "ui": "@excellense/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

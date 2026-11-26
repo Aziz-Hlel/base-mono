@@ -1,7 +1,13 @@
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 
 function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='skeleton' className={cn('bg-muted animate-pulse rounded-none', className)} {...props} />;
+  return (
+    <div
+      data-slot='skeleton'
+      className={cn('bg-muted animate-pulse rounded-none', className)}
+      {...props}
+    />
+  );
 }
 
 export { Skeleton };

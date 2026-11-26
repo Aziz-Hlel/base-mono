@@ -1,6 +1,6 @@
 import { defineRoute } from '@/openapi/defineRoute';
-import { authTokenResSchema } from '@base-monorepo-v2/contracts/schemas/auth/authToken.res';
-import { loginSchema } from '@base-monorepo-v2/contracts/schemas/auth/login.req';
+import { authTokenResSchema } from '@excellense/contracts/schemas/auth/authToken.res';
+import { loginSchema } from '@excellense/contracts/schemas/auth/login.req';
 import express from 'express';
 
 const router = express.Router();

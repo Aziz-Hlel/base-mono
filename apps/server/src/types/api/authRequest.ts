@@ -1,4 +1,4 @@
-import type { UserRole } from '@base-monorepo-v2/db/prisma';
+import type { UserRole } from '@excellense/db/prisma';
 import type { Request } from 'express';
 
 export type AuthRequest = Request & {

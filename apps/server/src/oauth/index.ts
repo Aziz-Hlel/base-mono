@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@/exceptions';
 import { firebaseProvider } from '@/firebase';
 import { handleFirebaseInfraException } from '@/firebase/infraExceptions';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
 import { AuthErrorCode, FirebaseAuthError, type DecodedIdToken } from 'firebase-admin/auth';
 
 export class OAuthProvider {

@@ -1,5 +1,5 @@
 {
-  "name": "@base-monorepo-v2/env",
+  "name": "@excellense/env",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,7 +17,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@base-monorepo-v2/config": "workspace:*",
+    "@excellense/config": "workspace:*",
     "typescript": "catalog:"
   }
 }

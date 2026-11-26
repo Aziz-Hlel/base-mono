@@ -1,6 +1,6 @@
 import redis from '@/redis/init';
-import QUEUE_NAMES from '@base-monorepo-v2/contracts/queues/names';
-import type { NotificationMessage } from '@base-monorepo-v2/contracts/queues/types/notification.message';
+import QUEUE_NAMES from '@excellense/contracts/queues/names';
+import type { NotificationMessage } from '@excellense/contracts/queues/types/notification.message';
 import { Queue } from 'bullmq';
 
 type AddNotificationProps = {

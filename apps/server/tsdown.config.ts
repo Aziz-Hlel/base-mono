@@ -6,6 +6,6 @@ export default defineConfig({
   outDir: './dist',
   clean: true,
   deps: {
-    alwaysBundle: [/@base-monorepo-v2\/.*/],
+    alwaysBundle: [/@excellense\/.*/],
   },
 });

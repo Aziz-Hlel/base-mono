@@ -1,5 +1,5 @@
-import { Button } from '@base-monorepo-v2/ui/components/button';
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { Button } from '@excellense/ui/components/button';
+import { cn } from '@excellense/ui/lib/utils';
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
 import { cva, type VariantProps } from 'class-variance-authority';
@@ -150,7 +150,12 @@ function AttachmentAction({
   );
 }
 
-function AttachmentTrigger({ className, render, type, ...props }: useRender.ComponentProps<'button'>) {
+function AttachmentTrigger({
+  className,
+  render,
+  type,
+  ...props
+}: useRender.ComponentProps<'button'>) {
   return useRender({
     defaultTagName: 'button',
     props: mergeProps<'button'>(

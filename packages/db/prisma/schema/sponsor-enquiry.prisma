@@ -1,0 +1,20 @@
+model SponsorEnquiry {
+  id                        String  @id @default(uuid()) @db.Uuid
+  organizationName          String  @db.VarChar(255)
+  sector                    String  @db.VarChar(255)
+  contactNameAndRole        String  @db.VarChar(255)
+  workEmail                 String  @db.VarChar(255)
+  phone                     String  @db.VarChar(30)
+  country                   String  @db.VarChar(100)
+  website                   String? @db.VarChar(255)
+  preferredSponsorshipLevel String  @db.VarChar(255)
+  boothRequirement          String  @db.VarChar(255)
+  partnershipObjectives     String? @db.Text
+  additionalMessage         String? @db.Text
+  agreedToContact           Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sponsor_enquiries")
+}

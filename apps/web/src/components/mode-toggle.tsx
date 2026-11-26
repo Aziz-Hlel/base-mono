@@ -1,11 +1,11 @@
 import { useTheme } from '@/components/theme-provider';
-import { Button } from '@base-monorepo-v2/ui/components/button';
+import { Button } from '@excellense/ui/components/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@base-monorepo-v2/ui/components/dropdown-menu';
+} from '@excellense/ui/components/dropdown-menu';
 import { Moon, Sun } from 'lucide-react';
 
 export function ModeToggle() {

@@ -1,7 +1,11 @@
-import { cn } from '@base-monorepo-v2/ui/lib/utils';
+import { cn } from '@excellense/ui/lib/utils';
 import * as React from 'react';
 
-function Card({ className, size = 'default', ...props }: React.ComponentProps<'div'> & { size?: 'default' | 'sm' }) {
+function Card({
+  className,
+  size = 'default',
+  ...props
+}: React.ComponentProps<'div'> & { size?: 'default' | 'sm' }) {
   return (
     <div
       data-slot='card'
@@ -32,7 +36,10 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       data-slot='card-title'
-      className={cn('cn-font-heading text-sm font-medium group-data-[size=sm]/card:text-sm', className)}
+      className={cn(
+        'cn-font-heading text-sm font-medium group-data-[size=sm]/card:text-sm',
+        className,
+      )}
       {...props}
     />
   );
@@ -40,7 +47,11 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
 
 function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div data-slot='card-description' className={cn('text-muted-foreground text-xs/relaxed', className)} {...props} />
+    <div
+      data-slot='card-description'
+      className={cn('text-muted-foreground text-xs/relaxed', className)}
+      {...props}
+    />
   );
 }
 
@@ -55,7 +66,9 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
 }
 
 function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
-  return <div data-slot='card-content' className={cn('px-(--card-spacing)', className)} {...props} />;
+  return (
+    <div data-slot='card-content' className={cn('px-(--card-spacing)', className)} {...props} />
+  );
 }
 
 function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {

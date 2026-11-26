@@ -1,5 +1,5 @@
 import { InternalServerErrorException, ServiceUnavailableException } from '@/exceptions';
-import { ERROR_CODES } from '@base-monorepo-v2/contracts/exceptions/codes';
+import { ERROR_CODES } from '@excellense/contracts/exceptions/codes';
 import type { FirebaseAuthError } from 'firebase-admin/auth';
 
 export const handleFirebaseInfraException = (error: FirebaseAuthError) => {

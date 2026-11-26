@@ -1,5 +1,5 @@
 import logger from '@/logger';
-import { isProd } from '@base-monorepo-v2/env/server';
+import { isProd } from '@excellense/env/server';
 import type { Request, Response } from 'express';
 import pinoHttp from 'pino-http';
 

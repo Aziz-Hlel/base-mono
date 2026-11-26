@@ -1,4 +1,4 @@
-import { isDev, isProd } from '@base-monorepo-v2/env/server';
+import { isDev, isProd } from '@excellense/env/server';
 import pino from 'pino';
 import { devTransport } from './transport/devTransport';
 import { wrapErrorLogs } from './wrapErrorLogs';
