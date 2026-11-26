@@ -1,13 +1,33 @@
 enum CancerType {
+    // Most common solid tumors
     BREAST
     LUNG
     COLORECTAL
-    UTERINE
-    BRAIN
     PROSTATE
+    SKIN // melanoma & non-melanoma
+    STOMACH // gastric
+    LIVER
+    PANCREATIC
+    ESOPHAGEAL
+    THYROID
+    BLADDER
+    KIDNEY
+
+    // Gynecologic & urogenital
+    CERVICAL
+    OVARIAN
+    UTERINE // endometrial
+    TESTICULAR
+
+    // Head, neck & CNS
+    BRAIN
+    HEAD_AND_NECK // oral, throat, larynx
+
+    // Blood & bone/soft tissue
     LEUKEMIA
     LYMPHOMA
-    CERVICAL
-    THYROID
+    MULTIPLE_MYELOMA
+    SARCOMA // bone & soft tissue
+
     OTHER
 }
