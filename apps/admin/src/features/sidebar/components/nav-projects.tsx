@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { MoreHorizontalIcon, FolderIcon, ArrowRightIcon, Trash2Icon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function NavProjects({
   projects,
@@ -27,11 +28,12 @@ export function NavProjects({
     icon: React.ReactNode;
   }[];
 }) {
+  const { t } = useTranslation(['sidebar', 'common']);
   const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className='group-data-[collapsible=icon]:hidden'>
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('projects.title')}</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
@@ -45,7 +47,7 @@ export function NavProjects({
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover className='aria-expanded:bg-muted'>
                   <MoreHorizontalIcon />
-                  <span className='sr-only'>More</span>
+                  <span className='sr-only'>{t('projects.more')}</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -55,16 +57,16 @@ export function NavProjects({
               >
                 <DropdownMenuItem>
                   <FolderIcon />
-                  <span>View Project</span>
+                  <span>{t('projects.view')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <ArrowRightIcon />
-                  <span>Share Project</span>
+                  <span>{t('projects.share')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant='destructive'>
                   <Trash2Icon />
-                  <span>Delete Project</span>
+                  <span>{t('projects.delete')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -73,7 +75,7 @@ export function NavProjects({
         <SidebarMenuItem>
           <SidebarMenuButton className='text-sidebar-foreground/70'>
             <MoreHorizontalIcon className='text-sidebar-foreground/70' />
-            <span>More</span>
+            <span>{t('projects.more')}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

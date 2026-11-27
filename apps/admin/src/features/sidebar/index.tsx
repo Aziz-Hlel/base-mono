@@ -1,4 +1,3 @@
-import { AppSidebar } from '@/components/app-sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,9 +8,16 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { Outlet } from 'react-router';
+import { AppSidebar } from '@/features/sidebar/components/app-sidebar';
+import { getBreadcrumbs } from '@/features/sidebar/data/sidebar-data';
+import { useTranslation } from 'react-i18next';
+import { Link, Outlet, useLocation } from 'react-router';
 
 export default function Sidebar() {
+  const { t } = useTranslation(['sidebar', 'common']);
+  const { pathname } = useLocation();
+  const { parent, current } = getBreadcrumbs(pathname);
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -23,26 +29,20 @@ export default function Sidebar() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className='hidden md:block'>
-                  <BreadcrumbLink href='#'>Build Your Application</BreadcrumbLink>
+                  <BreadcrumbLink asChild>
+                    <Link to={parent.url}>{t(parent.title)}</Link>
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className='hidden md:block' />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                  <BreadcrumbPage>{t(current)}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
-        {/* <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div> */}
 
-        <div className='flex flex-1 p-4 '>
+        <div className='flex flex-1 p-4'>
           <Outlet />
         </div>
       </SidebarInset>

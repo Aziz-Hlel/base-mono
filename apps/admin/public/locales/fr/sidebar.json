@@ -1,0 +1,34 @@
+{
+  "team": {
+    "adminConsole": "Console d'administration",
+    "teams": "Équipes",
+    "addTeam": "Ajouter une équipe"
+  },
+  "nav": {
+    "platform": "Plateforme",
+    "dashboard": "Tableau de bord",
+    "contacts": "Contacts",
+    "exhibitorEnquiries": "Demandes d'exposants",
+    "sponsorEnquiries": "Demandes de sponsors"
+  },
+  "user": {
+    "defaultName": "Admin",
+    "upgradeToPro": "Passer à Pro",
+    "account": "Compte",
+    "billing": "Facturation",
+    "notifications": "Notifications",
+    "logOut": "Se déconnecter"
+  },
+  "projects": {
+    "title": "Projets",
+    "more": "Plus",
+    "view": "Voir le projet",
+    "share": "Partager le projet",
+    "delete": "Supprimer le projet"
+  },
+  "language": {
+    "label": "Langue : {{lang}}",
+    "switchTo": "Passer en {{lang}}",
+    "ariaLabel": "Changer la langue vers {{lang}}"
+  }
+}

@@ -8,12 +8,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+import { useTranslation } from 'react-i18next';
+
 interface ViewExhibitorEnquiryProps {
   enquiry: ExhibitorEnquiryRes | null;
   onClose: () => void;
 }
 
 const ViewExhibitorEnquiry = ({ enquiry, onClose }: ViewExhibitorEnquiryProps) => {
+  const { t } = useTranslation(['exhibitor-enquiries', 'common']);
+
   return (
     <Dialog open={Boolean(enquiry)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className='sm:max-w-lg'>
@@ -32,18 +36,18 @@ const ViewExhibitorEnquiry = ({ enquiry, onClose }: ViewExhibitorEnquiryProps) =
         <div className='space-y-3 text-sm'>
           <div className='grid grid-cols-2 gap-2'>
             <div>
-              <span className='text-muted-foreground'>Sector: </span>
+              <span className='text-muted-foreground'>{t('dialog.sector')}: </span>
               <span>{enquiry?.sector}</span>
             </div>
             <div>
-              <span className='text-muted-foreground'>Country: </span>
+              <span className='text-muted-foreground'>{t('dialog.country')}: </span>
               <span>{enquiry?.country}</span>
             </div>
           </div>
 
           {enquiry?.companyWebsite && (
             <div>
-              <span className='text-muted-foreground'>Website: </span>
+              <span className='text-muted-foreground'>{t('dialog.website')}: </span>
               <a
                 href={enquiry.companyWebsite}
                 target='_blank'
@@ -57,7 +61,9 @@ const ViewExhibitorEnquiry = ({ enquiry, onClose }: ViewExhibitorEnquiryProps) =
 
           {enquiry?.companyDescription && (
             <div className='space-y-1'>
-              <p className='text-muted-foreground text-xs font-medium'>Company Description</p>
+              <p className='text-muted-foreground text-xs font-medium'>
+                {t('dialog.companyDescription')}
+              </p>
               <div className='bg-muted/40 rounded-md border p-3 whitespace-pre-wrap'>
                 {enquiry.companyDescription}
               </div>
@@ -66,7 +72,9 @@ const ViewExhibitorEnquiry = ({ enquiry, onClose }: ViewExhibitorEnquiryProps) =
 
           {enquiry?.technicalRequirements && (
             <div className='space-y-1'>
-              <p className='text-muted-foreground text-xs font-medium'>Technical Requirements</p>
+              <p className='text-muted-foreground text-xs font-medium'>
+                {t('dialog.technicalRequirements')}
+              </p>
               <div className='bg-muted/40 rounded-md border p-3 whitespace-pre-wrap'>
                 {enquiry.technicalRequirements}
               </div>

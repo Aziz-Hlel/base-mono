@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useTranslation } from 'react-i18next';
 
 interface ViewSponsorEnquiryProps {
   enquiry: SponsorEnquiryRes | null;
@@ -14,6 +15,8 @@ interface ViewSponsorEnquiryProps {
 }
 
 const ViewSponsorEnquiry = ({ enquiry, onClose }: ViewSponsorEnquiryProps) => {
+  const { t } = useTranslation(['sponsor-enquiries', 'common']);
+
   return (
     <Dialog open={Boolean(enquiry)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className='sm:max-w-lg'>
@@ -35,23 +38,25 @@ const ViewSponsorEnquiry = ({ enquiry, onClose }: ViewSponsorEnquiryProps) => {
         <div className='space-y-3 text-sm'>
           <div className='grid grid-cols-2 gap-2'>
             <div>
-              <span className='text-muted-foreground'>Sector: </span>
+              <span className='text-muted-foreground'>{t('dialog.sector')}: </span>
               <span>{enquiry?.sector}</span>
             </div>
             <div>
-              <span className='text-muted-foreground'>Country: </span>
+              <span className='text-muted-foreground'>{t('dialog.country')}: </span>
               <span>{enquiry?.country}</span>
             </div>
           </div>
 
           <div className='grid grid-cols-2 gap-2'>
             <div>
-              <span className='text-muted-foreground'>Agreed to contact: </span>
-              <span>{enquiry?.agreedToContact ? 'Yes' : 'No'}</span>
+              <span className='text-muted-foreground'>{t('dialog.agreedToContact')}: </span>
+              <span>
+                {enquiry?.agreedToContact ? t('common:boolean.yes') : t('common:boolean.no')}
+              </span>
             </div>
             {enquiry?.website && (
               <div className='truncate'>
-                <span className='text-muted-foreground'>Website: </span>
+                <span className='text-muted-foreground'>{t('dialog.website')}: </span>
                 <a
                   href={enquiry.website}
                   target='_blank'
@@ -66,7 +71,9 @@ const ViewSponsorEnquiry = ({ enquiry, onClose }: ViewSponsorEnquiryProps) => {
 
           {enquiry?.partnershipObjectives && (
             <div className='space-y-1'>
-              <p className='text-muted-foreground text-xs font-medium'>Partnership Objectives</p>
+              <p className='text-muted-foreground text-xs font-medium'>
+                {t('dialog.partnershipObjectives')}
+              </p>
               <div className='bg-muted/40 rounded-md border p-3 whitespace-pre-wrap'>
                 {enquiry.partnershipObjectives}
               </div>
@@ -75,7 +82,9 @@ const ViewSponsorEnquiry = ({ enquiry, onClose }: ViewSponsorEnquiryProps) => {
 
           {enquiry?.additionalMessage && (
             <div className='space-y-1'>
-              <p className='text-muted-foreground text-xs font-medium'>Additional Message</p>
+              <p className='text-muted-foreground text-xs font-medium'>
+                {t('dialog.additionalMessage')}
+              </p>
               <div className='bg-muted/40 rounded-md border p-3 whitespace-pre-wrap'>
                 {enquiry.additionalMessage}
               </div>

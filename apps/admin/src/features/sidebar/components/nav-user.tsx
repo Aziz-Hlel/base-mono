@@ -22,16 +22,20 @@ import {
   BellIcon,
   LogOutIcon,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export function NavUser({
   user,
+  onLogout,
 }: {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
+  onLogout?: () => void;
 }) {
+  const { t } = useTranslation(['sidebar', 'common']);
   const { isMobile } = useSidebar();
 
   return (
@@ -76,28 +80,28 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <SparklesIcon />
-                Upgrade to Pro
+                {t('user.upgradeToPro')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheckIcon />
-                Account
+                {t('user.account')}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCardIcon />
-                Billing
+                {t('user.billing')}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <BellIcon />
-                Notifications
+                {t('user.notifications')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onLogout}>
               <LogOutIcon />
-              Log out
+              {t('user.logOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

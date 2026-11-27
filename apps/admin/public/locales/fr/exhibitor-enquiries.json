@@ -1,0 +1,31 @@
+{
+  "title": "Demandes d'exposants",
+  "subtitle": "Consultez et recherchez les demandes d'exposants soumises sur la plateforme.",
+  "searchPlaceholder": "Rechercher entreprise, contact, e-mail, secteur, pays...",
+  "empty": "Aucune demande d'exposant trouvée.",
+  "errors": {
+    "loadFailed": "Échec du chargement des demandes d'exposants"
+  },
+  "columns": {
+    "company": "Entreprise",
+    "contactPerson": "Personne de contact",
+    "email": "E-mail",
+    "sector": "Secteur",
+    "country": "Pays",
+    "package": "Forfait"
+  },
+  "actions": {
+    "viewEnquiry": "Voir la demande de {{companyName}}"
+  },
+  "pagination": {
+    "total_one": "{{count}} demande au total",
+    "total_other": "{{count}} demandes au total"
+  },
+  "dialog": {
+    "sector": "Secteur",
+    "country": "Pays",
+    "website": "Site web",
+    "companyDescription": "Description de l'entreprise",
+    "technicalRequirements": "Exigences techniques"
+  }
+}

@@ -2,30 +2,33 @@ import type { ExhibitorEnquiryRes } from '@/api/generated/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy';
+import type { TFunction } from 'i18next';
 import { ArrowUpDown, Eye } from 'lucide-react';
 
 interface GetExhibitorEnquiriesColumnsOptions {
   onView: (enquiry: ExhibitorEnquiryRes) => void;
   onToggleCreatedSort: () => void;
+  t: TFunction<['exhibitor-enquiries', 'common']>;
 }
 
 export const getExhibitorEnquiriesColumns = ({
   onView,
   onToggleCreatedSort,
+  t,
 }: GetExhibitorEnquiriesColumnsOptions): LegacyColumnDef<ExhibitorEnquiryRes>[] => [
   {
     accessorKey: 'companyName',
-    header: 'Company',
+    header: t('columns.company'),
     cell: ({ row }) => <span className='font-medium'>{row.original.companyName}</span>,
   },
   {
     accessorKey: 'contactPerson',
-    header: 'Contact Person',
+    header: t('columns.contactPerson'),
     cell: ({ row }) => <span>{row.original.contactPerson}</span>,
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    header: t('columns.email'),
     cell: ({ row }) => (
       <a
         href={`mailto:${row.original.email}`}
@@ -37,7 +40,7 @@ export const getExhibitorEnquiriesColumns = ({
   },
   {
     accessorKey: 'sector',
-    header: 'Sector',
+    header: t('columns.sector'),
     cell: ({ row }) => (
       <span className='block max-w-[160px] truncate' title={row.original.sector}>
         {row.original.sector}
@@ -46,18 +49,18 @@ export const getExhibitorEnquiriesColumns = ({
   },
   {
     accessorKey: 'country',
-    header: 'Country',
+    header: t('columns.country'),
   },
   {
     accessorKey: 'preferredPackage',
-    header: 'Package',
+    header: t('columns.package'),
     cell: ({ row }) => <Badge variant='secondary'>{row.original.preferredPackage}</Badge>,
   },
   {
     accessorKey: 'createdAt',
     header: () => (
       <Button variant='ghost' size='sm' className='-ml-2 h-8 px-2' onClick={onToggleCreatedSort}>
-        Received
+        {t('common:table.received')}
         <ArrowUpDown className='ml-1.5 size-3.5' />
       </Button>
     ),
@@ -73,13 +76,13 @@ export const getExhibitorEnquiriesColumns = ({
   },
   {
     id: 'actions',
-    header: () => <span className='sr-only'>Actions</span>,
+    header: () => <span className='sr-only'>{t('common:table.actions')}</span>,
     cell: ({ row }) => (
       <div className='flex justify-end'>
         <Button
           variant='ghost'
           size='icon-sm'
-          aria-label={`View enquiry from ${row.original.companyName}`}
+          aria-label={t('actions.viewEnquiry', { companyName: row.original.companyName })}
           onClick={() => onView(row.original)}
         >
           <Eye className='size-4' />

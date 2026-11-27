@@ -1,0 +1,28 @@
+{
+  "title": "Contacts",
+  "subtitle": "Consultez et recherchez les demandes de contact soumises via la plateforme.",
+  "columns": {
+    "name": "Nom",
+    "email": "E-mail",
+    "organization": "Organisation",
+    "subject": "Objet",
+    "message": "Message"
+  },
+  "actions": {
+    "viewMessageAria": "Voir le message de {{name}}"
+  },
+  "table": {
+    "searchPlaceholder": "Rechercher nom, e-mail, organisation, objet...",
+    "loadError": "Échec du chargement des contacts",
+    "empty": "Aucun contact trouvé.",
+    "total_one": "{{count}} contact au total",
+    "total_other": "{{count}} contacts au total"
+  },
+  "dialog": {
+    "from": "De {{name}} ({{email}})",
+    "fromWithOrg": "De {{name}} ({{email}}) — {{organization}}"
+  },
+  "errors": {
+    "fetchFailed": "Échec de la récupération des contacts"
+  }
+}

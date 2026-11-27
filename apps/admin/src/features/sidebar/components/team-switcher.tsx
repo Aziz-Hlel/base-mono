@@ -17,19 +17,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import type { SidebarTeam } from '@/features/sidebar/data/sidebar-data';
 import { ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: React.ReactNode;
-    plan: string;
-  }[];
-}) {
+export function TeamSwitcher({ teams }: { teams: SidebarTeam[] }) {
+  const { t } = useTranslation(['sidebar', 'common']);
   const { isMobile } = useSidebar();
-  const [activeTeam, setActiveTeam] = React.useState(teams[0]);
+  const [activeTeamIndex, setActiveTeamIndex] = React.useState(0);
+  const activeTeam = teams[activeTeamIndex] ?? teams[0];
 
   if (!activeTeam) {
     return null;
@@ -49,7 +45,7 @@ export function TeamSwitcher({
               </div>
               <div className='grid flex-1 text-left text-sm leading-tight'>
                 <span className='truncate font-medium'>{activeTeam.name}</span>
-                <span className='truncate text-xs'>{activeTeam.plan}</span>
+                <span className='truncate text-xs'>{t(activeTeam.plan)}</span>
               </div>
               <ChevronsUpDownIcon className='ml-auto' />
             </SidebarMenuButton>
@@ -60,11 +56,13 @@ export function TeamSwitcher({
             side={isMobile ? 'bottom' : 'right'}
             sideOffset={4}
           >
-            <DropdownMenuLabel className='text-xs text-muted-foreground'>Teams</DropdownMenuLabel>
+            <DropdownMenuLabel className='text-xs text-muted-foreground'>
+              {t('team.teams')}
+            </DropdownMenuLabel>
             {teams.map((team, index) => (
               <DropdownMenuItem
                 key={team.name}
-                onClick={() => setActiveTeam(team)}
+                onClick={() => setActiveTeamIndex(index)}
                 className='gap-2 p-2'
               >
                 <div className='flex size-6 items-center justify-center rounded-md border'>
@@ -79,7 +77,7 @@ export function TeamSwitcher({
               <div className='flex size-6 items-center justify-center rounded-md border bg-transparent'>
                 <PlusIcon className='size-4' />
               </div>
-              <div className='font-medium text-muted-foreground'>Add team</div>
+              <div className='font-medium text-muted-foreground'>{t('team.addTeam')}</div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

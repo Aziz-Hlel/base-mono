@@ -1,0 +1,31 @@
+{
+  "title": "Demandes de sponsoring",
+  "subtitle": "Consultez et recherchez les demandes de sponsoring soumises sur la plateforme.",
+  "searchPlaceholder": "Rechercher par organisation, contact, e-mail, secteur, pays...",
+  "empty": "Aucune demande de sponsoring trouvée.",
+  "total_one": "{{count}} demande au total",
+  "total_other": "{{count}} demandes au total",
+  "errors": {
+    "loadFailed": "Échec du chargement des demandes de sponsoring"
+  },
+  "columns": {
+    "organization": "Organisation",
+    "contact": "Contact",
+    "workEmail": "E-mail professionnel",
+    "sector": "Secteur",
+    "country": "Pays",
+    "level": "Niveau",
+    "booth": "Stand"
+  },
+  "actions": {
+    "viewEnquiry": "Voir la demande de {{organization}}"
+  },
+  "dialog": {
+    "sector": "Secteur",
+    "country": "Pays",
+    "agreedToContact": "Accepte d'être contacté",
+    "website": "Site web",
+    "partnershipObjectives": "Objectifs du partenariat",
+    "additionalMessage": "Message complémentaire"
+  }
+}

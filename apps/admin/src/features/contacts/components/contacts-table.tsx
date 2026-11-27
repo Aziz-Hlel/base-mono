@@ -22,11 +22,13 @@ import { getCoreRowModel, useLegacyTable } from '@tanstack/react-table/legacy';
 import { useDebounce } from '@uidotdev/usehooks';
 import { ChevronLeft, ChevronRight, RefreshCw, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ViewContact from '../dialogs/view-contact';
 import { useContacts } from '../hooks/use-contacts';
 import { getContactsColumns } from './contacts-columns';
 
 export const ContactsTable = () => {
+  const { t } = useTranslation(['contacts', 'common']);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
@@ -51,13 +53,14 @@ export const ContactsTable = () => {
   const columns = useMemo(
     () =>
       getContactsColumns({
+        t,
         onView: setSelectedContact,
         onToggleCreatedSort: () => {
           setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'));
           setPage(1);
         },
       }),
-    [],
+    [t],
   );
 
   const table = useLegacyTable({
@@ -81,14 +84,14 @@ export const ContactsTable = () => {
           <Input
             value={searchInput}
             onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder='Search name, email, organization, subject...'
+            placeholder={t('table.searchPlaceholder')}
             className='pl-9'
           />
         </div>
 
         <Button variant='outline' size='sm' onClick={() => refetch()} disabled={isFetching}>
           <RefreshCw className={`mr-2 size-4 ${isFetching ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('common:actions.refresh')}
         </Button>
       </div>
 
@@ -123,10 +126,10 @@ export const ContactsTable = () => {
                 <TableCell colSpan={columns.length} className='h-32 text-center'>
                   <div className='flex flex-col items-center gap-2'>
                     <p className='text-destructive text-sm'>
-                      {error instanceof Error ? error.message : 'Failed to load contacts'}
+                      {error instanceof Error ? error.message : t('table.loadError')}
                     </p>
                     <Button variant='outline' size='sm' onClick={() => refetch()}>
-                      Try again
+                      {t('common:actions.tryAgain')}
                     </Button>
                   </div>
                 </TableCell>
@@ -137,7 +140,7 @@ export const ContactsTable = () => {
                   colSpan={columns.length}
                   className='text-muted-foreground h-32 text-center'
                 >
-                  No contacts found.
+                  {t('table.empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -157,12 +160,12 @@ export const ContactsTable = () => {
 
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
         <p className='text-muted-foreground text-sm'>
-          {totalElements} {totalElements === 1 ? 'contact' : 'contacts'} total
+          {t('table.total', { count: totalElements })}
         </p>
 
         <div className='flex items-center gap-4'>
           <div className='flex items-center gap-2'>
-            <span className='text-muted-foreground text-sm'>Rows</span>
+            <span className='text-muted-foreground text-sm'>{t('common:pagination.rows')}</span>
             <Select
               value={String(size)}
               onValueChange={(value) => {
@@ -183,14 +186,14 @@ export const ContactsTable = () => {
 
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              Page {page} of {totalPages}
+              {t('common:pagination.pageOf', { page, totalPages })}
             </span>
             <Button
               variant='outline'
               size='icon-sm'
               disabled={page <= 1 || isFetching}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              aria-label='Previous page'
+              aria-label={t('common:pagination.previousPage')}
             >
               <ChevronLeft className='size-4' />
             </Button>
@@ -199,7 +202,7 @@ export const ContactsTable = () => {
               size='icon-sm'
               disabled={page >= totalPages || isFetching}
               onClick={() => setPage((p) => p + 1)}
-              aria-label='Next page'
+              aria-label={t('common:pagination.nextPage')}
             >
               <ChevronRight className='size-4' />
             </Button>

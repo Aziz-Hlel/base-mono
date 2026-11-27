@@ -1,5 +1,6 @@
 import { listContacts, type ContactRes } from '@/api/generated/client';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 export interface ContactsPagination {
   number: number;
@@ -33,6 +34,8 @@ const DEFAULT_PAGINATION: ContactsPagination = {
 };
 
 export const useContacts = (params: ContactsQueryParams) => {
+  const { t } = useTranslation(['contacts', 'common']);
+
   return useQuery({
     queryKey: ['contacts', params],
     placeholderData: keepPreviousData,
@@ -51,7 +54,7 @@ export const useContacts = (params: ContactsQueryParams) => {
         const message =
           error && typeof error === 'object' && 'message' in error
             ? String((error as { message: unknown }).message)
-            : 'Failed to fetch contacts';
+            : t('errors.fetchFailed');
         throw new Error(message);
       }
 

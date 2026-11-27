@@ -1,0 +1,31 @@
+{
+  "title": "Sponsor Enquiries",
+  "subtitle": "View and search sponsor enquiries submitted through the platform.",
+  "searchPlaceholder": "Search organization, contact, email, sector, country...",
+  "empty": "No sponsor enquiries found.",
+  "total_one": "{{count}} enquiry total",
+  "total_other": "{{count}} enquiries total",
+  "errors": {
+    "loadFailed": "Failed to load sponsor enquiries"
+  },
+  "columns": {
+    "organization": "Organization",
+    "contact": "Contact",
+    "workEmail": "Work Email",
+    "sector": "Sector",
+    "country": "Country",
+    "level": "Level",
+    "booth": "Booth"
+  },
+  "actions": {
+    "viewEnquiry": "View enquiry from {{organization}}"
+  },
+  "dialog": {
+    "sector": "Sector",
+    "country": "Country",
+    "agreedToContact": "Agreed to contact",
+    "website": "Website",
+    "partnershipObjectives": "Partnership Objectives",
+    "additionalMessage": "Additional Message"
+  }
+}

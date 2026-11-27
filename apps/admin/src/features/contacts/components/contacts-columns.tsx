@@ -2,25 +2,28 @@ import type { ContactRes } from '@/api/generated/client';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { LegacyColumnDef } from '@tanstack/react-table/legacy';
+import type { TFunction } from 'i18next';
 import { ArrowUpDown, Eye } from 'lucide-react';
 
 interface GetContactsColumnsOptions {
+  t: TFunction<['contacts', 'common']>;
   onView: (contact: ContactRes) => void;
   onToggleCreatedSort: () => void;
 }
 
 export const getContactsColumns = ({
+  t,
   onView,
   onToggleCreatedSort,
 }: GetContactsColumnsOptions): LegacyColumnDef<ContactRes>[] => [
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: t('columns.name'),
     cell: ({ row }) => <span className='font-medium'>{row.original.name}</span>,
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    header: t('columns.email'),
     cell: ({ row }) => (
       <a
         href={`mailto:${row.original.email}`}
@@ -32,7 +35,7 @@ export const getContactsColumns = ({
   },
   {
     accessorKey: 'organization',
-    header: 'Organization',
+    header: t('columns.organization'),
     cell: ({ row }) =>
       row.original.organization ? (
         <Badge variant='secondary'>{row.original.organization}</Badge>
@@ -42,7 +45,7 @@ export const getContactsColumns = ({
   },
   {
     accessorKey: 'subject',
-    header: 'Subject',
+    header: t('columns.subject'),
     cell: ({ row }) => (
       <span className='block max-w-96 truncate' title={row.original.subject}>
         {row.original.subject}
@@ -51,7 +54,7 @@ export const getContactsColumns = ({
   },
   {
     accessorKey: 'message',
-    header: 'Message',
+    header: t('columns.message'),
     cell: ({ row }) => (
       <span className='text-muted-foreground block max-w-65 truncate' title={row.original.message}>
         {row.original.message}
@@ -62,7 +65,7 @@ export const getContactsColumns = ({
     accessorKey: 'createdAt',
     header: () => (
       <Button variant='ghost' size='sm' className='-ml-2 h-8 px-2' onClick={onToggleCreatedSort}>
-        Received
+        {t('common:table.received')}
         <ArrowUpDown className='ml-1.5 size-3.5' />
       </Button>
     ),
@@ -78,13 +81,13 @@ export const getContactsColumns = ({
   },
   {
     id: 'actions',
-    header: () => <span className='sr-only'>Actions</span>,
+    header: () => <span className='sr-only'>{t('common:table.actions')}</span>,
     cell: ({ row }) => (
       <div className='flex justify-end'>
         <Button
           variant='ghost'
           size='icon-sm'
-          aria-label={`View message from ${row.original.name}`}
+          aria-label={t('actions.viewMessageAria', { name: row.original.name })}
           onClick={() => onView(row.original)}
         >
           <Eye className='size-4' />

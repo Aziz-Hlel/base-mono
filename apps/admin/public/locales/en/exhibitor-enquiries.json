@@ -1,0 +1,31 @@
+{
+  "title": "Exhibitor Enquiries",
+  "subtitle": "View and search exhibitor enquiries submitted through the platform.",
+  "searchPlaceholder": "Search company, contact, email, sector, country...",
+  "empty": "No exhibitor enquiries found.",
+  "errors": {
+    "loadFailed": "Failed to load exhibitor enquiries"
+  },
+  "columns": {
+    "company": "Company",
+    "contactPerson": "Contact Person",
+    "email": "Email",
+    "sector": "Sector",
+    "country": "Country",
+    "package": "Package"
+  },
+  "actions": {
+    "viewEnquiry": "View enquiry from {{companyName}}"
+  },
+  "pagination": {
+    "total_one": "{{count}} enquiry total",
+    "total_other": "{{count}} enquiries total"
+  },
+  "dialog": {
+    "sector": "Sector",
+    "country": "Country",
+    "website": "Website",
+    "companyDescription": "Company Description",
+    "technicalRequirements": "Technical Requirements"
+  }
+}

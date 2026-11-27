@@ -22,11 +22,13 @@ import { getCoreRowModel, useLegacyTable } from '@tanstack/react-table/legacy';
 import { useDebounce } from '@uidotdev/usehooks';
 import { ChevronLeft, ChevronRight, RefreshCw, Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ViewSponsorEnquiry from '../dialogs/view-sponsor-enquiry';
 import { useSponsorEnquiries } from '../hooks/use-sponsor-enquiries';
 import { getSponsorEnquiriesColumns } from './sponsor-enquiries-columns';
 
 export const SponsorEnquiriesTable = () => {
+  const { t } = useTranslation(['sponsor-enquiries', 'common']);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [order, setOrder] = useState<'asc' | 'desc'>('desc');
@@ -51,13 +53,14 @@ export const SponsorEnquiriesTable = () => {
   const columns = useMemo(
     () =>
       getSponsorEnquiriesColumns({
+        t,
         onView: setSelectedEnquiry,
         onToggleCreatedSort: () => {
           setOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'));
           setPage(1);
         },
       }),
-    [],
+    [t],
   );
 
   const table = useLegacyTable({
@@ -81,14 +84,14 @@ export const SponsorEnquiriesTable = () => {
           <Input
             value={searchInput}
             onChange={(e) => handleSearchChange(e.target.value)}
-            placeholder='Search organization, contact, email, sector, country...'
+            placeholder={t('searchPlaceholder')}
             className='pl-9'
           />
         </div>
 
         <Button variant='outline' size='sm' onClick={() => refetch()} disabled={isFetching}>
           <RefreshCw className={`mr-2 size-4 ${isFetching ? 'animate-spin' : ''}`} />
-          Refresh
+          {t('common:actions.refresh')}
         </Button>
       </div>
 
@@ -123,10 +126,10 @@ export const SponsorEnquiriesTable = () => {
                 <TableCell colSpan={columns.length} className='h-32 text-center'>
                   <div className='flex flex-col items-center gap-2'>
                     <p className='text-destructive text-sm'>
-                      {error instanceof Error ? error.message : 'Failed to load sponsor enquiries'}
+                      {error instanceof Error ? error.message : t('errors.loadFailed')}
                     </p>
                     <Button variant='outline' size='sm' onClick={() => refetch()}>
-                      Try again
+                      {t('common:actions.tryAgain')}
                     </Button>
                   </div>
                 </TableCell>
@@ -137,7 +140,7 @@ export const SponsorEnquiriesTable = () => {
                   colSpan={columns.length}
                   className='text-muted-foreground h-32 text-center'
                 >
-                  No sponsor enquiries found.
+                  {t('empty')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -156,13 +159,11 @@ export const SponsorEnquiriesTable = () => {
       </div>
 
       <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
-        <p className='text-muted-foreground text-sm'>
-          {totalElements} {totalElements === 1 ? 'enquiry' : 'enquiries'} total
-        </p>
+        <p className='text-muted-foreground text-sm'>{t('total', { count: totalElements })}</p>
 
         <div className='flex items-center gap-4'>
           <div className='flex items-center gap-2'>
-            <span className='text-muted-foreground text-sm'>Rows</span>
+            <span className='text-muted-foreground text-sm'>{t('common:pagination.rows')}</span>
             <Select
               value={String(size)}
               onValueChange={(value) => {
@@ -183,14 +184,14 @@ export const SponsorEnquiriesTable = () => {
 
           <div className='flex items-center gap-2'>
             <span className='text-muted-foreground text-sm'>
-              Page {page} of {totalPages}
+              {t('common:pagination.pageOf', { page, totalPages })}
             </span>
             <Button
               variant='outline'
               size='icon-sm'
               disabled={page <= 1 || isFetching}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              aria-label='Previous page'
+              aria-label={t('common:pagination.previousPage')}
             >
               <ChevronLeft className='size-4' />
             </Button>
@@ -199,7 +200,7 @@ export const SponsorEnquiriesTable = () => {
               size='icon-sm'
               disabled={page >= totalPages || isFetching}
               onClick={() => setPage((p) => p + 1)}
-              aria-label='Next page'
+              aria-label={t('common:pagination.nextPage')}
             >
               <ChevronRight className='size-4' />
             </Button>

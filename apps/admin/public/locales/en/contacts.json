@@ -1,0 +1,28 @@
+{
+  "title": "Contacts",
+  "subtitle": "View and search contact enquiries submitted through the platform.",
+  "columns": {
+    "name": "Name",
+    "email": "Email",
+    "organization": "Organization",
+    "subject": "Subject",
+    "message": "Message"
+  },
+  "actions": {
+    "viewMessageAria": "View message from {{name}}"
+  },
+  "table": {
+    "searchPlaceholder": "Search name, email, organization, subject...",
+    "loadError": "Failed to load contacts",
+    "empty": "No contacts found.",
+    "total_one": "{{count}} contact total",
+    "total_other": "{{count}} contacts total"
+  },
+  "dialog": {
+    "from": "From {{name}} ({{email}})",
+    "fromWithOrg": "From {{name}} ({{email}}) — {{organization}}"
+  },
+  "errors": {
+    "fetchFailed": "Failed to fetch contacts"
+  }
+}

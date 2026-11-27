@@ -1,0 +1,24 @@
+{
+  "actions": {
+    "refresh": "Refresh",
+    "tryAgain": "Try again",
+    "view": "View",
+    "close": "Close",
+    "add": "Add",
+    "delete": "Delete"
+  },
+  "table": {
+    "actions": "Actions",
+    "received": "Received"
+  },
+  "pagination": {
+    "rows": "Rows",
+    "pageOf": "Page {{page}} of {{totalPages}}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
+  },
+  "boolean": {
+    "yes": "Yes",
+    "no": "No"
+  }
+}
