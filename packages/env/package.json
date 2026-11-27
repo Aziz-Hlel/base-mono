@@ -7,8 +7,7 @@
     "./db": "./src/db.ts",
     "./cache": "./src/cache.ts",
     "./server": "./src/server.ts",
-    "./ocr": "./src/ocr.ts",
-    "./web": "./src/web.ts"
+    "./ocr": "./src/ocr.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.1",

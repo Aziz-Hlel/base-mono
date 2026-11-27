@@ -1,14 +1,16 @@
-name: excellense-mono
+name: fessummit-mono
 
 services:
   caddy:
+    container_name: fessummit-reverse-proxy
     image: ${CADDY_IMAGE:?CADDY_IMAGE is required}
     build:
       context: .
       dockerfile: infra/caddy/Dockerfile
       args:
-        VITE_NODE_ENV: ${VITE_NODE_ENV:?VITE_NODE_ENV is required}
-        VITE_API_URL: ${VITE_API_URL:?VITE_API_URL is required}
+        # Must use :- (not :?) because :? throws an error in the cloud even with --no-build  
+        VITE_NODE_ENV: ${VITE_NODE_ENV:-}
+        VITE_API_URL: ${VITE_API_URL:-}
     ports:
       - ${LANDING_PORT}:${LANDING_PORT}
       - ${ADMIN_PORT}:${ADMIN_PORT}
@@ -23,6 +25,9 @@ services:
       - caddy_config:/config
     depends_on:
       - server
+    networks:
+      - fessummit-network
+      - default
     restart: unless-stopped
 
   server:
@@ -51,6 +56,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    networks:
+      - default
     restart: unless-stopped
 
   db:
@@ -70,6 +77,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default
     restart: unless-stopped
 
   redis:
@@ -89,6 +98,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - default
     restart: unless-stopped
 
 volumes:
@@ -96,3 +107,7 @@ volumes:
   caddy_config:
   db_data:
   redis_data:
+
+networks:
+  fessummit-network:
+    name: fessummit-network

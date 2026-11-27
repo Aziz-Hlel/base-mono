@@ -1,0 +1,173 @@
+name: CI-CD
+
+on:
+  push:
+    branches:
+      - prod
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.5"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run typecheck
+        run: bun run check-types
+
+  build-and-push:
+    name: Build & Push Images
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      caddy_image: ${{ steps.meta.outputs.caddy_image }}
+      server_image: ${{ steps.meta.outputs.server_image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute image names
+        id: meta
+        run: |
+          PREFIX="ghcr.io/$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
+          echo "caddy_repo=${PREFIX}-caddy" >> "$GITHUB_OUTPUT"
+          echo "server_repo=${PREFIX}-server" >> "$GITHUB_OUTPUT"
+          echo "caddy_image=${PREFIX}-caddy:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          echo "server_image=${PREFIX}-server:${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Caddy (admin + landing)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: infra/caddy/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.caddy_repo }}:${{ github.sha }}
+            ${{ steps.meta.outputs.caddy_repo }}:latest
+          build-args: |
+            VITE_NODE_ENV=${{ secrets.VITE_NODE_ENV }}
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
+          cache-from: type=gha,scope=caddy
+          cache-to: type=gha,mode=max,scope=caddy
+
+      - name: Build and push Server
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/server/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.server_repo }}:${{ github.sha }}
+            ${{ steps.meta.outputs.server_repo }}:latest
+          cache-from: type=gha,scope=server
+          cache-to: type=gha,mode=max,scope=server
+
+  deploy:
+    name: Deploy to EC2
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Copy compose.yml and .env to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          CADDY_IMAGE: ${{ needs.build-and-push.outputs.caddy_image }}
+          SERVER_IMAGE: ${{ needs.build-and-push.outputs.server_image }}
+          LANDING_PORT: ${{ secrets.LANDING_PORT }}
+          ADMIN_PORT: ${{ secrets.ADMIN_PORT }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          API_PORT: ${{ secrets.API_PORT }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          APP_NAME: ${{ secrets.APP_NAME }}
+          ALLOWED_ORIGIN_PATTERNS: ${{ secrets.ALLOWED_ORIGIN_PATTERNS }}
+          JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        run: |
+          SSH_OPTS="-i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new"
+          ssh $SSH_OPTS "$EC2_USER@$EC2_HOST" "mkdir -p ./fessummit"
+          scp $SSH_OPTS compose.yml "$EC2_USER@$EC2_HOST:./fessummit/compose.yml"
+          cat <<EOF | ssh $SSH_OPTS "$EC2_USER@$EC2_HOST" "cat > ./fessummit/.env && chmod 600 ./fessummit/.env"
+          CADDY_IMAGE=${CADDY_IMAGE}
+          SERVER_IMAGE=${SERVER_IMAGE}
+          LANDING_PORT=${LANDING_PORT}
+          ADMIN_PORT=${ADMIN_PORT}
+          SERVER_PORT=${SERVER_PORT}
+          API_PORT=${API_PORT}
+          NODE_ENV=${NODE_ENV}
+          APP_NAME=${APP_NAME}
+          ALLOWED_ORIGIN_PATTERNS=${ALLOWED_ORIGIN_PATTERNS}
+          JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET}
+          JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+          DB_HOST=${DB_HOST}
+          DB_PORT=${DB_PORT}
+          DB_USER=${DB_USER}
+          DB_PASSWORD=${DB_PASSWORD}
+          DB_NAME=${DB_NAME}
+          REDIS_HOST=${REDIS_HOST}
+          REDIS_PORT=${REDIS_PORT}
+          REDIS_PASSWORD=${REDIS_PASSWORD}
+          EOF
+
+      - name: Pull images and restart Compose
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          SSH_OPTS="-i ~/.ssh/deploy_key -o StrictHostKeyChecking=accept-new"
+          if [ -n "$GHCR_TOKEN" ]; then
+            printf '%s\n' "$GHCR_TOKEN" | ssh $SSH_OPTS "$EC2_USER@$EC2_HOST" "docker login ghcr.io -u '$GHCR_USER' --password-stdin"
+          fi
+          ssh $SSH_OPTS "$EC2_USER@$EC2_HOST" "
+            set -e
+            cd ./fessummit
+            docker compose pull
+            docker compose up -d --no-build --remove-orphans
+            docker image prune -f
+          "

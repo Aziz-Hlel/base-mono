@@ -23,7 +23,6 @@
       "sonner": "^2.0.8",
       "tailwindcss": "^4.3.3",
       "typescript": "6.0.2",
-      "varlock": "1.18.0",
       "zod": "^4.5.4"
     }
   },
@@ -54,7 +53,6 @@
     "build": "bun --filter '*' build",
     "check-types": "bun --filter '*' check-types",
     "docker:local": "docker compose -f ./docker/compose.local.yml --env-file config/.env.local up",
-    "dev:web": "bun --filter web dev",
     "dev:admin": "bun --filter admin dev",
     "dev:server": "bun --filter server dev",
     "dev:landing": "bun --filter landing dev",
@@ -71,7 +69,6 @@
     "docker:up": "docker compose up -d --build",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "env:generate": "varlock codegen --path ./apps/web/ ",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -86,8 +83,7 @@
     "@infisical/cli": "^0.45.8",
     "prettier": "^3.9.8",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "catalog:",
-    "varlock": "catalog:"
+    "typescript": "catalog:"
   },
   "lint-staged": {
     "**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,json,md}": "prettier --write --ignore-unknown"

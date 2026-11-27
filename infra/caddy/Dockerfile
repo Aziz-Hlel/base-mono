@@ -6,7 +6,6 @@ COPY package.json bun.lock ./
 COPY apps/admin/package.json apps/admin/package.json
 COPY apps/landing/package.json apps/landing/package.json
 COPY apps/server/package.json apps/server/package.json
-COPY apps/web/package.json apps/web/package.json
 COPY packages/config/package.json packages/config/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
 COPY packages/db/package.json packages/db/package.json

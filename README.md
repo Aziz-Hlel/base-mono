@@ -1,4 +1,4 @@
-# base-monorepo-v2
+# fessummit-mono
 
 This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, React Router, Express, and more.
 
@@ -55,7 +55,7 @@ React web apps in this stack share shadcn/ui primitives through `packages/ui`.
 
 - Change design tokens and global styles in `packages/ui/src/styles/globals.css`
 - Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
+- Adjust shadcn aliases or style config in `packages/ui/components.json`
 
 ### Add more shared components
 
@@ -73,7 +73,7 @@ import { Button } from '@excellense/ui/components/button';
 
 ### Add app-specific blocks
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from the target app directory.
 
 ## Environment Configuration
 
@@ -105,7 +105,8 @@ For more details, see the guide on [Deploying with Docker Compose](https://www.b
 ```
 base-monorepo-v2/
 ├── apps/
-│   ├── web/         # Frontend application (React + React Router)
+│   ├── admin/       # Admin dashboard application
+│   ├── landing/     # Landing page application
 │   └── server/      # Backend API (Express)
 ├── packages/
 │   ├── ui/          # Shared shadcn/ui components and styles
@@ -116,7 +117,8 @@ base-monorepo-v2/
 
 - `pnpm run dev`: Start all applications in development mode
 - `pnpm run build`: Build all applications
-- `pnpm run dev:web`: Start only the web application
+- `pnpm run dev:admin`: Start only the admin application
+- `pnpm run dev:landing`: Start only the landing application
 - `pnpm run dev:server`: Start only the server
 - `pnpm run check-types`: Check TypeScript types across all apps
 - `pnpm run db:push`: Push schema changes to database
