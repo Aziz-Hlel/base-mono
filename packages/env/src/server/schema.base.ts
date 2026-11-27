@@ -1,12 +1,5 @@
 import z from 'zod';
-import {
-  API_PORT,
-  APP_NAME,
-  dbSchema,
-  jwtSchema,
-  mobileVersionsSchema,
-  redisSchema,
-} from './envs.fields';
+import { API_PORT, APP_NAME, dbSchema, jwtSchema, redisSchema } from './envs.fields';
 
 const baseSchema = z.object({
   // APP
@@ -21,12 +14,6 @@ const baseSchema = z.object({
 
   // REDIS
   ...redisSchema,
-
-  // SMTP
-  // ...smtpSchema,
-
-  // APP VERSIONS
-  ...mobileVersionsSchema,
 });
 
 export default baseSchema;

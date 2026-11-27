@@ -1,0 +1,17 @@
+{$LANDING_DOMAIN} {
+	root * /srv/landing
+	encode zstd gzip
+	try_files {path} /index.html
+	file_server
+}
+
+{$ADMIN_DOMAIN} {
+	root * /srv/admin
+	encode zstd gzip
+	try_files {path} /index.html
+	file_server
+}
+
+{$API_DOMAIN} {
+	reverse_proxy server:{$API_PORT}
+}
