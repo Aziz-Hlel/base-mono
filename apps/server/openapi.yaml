@@ -1,0 +1,524 @@
+openapi: 3.1.0
+info:
+  title: KHAIAL API Reference
+  version: 1.0.0
+  description: Production API documentation powered by Zod and Scalar
+servers:
+  - url: http://localhost:3000
+components:
+  schemas:
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+          maxLength: 255
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required:
+        - email
+        - password
+    RefreshTokenInput:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          minLength: 1
+      required:
+        - refreshToken
+    MeRes:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UserRes"
+      required:
+        - user
+      description: Current authenticated user
+    UserRes:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          maxLength: 255
+          format: email
+        role:
+          $ref: "#/components/schemas/UserRole"
+        username:
+          type: string
+          minLength: 3
+          maxLength: 255
+        isEmailVerified:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - role
+        - username
+        - isEmailVerified
+        - createdAt
+        - updatedAt
+    UserRole:
+      type: string
+      enum:
+        - SUPER_ADMIN
+        - ADMIN
+      description: UserRole enum
+    ListContactsRes:
+      type: array
+      items:
+        $ref: "#/components/schemas/ContactRes"
+      description: List of contact enquiries
+    ContactRes:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 3
+          maxLength: 255
+        email:
+          type: string
+          maxLength: 255
+          format: email
+        organization:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 255
+        subject:
+          type: string
+          minLength: 3
+          maxLength: 255
+        message:
+          type: string
+          minLength: 3
+          maxLength: 5000
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - organization
+        - subject
+        - message
+        - createdAt
+        - updatedAt
+    ListExhibitorEnquiriesRes:
+      type: array
+      items:
+        $ref: "#/components/schemas/ExhibitorEnquiryRes"
+      description: List of exhibitor enquiries
+    ExhibitorEnquiryRes:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        companyName:
+          type: string
+          minLength: 3
+          maxLength: 255
+        sector:
+          type: string
+          minLength: 3
+          maxLength: 255
+        contactPerson:
+          type: string
+          minLength: 3
+          maxLength: 255
+        email:
+          type: string
+          maxLength: 255
+          format: email
+        phone:
+          type: string
+          minLength: 3
+          maxLength: 30
+        country:
+          type: string
+          minLength: 2
+          maxLength: 100
+        companyWebsite:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 255
+        preferredPackage:
+          $ref: "#/components/schemas/PreferredPackage"
+        technicalRequirements:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 5000
+        companyDescription:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 5000
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - companyName
+        - sector
+        - contactPerson
+        - email
+        - phone
+        - country
+        - companyWebsite
+        - preferredPackage
+        - technicalRequirements
+        - companyDescription
+        - createdAt
+        - updatedAt
+    PreferredPackage:
+      type: string
+      enum:
+        - STARTUP
+        - STANDARD
+        - PREMIUM
+      description: PreferredPackage enum
+    ListSponsorEnquiriesRes:
+      type: array
+      items:
+        $ref: "#/components/schemas/SponsorEnquiryRes"
+      description: List of sponsor enquiries
+    SponsorEnquiryRes:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizationName:
+          type: string
+          minLength: 3
+          maxLength: 255
+        sector:
+          type: string
+          minLength: 3
+          maxLength: 255
+        contactNameAndRole:
+          type: string
+          minLength: 3
+          maxLength: 255
+        workEmail:
+          type: string
+          maxLength: 255
+          format: email
+        phone:
+          type: string
+          minLength: 3
+          maxLength: 30
+        country:
+          type: string
+          minLength: 2
+          maxLength: 100
+        website:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 255
+        preferredSponsorshipLevel:
+          $ref: "#/components/schemas/PreferredSponsorshipLevel"
+        boothRequirement:
+          $ref: "#/components/schemas/BoothRequirement"
+        partnershipObjectives:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 5000
+        additionalMessage:
+          type:
+            - string
+            - "null"
+          minLength: 3
+          maxLength: 5000
+        agreedToContact:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - organizationName
+        - sector
+        - contactNameAndRole
+        - workEmail
+        - phone
+        - country
+        - website
+        - preferredSponsorshipLevel
+        - boothRequirement
+        - partnershipObjectives
+        - additionalMessage
+        - agreedToContact
+        - createdAt
+        - updatedAt
+    PreferredSponsorshipLevel:
+      type: string
+      enum:
+        - PLATINUM
+        - GOLD
+        - SILVER
+        - BRONZE
+      description: PreferredSponsorshipLevel enum
+    BoothRequirement:
+      type: string
+      enum:
+        - EXHIBITOR
+        - NO
+        - TO_BE_DISCUSSED
+      description: BoothRequirement enum
+  parameters: {}
+paths:
+  /api/auth/register:
+    post:
+      operationId: register
+      summary: Register a new user
+      description: Creates a new user account and issues authentication tokens.
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 255
+                email:
+                  type: string
+                  maxLength: 255
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+              required:
+                - username
+                - email
+                - password
+      responses:
+        "201":
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                required:
+                  - accessToken
+        "409":
+          description: Email already registered
+  /api/auth/login:
+    post:
+      operationId: login
+      summary: Log in with email and password
+      description: Authenticates a user and issues access and refresh tokens.
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                required:
+                  - accessToken
+        "401":
+          description: Invalid email or password
+  /api/auth/refresh:
+    post:
+      operationId: refreshTokens
+      summary: Refresh authentication tokens
+      description: Rotates the refresh token from cookie (web) or body (mobile) and
+        issues new tokens.
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenInput"
+      responses:
+        "200":
+          description: Tokens refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                required:
+                  - accessToken
+        "401":
+          description: No refresh token provided or token invalid
+  /api/auth/logout:
+    post:
+      operationId: logout
+      summary: Log out current user
+      description: Revokes the current session (or all sessions when allDevices=true)
+        and clears the refresh cookie.
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: "null"
+        "401":
+          description: Unauthorized
+  /api/auth/me:
+    get:
+      operationId: getMe
+      summary: Get current authenticated user
+      description: Returns the authenticated user.
+      tags:
+        - Auth
+      responses:
+        "200":
+          description: Current user fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeRes"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeRes"
+  /api/contacts:
+    get:
+      operationId: listContacts
+      summary: List all contact enquiries
+      description: Get all contact enquiries with pagination and optional search.
+      tags:
+        - Contacts
+      responses:
+        "200":
+          description: Contact enquiries fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListContactsRes"
+    post:
+      operationId: createContact
+      summary: Submit a contact enquiry
+      description: Create a new contact enquiry.
+      tags:
+        - Contacts
+      responses:
+        "201":
+          description: Contact enquiry submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactRes"
+  /api/exhibitor-enquiries:
+    get:
+      operationId: listExhibitorEnquiries
+      summary: List all exhibitor enquiries
+      description: Get all exhibitor enquiries with pagination and optional search.
+      tags:
+        - Exhibitor Enquiries
+      responses:
+        "200":
+          description: Exhibitor enquiries fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListExhibitorEnquiriesRes"
+    post:
+      operationId: createExhibitorEnquiry
+      summary: Submit an exhibitor enquiry
+      description: Create a new exhibitor enquiry.
+      tags:
+        - Exhibitor Enquiries
+      responses:
+        "201":
+          description: Exhibitor enquiry submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExhibitorEnquiryRes"
+  /api/sponsor-enquiries:
+    get:
+      operationId: listSponsorEnquiries
+      summary: List all sponsor enquiries
+      description: Get all sponsor enquiries with pagination and optional search.
+      tags:
+        - Sponsor Enquiries
+      responses:
+        "200":
+          description: Sponsor enquiries fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListSponsorEnquiriesRes"
+    post:
+      operationId: createSponsorEnquiry
+      summary: Submit a sponsor enquiry
+      description: Create a new sponsor enquiry.
+      tags:
+        - Sponsor Enquiries
+      responses:
+        "201":
+          description: Sponsor enquiry submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SponsorEnquiryRes"
+webhooks: {}

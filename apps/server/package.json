@@ -32,6 +32,8 @@
     "jsonwebtoken": "^9.0.3",
     "pino": "catalog:",
     "pino-http": "^11.0.0",
+    "uuid": "^14.0.3",
+    "yaml": "^2.9.1",
     "zod": "catalog:"
   },
   "devDependencies": {

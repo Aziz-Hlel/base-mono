@@ -23,6 +23,7 @@
       },
       "problemMatcher": []
     },
+
     {
       "label": "Landing",
       "type": "shell",
@@ -34,10 +35,22 @@
       },
       "problemMatcher": []
     },
+
+    {
+      "label": "Admin",
+      "type": "shell",
+      "command": "bun --filter admin dev; pwsh",
+      "presentation": {
+        "group": "dev",
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
     {
       "label": "Start Local",
       "dependsOrder": "parallel",
-      "dependsOn": ["Docker", "Frontend", "Server", "Landing"], // Because of how VS Code inserts panes relative to the root pane, reversing the order of Frontend and Server in dependsOn places Server into the middle slot and Frontend in last, idk but this is chat explanation when giving me the code
+      "dependsOn": ["Docker", "Landing", "Admin", "Server"], // Because of how VS Code inserts panes relative to the root pane, reversing the order of Frontend and Server in dependsOn places Server into the middle slot and Frontend in last, idk but this is chat explanation when giving me the code
       "problemMatcher": [],
       "icon": {
         "color": "terminal.ansiGreen",

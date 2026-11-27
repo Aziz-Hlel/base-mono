@@ -15,3 +15,16 @@ const openApiDoc = generator.generateDocument({
 });
 
 export default openApiDoc;
+
+export function getOpenApiDocumentation() {
+  const generator = new OpenApiGeneratorV31(serverRegistry.definitions);
+  return generator.generateDocument({
+    openapi: '3.1.0',
+    info: {
+      title: 'KHAIAL API Reference',
+      version: '1.0.0',
+      description: 'Production API documentation powered by Zod and Scalar',
+    },
+    servers: [{ url: 'http://localhost:3000' }],
+  });
+}

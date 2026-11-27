@@ -4,7 +4,7 @@ import cors from 'cors';
 
 export function corsMiddleware() {
   return cors({
-    origin: hasEnvProdFields(ENV) ? ENV.ALLOWED_ORIGIN_PATTERNS : '*',
+    origin: hasEnvProdFields(ENV) ? ENV.ALLOWED_ORIGIN_PATTERNS : true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     exposedHeaders: ['Content-Length'],
