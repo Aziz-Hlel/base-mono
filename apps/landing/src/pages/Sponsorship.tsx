@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { createSponsorEnquiry } from '@/api/generated/client';
+import { createSponsorEnquiryReqSchema } from '@excellense/contracts/schemas/sponsor-enquiry/create-sponsor-enquiry.req';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowRight,
   CheckCircle2,
@@ -11,21 +13,83 @@ import {
   Target,
   Users,
 } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import PageHero, { Reveal } from '../components/Animated';
 import type { Translation } from '../translations';
+
+const SPONSOR_FIELD_KEYS = [
+  'organizationName',
+  'sector',
+  'contactNameAndRole',
+  'workEmail',
+  'phone',
+  'country',
+  'website',
+] as const;
+
+const SPONSORSHIP_LEVEL_OPTIONS = ['PLATINUM', 'GOLD', 'SILVER', 'BRONZE'] as const;
 
 export default function Sponsorship({ t }: { t: Translation }) {
   const c = t.sponsorshipPage;
   const [sent, setSent] = useState(false);
-  const [tier, setTier] = useState(c.tiers[0]?.name || 'Platinum Partner');
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const scrollToForm = (selectedTier?: string) => {
-    if (selectedTier) setTier(selectedTier);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(createSponsorEnquiryReqSchema),
+    defaultValues: {
+      preferredSponsorshipLevel: 'PLATINUM' as (typeof SPONSORSHIP_LEVEL_OPTIONS)[number],
+      boothRequirement: 'EXHIBITOR' as 'EXHIBITOR' | 'NO' | 'TO_BE_DISCUSSED',
+      agreedToContact: false,
+    },
+  });
+
+  const scrollToForm = (selectedTier?: (typeof SPONSORSHIP_LEVEL_OPTIONS)[number]) => {
+    if (selectedTier) setValue('preferredSponsorshipLevel', selectedTier);
     setShowForm(true);
     setTimeout(() => {
       document.getElementById('sponsor-form')?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
+  };
+
+  const onSubmit = async (data: { agreedToContact?: boolean }) => {
+    if (!data.agreedToContact) {
+      setError('agreedToContact', { message: 'Please agree to be contacted.' });
+      return;
+    }
+
+    setSubmitError(null);
+    try {
+      const { error, response } = await createSponsorEnquiry({
+        body: data as never,
+      });
+
+      if (!response?.ok) {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? String((error as { message: unknown }).message)
+            : 'Failed to submit sponsorship enquiry. Please try again.';
+        setSubmitError(message);
+        return;
+      }
+
+      setSent(true);
+      reset();
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to submit sponsorship enquiry. Please try again.',
+      );
+    }
   };
 
   // Styles spécifiques par palier pour reproduire les bordures supérieures de l'image
@@ -151,7 +215,7 @@ export default function Sponsorship({ t }: { t: Translation }) {
               return (
                 <Reveal key={p.name} delay={i * 0.05}>
                   <article
-                    onClick={() => scrollToForm(p.name)}
+                    onClick={() => scrollToForm(SPONSORSHIP_LEVEL_OPTIONS[i])}
                     className={`group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white p-6 transition duration-200 hover:-translate-y-1 hover:shadow-lg ${style.card}`}
                   >
                     {/* Barre supérieure colorée */}
@@ -318,71 +382,116 @@ export default function Sponsorship({ t }: { t: Translation }) {
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSent(true);
-                }}
+                noValidate
+                onSubmit={handleSubmit(onSubmit)}
                 className='grid gap-4 sm:grid-cols-2'
               >
-                {c.fields.map((f: string, i: number) => (
-                  <label key={f} className='text-xs font-bold text-[#0B253A]'>
-                    {f}
+                {SPONSOR_FIELD_KEYS.map((fieldKey, i) => (
+                  <label key={fieldKey} className='text-xs font-bold text-[#0B253A]'>
+                    {c.fields[i] ?? fieldKey}
                     <input
-                      required={i === 0 || i === 3}
-                      type={i === 3 ? 'email' : 'text'}
+                      {...register(fieldKey)}
+                      type={fieldKey === 'workEmail' ? 'email' : 'text'}
                       className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none transition focus:border-[#1E7E8B] focus:bg-white'
                     />
+                    {errors[fieldKey] && (
+                      <p className='mt-1 text-xs font-medium text-red-600'>
+                        {errors[fieldKey]?.message}
+                      </p>
+                    )}
                   </label>
                 ))}
 
                 <label className='text-xs font-bold text-[#0B253A]'>
                   {c.tierLabel}
                   <select
-                    value={tier}
-                    onChange={(e) => setTier(e.target.value)}
+                    {...register('preferredSponsorshipLevel')}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   >
-                    {c.tiers.map((p: any) => (
-                      <option key={p.name} value={p.name}>
+                    {c.tiers.map((p: any, i: number) => (
+                      <option key={p.name} value={SPONSORSHIP_LEVEL_OPTIONS[i] ?? 'PLATINUM'}>
                         {p.name} ({p.price})
                       </option>
                     ))}
                   </select>
+                  {errors.preferredSponsorshipLevel && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.preferredSponsorshipLevel.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='text-xs font-bold text-[#0B253A]'>
                   {c.boothLabel}
-                  <select className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'>
-                    <option>{t.nav.exhibition}</option>
-                    <option>No</option>
-                    <option>To be discussed</option>
+                  <select
+                    {...register('boothRequirement')}
+                    className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
+                  >
+                    <option value='EXHIBITOR'>{t.nav.exhibition}</option>
+                    <option value='NO'>No</option>
+                    <option value='TO_BE_DISCUSSED'>To be discussed</option>
                   </select>
+                  {errors.boothRequirement && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.boothRequirement.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='text-xs font-bold text-[#0B253A] sm:col-span-2'>
                   {c.objectives}
                   <textarea
+                    {...register('partnershipObjectives')}
                     rows={3}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   />
+                  {errors.partnershipObjectives && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.partnershipObjectives.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='text-xs font-bold text-[#0B253A] sm:col-span-2'>
                   {c.message}
                   <textarea
+                    {...register('additionalMessage')}
                     rows={2}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   />
+                  {errors.additionalMessage && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.additionalMessage.message}
+                    </p>
+                  )}
                 </label>
 
-                <label className='flex items-start gap-3 text-xs font-normal text-slate-600 sm:col-span-2'>
-                  <input required type='checkbox' className='mt-0.5 accent-[#1E7E8B]' />
-                  <span>{c.consent}</span>
-                </label>
+                <div className='sm:col-span-2'>
+                  <label className='flex items-start gap-3 text-xs font-normal text-slate-600'>
+                    <input
+                      {...register('agreedToContact')}
+                      type='checkbox'
+                      className='mt-0.5 accent-[#1E7E8B]'
+                    />
+                    <span>{c.consent}</span>
+                  </label>
+                  {errors.agreedToContact && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.agreedToContact.message}
+                    </p>
+                  )}
+                </div>
+
+                {submitError && (
+                  <p className='rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-medium text-red-700 sm:col-span-2'>
+                    {submitError}
+                  </p>
+                )}
 
                 <button
                   type='submit'
-                  className='inline-flex w-fit items-center gap-2.5 rounded-xl bg-[#0B253A] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#143a58] sm:col-span-2'
+                  disabled={isSubmitting}
+                  className='inline-flex w-fit items-center gap-2.5 rounded-xl bg-[#0B253A] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#143a58] disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2'
                 >
                   {c.submit}
                   <ArrowRight size={16} />

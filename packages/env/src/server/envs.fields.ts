@@ -76,20 +76,38 @@ export const minioSchema = {
 };
 
 // CORS
+// An origin is scheme + host + optional port, with no path, e.g. "https://domain.com" or "http://localhost:3000".
+const isOrigin = (value: string) => {
+  try {
+    const url = new URL(value);
+    return (url.protocol === 'http:' || url.protocol === 'https:') && url.origin === value;
+  } catch {
+    return false;
+  }
+};
+
 export const corsSchema = {
   ALLOWED_ORIGIN_PATTERNS: z
     .string({ error: 'ALLOWED_ORIGIN_PATTERNS is required in prod environments' })
-    .transform((origins) => origins.split(','))
-    .refine(
-      (origins) => {
-        const regexOrigins = /^https?:\/\/([a-z0-9-]+\.)+[a-z]{2,}$/i;
-        return origins.every((origin) => regexOrigins.test(origin));
-      },
-      {
-        error:
-          'ALLOWED_ORIGIN_PATTERNS is invalid, it must follow "http://domain.com,https://domain.com"',
-      },
-    ),
+    .transform((origins) =>
+      origins
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean),
+    )
+    .superRefine((origins, ctx) => {
+      if (origins.length === 0) {
+        ctx.addIssue({ code: 'custom', message: 'ALLOWED_ORIGIN_PATTERNS cannot be empty' });
+      }
+      for (const origin of origins) {
+        if (!isOrigin(origin)) {
+          ctx.addIssue({
+            code: 'custom',
+            message: `ALLOWED_ORIGIN_PATTERNS: "${origin}" is not a valid origin, expected e.g. "https://domain.com" or "http://localhost:3000"`,
+          });
+        }
+      }
+    }),
 };
 
 export type CorsSchema = z.infer<z.ZodObject<typeof corsSchema>>;

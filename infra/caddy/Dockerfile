@@ -24,8 +24,8 @@ ARG VITE_API_URL
 ENV VITE_NODE_ENV=${VITE_NODE_ENV}
 ENV VITE_API_URL=${VITE_API_URL}
 
-RUN bun --cwd apps/admin run build
-RUN bun --cwd apps/landing run build
+RUN bun --filter admin build
+RUN bun --filter landing build
 
 FROM caddy:2-alpine AS runner
 

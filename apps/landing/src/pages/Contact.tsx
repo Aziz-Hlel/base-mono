@@ -1,10 +1,58 @@
-import { Mail, MapPin, Phone, Send, ArrowRight } from 'lucide-react';
+import { createContact } from '@/api/generated/client';
+import {
+  type CreateContactReq,
+  createContactReqSchema,
+} from '@excellense/contracts/schemas/contact/create-contact.req';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, Mail, MapPin, Phone, Send } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { Reveal } from '../components/Animated';
 import SectionHeader from '../components/SectionHeader';
 import type { Translation } from '../translations';
 
 export default function Contact({ t }: { t: Translation }) {
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(createContactReqSchema),
+  });
+
+  const onSubmit = async (data: CreateContactReq) => {
+    setSubmitStatus('idle');
+    setSubmitError(null);
+
+    try {
+      const { error, response } = await createContact({
+        body: data as never,
+      });
+
+      if (!response?.ok) {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? String((error as { message: unknown }).message)
+            : 'Failed to send message. Please try again.';
+        setSubmitStatus('error');
+        setSubmitError(message);
+        return;
+      }
+
+      setSubmitStatus('success');
+      reset();
+    } catch (err) {
+      setSubmitStatus('error');
+      setSubmitError(
+        err instanceof Error ? err.message : 'Failed to send message. Please try again.',
+      );
+    }
+  };
   return (
     <main className='page-bg' dir={t.isRtl ? 'rtl' : 'ltr'}>
       {/* HERO — FULL BACKGROUND IMAGE */}
@@ -104,7 +152,8 @@ export default function Contact({ t }: { t: Translation }) {
           <Reveal delay={0.1}>
             <form
               id='contact-form'
-              onSubmit={(e) => e.preventDefault()}
+              noValidate
+              onSubmit={handleSubmit(onSubmit)}
               className='scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-6 shadow-luxe md:p-9'
             >
               <div className='mb-7'>
@@ -123,11 +172,15 @@ export default function Contact({ t }: { t: Translation }) {
                     {t.contact.form[key]}
 
                     <input
-                      name={key}
+                      {...register(key)}
                       type={key === 'email' ? 'email' : 'text'}
-                      required={key === 'name' || key === 'email'}
                       className='mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition focus:border-royal focus:bg-white'
                     />
+                    {errors[key] && (
+                      <p className='mt-1.5 text-xs font-medium text-red-600'>
+                        {errors[key]?.message}
+                      </p>
+                    )}
                   </label>
                 ))}
               </div>
@@ -136,16 +189,33 @@ export default function Contact({ t }: { t: Translation }) {
                 {t.contact.form.message}
 
                 <textarea
-                  name='message'
+                  {...register('message')}
                   rows={5}
-                  required
                   className='mt-2 w-full resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm outline-none transition focus:border-royal focus:bg-white'
                 />
+                {errors.message && (
+                  <p className='mt-1.5 text-xs font-medium text-red-600'>
+                    {errors.message.message}
+                  </p>
+                )}
               </label>
+
+              {submitStatus === 'success' && (
+                <p className='mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-700'>
+                  Your message has been sent successfully.
+                </p>
+              )}
+
+              {submitStatus === 'error' && submitError && (
+                <p className='mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-medium text-red-700'>
+                  {submitError}
+                </p>
+              )}
 
               <button
                 type='submit'
-                className='mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-royal px-7 py-4 text-xs font-extrabold uppercase tracking-wider text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-lg sm:w-auto'
+                disabled={isSubmitting}
+                className='mt-6 flex w-full items-center justify-center gap-3 rounded-full bg-royal px-7 py-4 text-xs font-extrabold uppercase tracking-wider text-white transition duration-300 hover:-translate-y-0.5 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto'
               >
                 {t.contact.form.button}
                 <Send size={15} />

@@ -19,7 +19,7 @@ COPY packages packages
 
 ENV NODE_ENV=production
 RUN bun --cwd packages/db run db:generate
-RUN bun --cwd apps/server run build
+RUN bun --filter server build
 
 FROM oven/bun:1-slim AS runner
 WORKDIR /app
@@ -28,6 +28,8 @@ ENV NODE_ENV=production
 
 COPY --from=builder /app/package.json /app/bun.lock ./
 COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/packages/db/prisma.config.ts /app/apps/server/prisma.config.ts
+COPY --from=builder /app/packages/db/prisma /app/apps/server/prisma
 COPY --from=builder /app/apps/server/package.json /app/apps/server/package.json
 COPY --from=builder /app/apps/server/node_modules /app/apps/server/node_modules
 COPY --from=builder /app/apps/server/dist /app/apps/server/dist

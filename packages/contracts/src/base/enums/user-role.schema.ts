@@ -1,4 +1,4 @@
-import { UserRole } from '@excellense/db/prisma';
+import { UserRole } from '@excellense/db/prisma/enums';
 import { z } from 'zod';
 
 const userRoleSchema = z.enum(UserRole).meta({

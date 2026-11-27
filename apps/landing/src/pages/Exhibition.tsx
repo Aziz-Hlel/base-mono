@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { createExhibitorEnquiry } from '@/api/generated/client';
+import { createExhibitorEnquiryReqSchema } from '@excellense/contracts/schemas/exhibitor-enquiry/create-exhibitor-enquiry.req';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowRight,
   BarChart3,
@@ -12,21 +14,75 @@ import {
   Users,
   Wifi,
 } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import PageHero, { Reveal } from '../components/Animated';
+
+const EXHIBITOR_FIELD_KEYS = [
+  'companyName',
+  'sector',
+  'contactPerson',
+  'email',
+  'phone',
+  'country',
+  'companyWebsite',
+] as const;
+
+const PACKAGE_OPTIONS = ['STARTUP', 'STANDARD', 'PREMIUM'] as const;
 
 export default function Exhibition({ t }: { t: any }) {
   const c = t.exhibitionPage;
   const isRtl = Boolean(t?.isRtl);
   const [sent, setSent] = useState(false);
-  const [pack, setPack] = useState(c.stands?.[1]?.name || c.stands?.[0]?.name || 'Standard Booth');
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [highlightForm, setHighlightForm] = useState(false);
 
-  const scrollToForm = (selectedPack?: string) => {
-    if (selectedPack) setPack(selectedPack);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(createExhibitorEnquiryReqSchema),
+    defaultValues: {
+      preferredPackage: 'STANDARD' as (typeof PACKAGE_OPTIONS)[number],
+    },
+  });
+
+  const scrollToForm = (selectedPack?: (typeof PACKAGE_OPTIONS)[number]) => {
+    if (selectedPack) setValue('preferredPackage', selectedPack);
     setHighlightForm(true);
     setTimeout(() => {
       document.getElementById('exhibitor-form')?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
+  };
+
+  const onSubmit = async (data: unknown) => {
+    setSubmitError(null);
+    try {
+      const { error, response } = await createExhibitorEnquiry({
+        body: data as never,
+      });
+
+      if (!response?.ok) {
+        const message =
+          error && typeof error === 'object' && 'message' in error
+            ? String((error as { message: unknown }).message)
+            : 'Failed to submit exhibition enquiry. Please try again.';
+        setSubmitError(message);
+        return;
+      }
+
+      setSent(true);
+      reset();
+    } catch (err) {
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : 'Failed to submit exhibition enquiry. Please try again.',
+      );
+    }
   };
 
   // Styles des 3 cartes d'exposition (Startup, Standard, Premium)
@@ -149,7 +205,7 @@ export default function Exhibition({ t }: { t: any }) {
               return (
                 <Reveal key={p.name} delay={i * 0.05}>
                   <article
-                    onClick={() => scrollToForm(p.name)}
+                    onClick={() => scrollToForm(PACKAGE_OPTIONS[i])}
                     className={`group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border bg-white p-6 transition duration-200 hover:-translate-y-1 hover:shadow-lg ${style.card}`}
                   >
                     {/* Barre supérieure colorée */}
@@ -348,52 +404,71 @@ export default function Exhibition({ t }: { t: any }) {
               </div>
             ) : (
               <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  setSent(true);
-                }}
+                noValidate
+                onSubmit={handleSubmit(onSubmit)}
                 className='grid gap-4 sm:grid-cols-2'
               >
-                {c.fields?.map((f: string, i: number) => (
-                  <label key={f} className='text-xs font-bold text-[#0B253A]'>
-                    {f}
+                {EXHIBITOR_FIELD_KEYS.map((fieldKey, i) => (
+                  <label key={fieldKey} className='text-xs font-bold text-[#0B253A]'>
+                    {c.fields?.[i] ?? fieldKey}
                     <input
-                      required={i === 0 || i === 3}
-                      type={i === 3 ? 'email' : 'text'}
+                      {...register(fieldKey)}
+                      type={fieldKey === 'email' ? 'email' : 'text'}
                       className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none transition focus:border-[#1E7E8B] focus:bg-white'
                     />
+                    {errors[fieldKey] && (
+                      <p className='mt-1 text-xs font-medium text-red-600'>
+                        {errors[fieldKey]?.message}
+                      </p>
+                    )}
                   </label>
                 ))}
 
                 <label className='text-xs font-bold text-[#0B253A]'>
                   {c.packageLabel}
                   <select
-                    value={pack}
-                    onChange={(e) => setPack(e.target.value)}
+                    {...register('preferredPackage')}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   >
-                    {c.stands?.map((p: any) => (
-                      <option key={p.name} value={p.name}>
+                    {c.stands?.map((p: any, i: number) => (
+                      <option key={p.name} value={PACKAGE_OPTIONS[i] ?? 'STANDARD'}>
                         {p.name} ({p.price})
                       </option>
                     ))}
                   </select>
+                  {errors.preferredPackage && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.preferredPackage.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='text-xs font-bold text-[#0B253A] sm:col-span-2'>
                   {c.requirements}
                   <textarea
+                    {...register('technicalRequirements')}
                     rows={2}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   />
+                  {errors.technicalRequirements && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.technicalRequirements.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='text-xs font-bold text-[#0B253A] sm:col-span-2'>
                   {c.description}
                   <textarea
+                    {...register('companyDescription')}
                     rows={3}
                     className='mt-1.5 w-full rounded-xl border border-slate-200 bg-[#F4F7F9] px-4 py-3 text-sm font-normal text-slate-800 outline-none focus:border-[#1E7E8B] focus:bg-white'
                   />
+                  {errors.companyDescription && (
+                    <p className='mt-1 text-xs font-medium text-red-600'>
+                      {errors.companyDescription.message}
+                    </p>
+                  )}
                 </label>
 
                 <label className='flex items-start gap-3 text-xs font-normal text-slate-600 sm:col-span-2'>
@@ -401,9 +476,16 @@ export default function Exhibition({ t }: { t: any }) {
                   <span>{c.consent}</span>
                 </label>
 
+                {submitError && (
+                  <p className='rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs font-medium text-red-700 sm:col-span-2'>
+                    {submitError}
+                  </p>
+                )}
+
                 <button
                   type='submit'
-                  className='inline-flex w-fit items-center gap-2.5 rounded-xl bg-[#0B253A] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#143a58] sm:col-span-2'
+                  disabled={isSubmitting}
+                  className='inline-flex w-fit items-center gap-2.5 rounded-xl bg-[#0B253A] px-7 py-3.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-[#143a58] disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2'
                 >
                   {c.submit}
                   <ArrowRight size={16} className={isRtl ? 'rotate-180' : ''} />

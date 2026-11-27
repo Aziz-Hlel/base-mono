@@ -7,14 +7,20 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "openapi:generate": "openapi-ts"
   },
   "dependencies": {
+    "@excellense/contracts": "workspace:*",
+    "@hey-api/openapi-ts": "^0.99.0",
+    "@hookform/resolvers": "^7.0.9",
     "framer-motion": "^11.18.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.1"
+    "react-hook-form": "^7.92.0",
+    "react-router-dom": "^7.1.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@excellense/config": "workspace:*",

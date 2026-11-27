@@ -1,4 +1,4 @@
-import { PreferredPackage } from '@excellense/db/prisma';
+import { PreferredPackage } from '@excellense/db/prisma/enums';
 import { z } from 'zod';
 
 const preferredPackageSchema = z.enum(PreferredPackage).meta({

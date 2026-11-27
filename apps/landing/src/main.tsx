@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { initApiClient } from '@/api/client';
 import App from './App';
 import './index.css';
+
+initApiClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

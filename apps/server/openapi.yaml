@@ -494,6 +494,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ExhibitorEnquiryRes"
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Health check
+      description: Public liveness check endpoint.
+      tags:
+        - Root
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: "null"
+  /api/healthz:
+    get:
+      operationId: getHealthz
+      summary: Detailed health check
+      description: Authenticated health check returning uptime and memory usage.
+      tags:
+        - Root
+      responses:
+        "200":
+          description: Detailed health status fetched successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  uptime:
+                    type: number
+                  memoryUsage:
+                    type: object
+                    properties:
+                      rss:
+                        type: number
+                      heapTotal:
+                        type: number
+                      heapUsed:
+                        type: number
+                      external:
+                        type: number
+                      arrayBuffers:
+                        type: number
+                    required:
+                      - rss
+                      - heapTotal
+                      - heapUsed
+                      - external
+                      - arrayBuffers
+                required:
+                  - timestamp
+                  - uptime
+                  - memoryUsage
+  /api/hard-reset:
+    delete:
+      operationId: hardReset
+      summary: Hard reset database and cache
+      description: Development-only endpoint that flushes Redis and force-resets the
+        database.
+      tags:
+        - Root
+      responses:
+        "200":
+          description: DB and Cache reset successfully
+          content:
+            application/json:
+              schema:
+                type: "null"
   /api/sponsor-enquiries:
     get:
       operationId: listSponsorEnquiries
